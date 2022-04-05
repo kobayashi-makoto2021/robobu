@@ -56,6 +56,8 @@ USBを差したら，ArduinoIDEでポートを指定しよう．
 - [ ] 足す、引く、掛ける、割るの計算が出来る
 - [ ] 計算の順序に合わせて( )を使える
 
+---
+
 #### プログラムでの四則演算
 
 足し算，引き算，掛け算，割り算のことを「四則演算（しそくえんざん）」と言います．
@@ -78,17 +80,134 @@ USBを差したら，ArduinoIDEでポートを指定しよう．
 - 4 / 2
 
 
+---
 
 
 #### シリアルモニタからの入力を読み取ろう
 
 電卓を作るには，入力された数字を読み取る必要があります．
 
+さっそく，シリアルモニタからの入力をそのまま表示するプログラムを作ってみましょう．
 
+**＜プログラム＞**
+
+``` C++
+long val;
+
+void setup() {
+  Serial.begin(9600); //ボーレートの指定
+}
+
+void loop() {
+
+  //受信データがある場合if内を処理
+  if (Serial.available() > 0) {
+    val = Serial.parseInt();    //文字列データを数値に変換
+    Serial.println(val);          //一つ目の数字をシリアルモニタに表示
+  }
+
+}
+```
+
+
+**＜実行の準備＞**
+
+ツール→シリアルモニタをクリックしましょう．
+
+シリアルモニタが表示されたら，ボーレートを9600に，と改行の設定を「改行無し」にしましょう．
+
+シリアルモニタに数字を入力してみましょう．
+
+![lesson02_1_serialmonitor_setting]()
+
+
+
+**＜実行結果＞**
+
+![lesson02_1_serialmonitor_result]()
+
+
+---
 
 #### 電卓を完成させよう
 
-あああ
+上で作ったプログラムを改造して，電卓に改造しよう．
+
+ファイル→名前を付けて保存をクリックして，「lesson_02_1」という名前で保存しよう．
+
+以下をすべてコピー＆ペーストしよう．
+
+**＜プログラム＞**
+
+``` C++
+long val1,val2,result;
+
+void setup() {
+  Serial.begin(9600); //ボーレートを指定
+}
+
+void loop() {
+
+  //受信データがある場合if内を処理
+  if (Serial.available() > 0){
+    
+    val1 = Serial.parseInt();    //文字列データを数値に変換
+    Serial.print(val1);          //一つ目の数字をシリアルモニタに表示
+    
+    char aop = Serial.read();    //四則演算用の文字の読み込み
+    Serial.print(aop);           //四則演算の文字をシリアルモニタに表示
+ 
+    val2 = Serial.parseInt();    //文字列データを数値に変換
+    Serial.print(val2);          //2つ目の数字をシリアルモニタに表示
+    Serial.println("=");         //"="表示後改行
+    
+    switch (aop){
+      case '+' :
+          result = val1 + val2;
+          Serial.println(result ,DEC);   //加算と改行
+          Serial.println("");            //改行
+          break;
+      
+      case '-' :
+          result = val1 - val2;
+          Serial.println(result ,DEC);   //減算と改行
+          Serial.println("");            //改行
+          break;
+
+      case '*' :
+          result = val1 * val2;
+          Serial.println(result ,DEC);   //乗算と改行
+          Serial.println("");            //改行
+          break;
+
+      case '/' :
+          result = val1 / val2;
+          Serial.println(result ,DEC);   //除算と改行
+          Serial.println("");            //改行
+          break;
+      }
+      
+  }
+  
+}
+```
+
+**＜実行の準備＞**
+
+ツール→シリアルモニタをクリックしよう．
+
+シリアルモニタが表示されたら，ボーレートを9600に，と改行の設定を「改行無し」にしよう．
+
+シリアルモニタに「1+1」「2*3」のような式を入力して，Enterを押しましょう．
+
+![lesson02_2_serialmonitor_setting]()
+
+
+
+**＜実行結果＞**
+
+![lesson02_2_serialmonitor_result]()
+
 
 
 ---
