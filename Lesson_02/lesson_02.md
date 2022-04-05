@@ -224,11 +224,100 @@ void loop() {
 
 #### 1秒ごとにカウントアップするタイマーを作ろう
 
-あああ
+ファイル→名前を付けて保存をクリックして，「lesson_02_3」という名前で保存しよう．
+
+以下をすべてコピー＆ペーストしよう．
+
+**＜プログラム＞**
+
+``` C++
+int redLedPin = 2;
+int count = 0;
+
+
+void setup() {
+  Serial.begin(9600);
+  Serial.println("Enter Y to start timer");
+}
+void loop() {
+  if (Serial.available()) {
+    char ch = Serial.read();
+    if (ch == 'y' ||  ch == 'Y') {
+      Serial.println("Timer ON");
+      Serial.println("If you want to switch it off, simply enter N or n!");
+      count = 0;
+    }
+    if (ch == 'n' ||  ch == 'N') {
+      Serial.println("Timer OFF");
+      Serial.print(count);
+      Serial.println(" seconds");
+      Serial.println("If you want to switch it on, simply enter Y or y!");
+      count = 0;
+    }
+  }
+  delay(1000);
+  count += 1;
+}
+
+```
+
+**＜実行の準備＞**
+
+ツール→シリアルモニタをクリックしよう．
+
+シリアルモニタが表示されたら，ボーレートを9600に，と改行の設定を「改行無し」にしよう．
+
+シリアルモニタに「y」を入力して，Enterを押しましょう．タイマーが起動します．
+
+数秒後，シリアルモニタに「n」を入力して，またEnterを押しましょう．タイマーが停止して，経過した時間が表示されます．
+
+![lesson02_3_serialmonitor_setting]()
+
+
+
+**＜実行結果＞**
+
+![lesson02_3_serialmonitor_result]()
+
+
+
+
+
+---
 
 #### 0.1秒ごとにカウントアップするタイマーを作ろう
 
-あああ
+50m走をするときに使うストップウォッチなどは，1秒の100分の1や1000分の1の細かい時間まで測ることができます．
+
+今回は，上で作ったプログラムを改造して，1秒の10分の1の時間まで測ることができる（＝10倍の精度の）タイマーを作ろう．
+
+**＜プログラム＞**
+
+ループを遅らせる時間を1000ms（1秒）から100ms（0.1秒）に変えて，精度をアップしよう
+
+``` C++
+delay(100);
+```
+
+ループを早めた分，countの数字が10倍速く大きくなってしまうので，表示する数字を10分の1にして調節しましょう．
+
+``` C++
+Serial.print(count/10);
+```
+
+**＜実行の準備＞**
+
+さきほどと同じように実行しよう．
+
+
+**＜実行結果＞**
+
+![lesson02_4_serialmonitor_result]()
+
+**精度が10倍になっているはずなのに1秒単位でしか表示されないのは何故でしょうか？**
+
+
+---
 
 #### float型を使ってタイマーを正しく動作させよう
 
