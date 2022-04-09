@@ -253,27 +253,25 @@ int a;
 **＜プログラム＞**
 
 ``` C++
-int redLedPin = 2;
 int count = 0;
-
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("Enter Y to start timer");
+  Serial.println("Yを押してタイマースタート");
 }
 void loop() {
   if (Serial.available()) {
     char ch = Serial.read();
     if (ch == 'y' ||  ch == 'Y') {
-      Serial.println("Timer ON");
-      Serial.println("If you want to switch it off, simply enter N or n!");
+      Serial.println("タイマーON");
+      Serial.println("タイマーを止めるにはNを押してください");
       count = 0;
     }
     if (ch == 'n' ||  ch == 'N') {
-      Serial.println("Timer OFF");
+      Serial.println("タイマーOFF");
       Serial.print(count);
-      Serial.println(" seconds");
-      Serial.println("If you want to switch it on, simply enter Y or y!");
+      Serial.println(" 秒");
+      Serial.println("Yを押してタイマースタート");
       count = 0;
     }
   }
