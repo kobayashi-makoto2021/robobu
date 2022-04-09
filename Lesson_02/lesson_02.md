@@ -37,7 +37,7 @@
 
 Arduino UNOボードとパソコンをUSBケーブルでつなぎましょう．
 
-<img src="image/Arduino_USBcable.png" width="30%">
+<img src="image/Arduino_USBcable.png" width="20%">
 
 【注意】USBを抜き差しするときは向きを確認して，ていねいにあつかうこと．
 
