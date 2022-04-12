@@ -37,7 +37,7 @@
 
 Arduino UNOボードとパソコンをUSBケーブルでつなぎましょう．
 
-<img src="image/Arduino_USBcable.png" width="20%">
+<img src="image/Arduino_USBcable.png" width="30%">
 
 【注意】USBを抜き差しするときは向きを確認して，ていねいにあつかうこと．
 
@@ -94,9 +94,6 @@ USBを差したら，ArduinoIDEでポートを指定しましょう．
 
 さっそく，シリアルモニタからの入力をそのまま表示するプログラムを作ってみましょう．
 
-以下をすべてコピー＆ペーストしましょう．
-
-
 **＜プログラム＞**
 
 ``` C++
@@ -118,12 +115,7 @@ void loop() {
 ```
 
 
-
 **＜実行の準備＞**
-
-コピー＆ペーストができたら左上の矢印を押して（またはCtrl＋U），プログラムを書き込みましょう．「ボードへの書き込みが完了しました」と表示されれば成功です．
-
-<img src="image/ArduinoIDE_compile&run.png" width="70%">
 
 ツール→シリアルモニタをクリックしましょう．
 
@@ -205,11 +197,7 @@ void loop() {
 }
 ```
 
-
-
 **＜実行の準備＞**
-
-コピー＆ペーストができたら左上の矢印を押して（またはCtrl＋U），プログラムを書き込みましょう．
 
 ツール→シリアルモニタをクリックしましょう．
 
@@ -265,25 +253,27 @@ int a;
 **＜プログラム＞**
 
 ``` C++
+int redLedPin = 2;
 int count = 0;
+
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("Yを押してタイマースタート");
+  Serial.println("Enter Y to start timer");
 }
 void loop() {
   if (Serial.available()) {
     char ch = Serial.read();
     if (ch == 'y' ||  ch == 'Y') {
-      Serial.println("タイマーON");
-      Serial.println("タイマーを止めるにはNを押してください");
+      Serial.println("Timer ON");
+      Serial.println("If you want to switch it off, simply enter N or n!");
       count = 0;
     }
     if (ch == 'n' ||  ch == 'N') {
-      Serial.println("タイマーOFF");
+      Serial.println("Timer OFF");
       Serial.print(count);
-      Serial.println(" 秒");
-      Serial.println("Yを押してタイマースタート");
+      Serial.println(" seconds");
+      Serial.println("If you want to switch it on, simply enter Y or y!");
       count = 0;
     }
   }
@@ -292,12 +282,7 @@ void loop() {
 }
 ```
 
-
-
 **＜実行の準備＞**
-
-コピー＆ペーストができたら左上の矢印を押して（またはCtrl＋U），プログラムを書き込みましょう．
-
 
 ツール→シリアルモニタをクリックしましょう．
 
@@ -311,6 +296,9 @@ void loop() {
 **＜実行結果＞**
 
 <img src="image/lesson02_3_serialmonitor_result.png" width="70%">
+
+
+
 
 
 ---
@@ -335,11 +323,7 @@ delay(100);
 Serial.print(count/10);
 ```
 
-
-
 **＜実行の準備＞**
-
-コピー＆ペーストができたら左上の矢印を押して（またはCtrl＋U），プログラムを書き込みましょう．
 
 さきほどと同じように実行しましょう．
 
@@ -366,8 +350,6 @@ float count = 0;
 float型とは，整数に加えて小数も入れることができる変数です．小数点以下何桁まで入れることができるかによって型の種類が変わりますが，今回はfloat型で十分です．
 
 **＜実行の準備＞**
-
-コピー＆ペーストができたら左上の矢印を押して（またはCtrl＋U），プログラムを書き込みましょう．
 
 さきほどと同じように実行しましょう．
 
