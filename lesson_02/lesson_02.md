@@ -19,13 +19,13 @@
 - [ ] USBケーブルx 1
 - [ ] パソコン x 1
 
-#### 0.ArduinoIDEを起動しよう
+#### 1.ArduinoIDEを起動しよう（復習）
 
 デスクトップにあるAruduinoのアイコンをダブルクリックしてArduinoIDEを起動しましょう．
 
 <img src="image/ArduinoIDE_icon.png" width="10%">
 
-#### 1.スケッチを保存しよう
+#### 2.スケッチを保存しよう（復習）
 
 (Arduinoでは，プログラムのことを「スケッチ」といいます．)
 
@@ -33,11 +33,11 @@
 
 <img src="image/ArduinoIDE_save.png" width="50%">
 
-#### 2.Arduinoとパソコンを接続しよう
+#### 3.Arduinoとパソコンを接続しよう（復習）
 
 Arduino UNOボードとパソコンをUSBケーブルでつなぎましょう．
 
-<img src="image/Arduino_USBcable.png" width="30%">
+<img src="image/Arduino_USBcable.png" width="20%">
 
 【注意】USBを抜き差しするときは向きを確認して，ていねいにあつかうこと．
 
@@ -48,17 +48,10 @@ USBを差したら，ArduinoIDEでポートを指定しましょう．
 <img src="image/ArduinoIDE_port_setting.png" width="70%">
 
 
-
 ---
 
-### 【前回の復習】電卓を作ってみよう
-#### このセクションで身につける力
-- [ ] 足す、引く、掛ける、割るの計算が出来る
-- [ ] 計算の順序に合わせて( )を使える
+### 【ミッションチャレンジ】プログラムで計算をしてみよう
 
----
-
-#### プログラムでの四則演算
 
 足し算，引き算，掛け算，割り算のことを「四則演算（しそくえんざん）」と言います．
 
@@ -85,45 +78,33 @@ USBを差したら，ArduinoIDEでポートを指定しましょう．
 
 
 
----
+#### 計算結果を表示しよう
 
-
-#### シリアルモニタからの入力を読み取ろう
-
-電卓を作るには，入力された数字を読み取る必要があります．
-
-さっそく，シリアルモニタからの入力をそのまま表示するプログラムを作ってみましょう．
-
-**＜プログラム＞**
+以下をすべてコピー＆ペーストしましょう．
 
 ``` C++
-long val;
-
 void setup() {
-  Serial.begin(9600); //ボーレートの指定
+  // put your setup code here, to run once:
+  // (日本語訳)最初に一度だけ動かすプログラムはここに書く
+  Serial.begin(9600); // シリアルポートを使うための準備
 }
-
 void loop() {
-
-  //受信データがある場合if内を処理
-  if (Serial.available() > 0) {
-    val = Serial.parseInt();    //文字列データを数値に変換
-    Serial.println(val);          //一つ目の数字をシリアルモニタに表示
-  }
-
+  // put your main code here, to run repeatedly:
+  // (日本語訳)繰り返して動かすプログラムはここに書く
+  Serial.println(1 + 1);
+  //()内の計算をしてシリアルモニタに表示
+  delay(5000);
+  // 5秒待機させます（この数値を変更して時間を設定することができます）
 }
 ```
 
-
 **＜実行の準備＞**
+
+コピー＆ペーストができたら左上の矢印を押して（またはCtrl＋U），プログラムを書き込みましょう．
 
 ツール→シリアルモニタをクリックしましょう．
 
-シリアルモニタが表示されたら，ボーレートを9600bpsに，と改行の設定を「改行無し」にしましょう．
-
-シリアルモニタに数字を入力してみましょう．
-
-<img src="image/lesson02_1_serialmonitor_setting.png" width="70%">
+シリアルモニタが表示されたら，ボーレートを9600に，と改行の設定を「改行無し」にしましょう．
 
 
 **＜実行結果＞**
@@ -131,100 +112,31 @@ void loop() {
 <img src="image/lesson02_1_serialmonitor_result.png" width="70%">
 
 
+#### 様々な計算をしよう
 
----
+上のプログラムの9行目を改造して，足し算，引き算，掛け算，割り算や（）を使って計算してみましょう．
 
-#### 電卓を完成させよう
-
-上で作ったプログラムを改造して，電卓に改造しましょう．
-
-ファイル→名前を付けて保存をクリックして，「lesson_02_1」という名前で保存しましょう．
-
-以下をすべてコピー＆ペーストしましょう．
-
-**＜プログラム＞**
+例：
+``` C++
+  Serial.println(2 * 3);
+``` 
 
 ``` C++
-long val1,val2,result;
-
-void setup() {
-  Serial.begin(9600); //ボーレートを指定
-}
-
-void loop() {
-
-  //受信データがある場合if内を処理
-  if (Serial.available() > 0){
-    
-    val1 = Serial.parseInt();    //文字列データを数値に変換
-    Serial.print(val1);          //一つ目の数字をシリアルモニタに表示
-    
-    char aop = Serial.read();    //四則演算用の文字の読み込み
-    Serial.print(aop);           //四則演算の文字をシリアルモニタに表示
- 
-    val2 = Serial.parseInt();    //文字列データを数値に変換
-    Serial.print(val2);          //2つ目の数字をシリアルモニタに表示
-    Serial.println("=");         //"="表示後改行
-    
-    switch (aop){
-      case '+' :
-          result = val1 + val2;
-          Serial.println(result ,DEC);   //加算と改行
-          Serial.println("");            //改行
-          break;
-      
-      case '-' :
-          result = val1 - val2;
-          Serial.println(result ,DEC);   //減算と改行
-          Serial.println("");            //改行
-          break;
-
-      case '*' :
-          result = val1 * val2;
-          Serial.println(result ,DEC);   //乗算と改行
-          Serial.println("");            //改行
-          break;
-
-      case '/' :
-          result = val1 / val2;
-          Serial.println(result ,DEC);   //除算と改行
-          Serial.println("");            //改行
-          break;
-      }
-      
-  }
-  
-}
-```
-
-**＜実行の準備＞**
-
-ツール→シリアルモニタをクリックしましょう．
-
-シリアルモニタが表示されたら，ボーレートを9600に，と改行の設定を「改行無し」にしましょう．
-
-シリアルモニタに「1+1」「2*3」のような式を入力して，Enterを押しましょう．
-
-<img src="image/lesson02_2_serialmonitor_setting.png" width="70%">
+  Serial.println(((1 + 2) *3) / 3);
+``` 
 
 
-
-**＜実行結果＞**
-
-<img src="image/lesson02_2_serialmonitor_result.png" width="70%">
-
-
+- [ ] 足す、引く、掛ける、割るの計算が出来たらチェック
+- [ ] 計算の順序に合わせて( )を使えたらチェック
 
 ---
 
-### タイマーを作ってみよう
-#### このセクションで身につける力
-- [ ] delay()と変数、整数型（int）を使ってタイマーを作れる
-- [ ] 浮動小数点型(float)を使ってタイマーを改良できる
+### 0.1秒ごとにカウントアップするタイマーをつくろう！
+50m走をするときに使うストップウォッチなどは，1秒の100分の1（=0.01秒）や1000分の1（=0.001秒）の細かい時間まで測ることができます．
 
----
+今回は，0.1秒ごとにカウントアップするタイマーを作りましょう．
 
-#### 変数とは？
+#### 変数とデータ型について学ぼう
 
 変数は，数字や文字を入れておく入れ物のことです．MindStormsではカバンになっていましたね．
 
@@ -239,50 +151,58 @@ int a;
 
 「int」が「整数型」を表します．整数とは，「1」「100」「-5」などの小数や分数以外の数字です．整数型には整数しか入りません．「3.14（小数）」「b（文字）」などは入りません．
 
-この部分を変えると型の種類を変更できます．型の種類は他にもたくさんありますが，ここではintのみの紹介とします．
+小数を扱いたいときは「float型」を使います．float型は「浮動小数点型」とも言います．
 
 ---
 
+#### 【ステップ1】1秒ごとにカウントアップするタイマーを作ろう
 
-#### 1秒ごとにカウントアップするタイマーを作ろう
-
-ファイル→名前を付けて保存をクリックして，「lesson_02_3」という名前で保存しましょう．
+ファイル→名前を付けて保存をクリックして，「lesson_02_2」という名前で保存しましょう．
 
 以下をすべてコピー＆ペーストしましょう．
 
-**＜プログラム＞**
-
 ``` C++
-int redLedPin = 2;
 int count = 0;
-
+//整数型の変数countを定義
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("Enter Y to start timer");
+  Serial.println("Yを押してタイマースタート");
 }
 void loop() {
   if (Serial.available()) {
+  //シリアル信号を受信した場合
     char ch = Serial.read();
+    //受信した値を変数に代入
     if (ch == 'y' ||  ch == 'Y') {
-      Serial.println("Timer ON");
-      Serial.println("If you want to switch it off, simply enter N or n!");
+    //yまたはYだった場合
+      Serial.println("タイマーON");
+      Serial.println("タイマーを止めるにはNを押してください");
       count = 0;
+      //countに0を代入
     }
     if (ch == 'n' ||  ch == 'N') {
-      Serial.println("Timer OFF");
+    //nまたはNだった場合
+      Serial.println("タイマーOFF");
       Serial.print(count);
-      Serial.println(" seconds");
-      Serial.println("If you want to switch it on, simply enter Y or y!");
+      Serial.println(" 秒");
+      Serial.println("Yを押してタイマースタート");
       count = 0;
+      //countに0を代入
     }
   }
   delay(1000);
+  //1秒待機
   count += 1;
+  //countに1を足す
+  
 }
 ```
 
 **＜実行の準備＞**
+
+コピー＆ペーストができたら左上の矢印を押して（またはCtrl＋U），プログラムを書き込みましょう．
+
 
 ツール→シリアルモニタをクリックしましょう．
 
@@ -292,73 +212,84 @@ void loop() {
 
 数秒後，シリアルモニタに「n」を入力して，またEnterを押しましょう．タイマーが停止して，経過した時間が表示されます．
 
-
 **＜実行結果＞**
 
-<img src="image/lesson02_3_serialmonitor_result.png" width="70%">
+<img src="image/lesson02_2_ver.1_serialmonitor_result.png" width="70%">
 
-
-
-
-
+- [ ] delay()と整数型を使ってタイマーを作れたらチェック
 ---
 
-#### 0.1秒ごとにカウントアップするタイマーを作ろう
+#### 【ステップ2】0.1秒ごとにカウントアップするタイマーを作ろう
 
-50m走をするときに使うストップウォッチなどは，1秒の100分の1や1000分の1の細かい時間まで測ることができます．
+ステップ1のプログラムを改造して，0.1秒ごとにカウントアップするようにしましょう．
 
-今回は，上で作ったプログラムを改造して，1秒の10分の1の時間まで測ることができる（＝10倍の精度の）タイマーを作りましょう．
+ループを遅らせる時間を1000ms（1秒）から100ms（0.1秒）に変えましょう．
 
-**＜プログラム＞**
-
-ループを遅らせる時間を1000ms（1秒）から100ms（0.1秒）に変えて，精度をアップしましょう．
-
+上のプログラムの
+``` C++
+delay(1000);
+```
+の部分を
 ``` C++
 delay(100);
 ```
+に変えましょう．
 
-ループを早めた分，countの数字が10倍速く大きくなってしまうので，表示する数字を10分の1にして調節しましょう．
-
+また，
 ``` C++
-Serial.print(count/10);
+count += 1;
 ```
+の部分を
+``` C++
+count += 0.1;
+```
+に変えましょう．
+
 
 **＜実行の準備＞**
+
+コピー＆ペーストができたら左上の矢印を押して（またはCtrl＋U），プログラムを書き込みましょう．
 
 さきほどと同じように実行しましょう．
 
 
 **＜実行結果＞**
 
-<img src="image/lesson02_3_serialmonitor_result.png" width="70%">
+<img src="image/lesson02_2_ver.2_serialmonitor_result.png" width="70%">
 
-**精度が10倍になっているはずなのに1秒単位でしか表示されないのは何故だろう？**
+**何秒経っても0秒のままです．**
 
-
----
 
 #### float型を使ってタイマーを正しく動作させよう
 
-ファイル→名前を付けて保存をクリックして，「lesson_02_4」という名前で保存しましょう．
 
 先ほどのプログラムの変数「count」を，「float型（浮動小数点型）」に変えてみましょう．
 
 ``` C++
+int count = 0;
+```
+の部分を
+``` C++
 float count = 0;
 ```
-
-float型とは，整数に加えて小数も入れることができる変数です．小数点以下何桁まで入れることができるかによって型の種類が変わりますが，今回はfloat型で十分です．
+に変えましょう．
 
 **＜実行の準備＞**
+
+コピー＆ペーストができたら左上の矢印を押して（またはCtrl＋U），プログラムを書き込みましょう．
 
 さきほどと同じように実行しましょう．
 
 
 **＜実行結果＞**
 
-<img src="image/lesson02_4_serialmonitor_result.png" width="70%">
+<img src="image/lesson02_2_ver.3_serialmonitor_result.png" width="70%">
 
 **0.1秒単位で数字が表示されることを確認しよう**
+
+確認出来たら，0.01秒単位のタイマーをつくってみよう．
+
+- [ ] float型を使ってタイマーを改良できたらチェック
 
 ---
 
