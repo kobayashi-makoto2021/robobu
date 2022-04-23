@@ -1,15 +1,13 @@
-long val;
-
 void setup() {
-  Serial.begin(9600); //データ転送レートを指定
+  // put your setup code here, to run once:
+  // (日本語訳)最初に一度だけ動かすプログラムはここに書く
+  Serial.begin(9600); // シリアルポートを使うための準備
 }
-
 void loop() {
-
-  //受信データがある場合if内を処理
-  if (Serial.available() > 0) {
-    val = Serial.parseInt();    //文字列データを数値に変換
-    Serial.println(val);          //一つ目の数字をシリアルモニタに表示
-  }
-
+  // put your main code here, to run repeatedly:
+  // (日本語訳)繰り返して動かすプログラムはここに書く
+  Serial.println(1 + 1);
+  //シリアルは「Hello World！」という文字列を出力します
+  delay(5000);
+  // 5秒待機させます（この数値を変更して時間を設定することができます）
 }
