@@ -51,14 +51,14 @@ USBを差したら，ArduinoIDEでポートを指定しましょう．
 
 ---
 
-### 【前回の復習】電卓を作ってみよう
+### ミッションチャレンジ
 #### このセクションで身につける力
 - [ ] 足す、引く、掛ける、割るの計算が出来る
 - [ ] 計算の順序に合わせて( )を使える
 
 ---
 
-#### プログラムでの四則演算
+#### プログラムで計算をしてみよう
 
 足し算，引き算，掛け算，割り算のことを「四則演算（しそくえんざん）」と言います．
 
@@ -88,63 +88,8 @@ USBを差したら，ArduinoIDEでポートを指定しましょう．
 ---
 
 
-#### シリアルモニタからの入力を読み取ろう
+#### 計算結果を表示しよう
 
-電卓を作るには，入力された数字を読み取る必要があります．
-
-さっそく，シリアルモニタからの入力をそのまま表示するプログラムを作ってみましょう．
-
-以下をすべてコピー＆ペーストしましょう．
-
-
-**＜プログラム＞**
-
-``` C++
-long val;
-
-void setup() {
-  Serial.begin(9600); //ボーレートの指定
-}
-
-void loop() {
-
-  //受信データがある場合if内を処理
-  if (Serial.available() > 0) {
-    val = Serial.parseInt();    //文字列データを数値に変換
-    Serial.println(val);          //一つ目の数字をシリアルモニタに表示
-  }
-
-}
-```
-
-
-
-**＜実行の準備＞**
-
-コピー＆ペーストができたら左上の矢印を押して（またはCtrl＋U），プログラムを書き込みましょう．「ボードへの書き込みが完了しました」と表示されれば成功です．
-
-<img src="image/ArduinoIDE_compile&run.png" width="70%">
-
-ツール→シリアルモニタをクリックしましょう．
-
-シリアルモニタが表示されたら，ボーレートを9600bpsに，と改行の設定を「改行無し」にしましょう．
-
-シリアルモニタに数字を入力してみましょう．
-
-<img src="image/lesson02_1_serialmonitor_setting.png" width="70%">
-
-
-**＜実行結果＞**
-
-<img src="image/lesson02_1_serialmonitor_result.png" width="70%">
-
-
-
----
-
-#### 電卓を完成させよう
-
-上で作ったプログラムを改造して，電卓に改造しましょう．
 
 ファイル→名前を付けて保存をクリックして，「lesson_02_1」という名前で保存しましょう．
 
@@ -153,59 +98,20 @@ void loop() {
 **＜プログラム＞**
 
 ``` C++
-long val1,val2,result;
-
 void setup() {
-  Serial.begin(9600); //ボーレートを指定
+  // put your setup code here, to run once:
+  // (日本語訳)最初に一度だけ動かすプログラムはここに書く
+  Serial.begin(9600); // シリアルポートを使うための準備
 }
-
 void loop() {
-
-  //受信データがある場合if内を処理
-  if (Serial.available() > 0){
-    
-    val1 = Serial.parseInt();    //文字列データを数値に変換
-    Serial.print(val1);          //一つ目の数字をシリアルモニタに表示
-    
-    char aop = Serial.read();    //四則演算用の文字の読み込み
-    Serial.print(aop);           //四則演算の文字をシリアルモニタに表示
- 
-    val2 = Serial.parseInt();    //文字列データを数値に変換
-    Serial.print(val2);          //2つ目の数字をシリアルモニタに表示
-    Serial.println("=");         //"="表示後改行
-    
-    switch (aop){
-      case '+' :
-          result = val1 + val2;
-          Serial.println(result ,DEC);   //加算と改行
-          Serial.println("");            //改行
-          break;
-      
-      case '-' :
-          result = val1 - val2;
-          Serial.println(result ,DEC);   //減算と改行
-          Serial.println("");            //改行
-          break;
-
-      case '*' :
-          result = val1 * val2;
-          Serial.println(result ,DEC);   //乗算と改行
-          Serial.println("");            //改行
-          break;
-
-      case '/' :
-          result = val1 / val2;
-          Serial.println(result ,DEC);   //除算と改行
-          Serial.println("");            //改行
-          break;
-      }
-      
-  }
-  
+  // put your main code here, to run repeatedly:
+  // (日本語訳)繰り返して動かすプログラムはここに書く
+  Serial.println(1+1);
+  //()内の計算をしてシリアルモニタに表示
+  delay(5000);
+  // 5秒待機させます（この数値を変更して時間を設定することができます）
 }
 ```
-
-
 
 **＜実行の準備＞**
 
@@ -215,16 +121,21 @@ void loop() {
 
 シリアルモニタが表示されたら，ボーレートを9600に，と改行の設定を「改行無し」にしましょう．
 
-シリアルモニタに「1+1」「2*3」のような式を入力して，Enterを押しましょう．
-
-<img src="image/lesson02_2_serialmonitor_setting.png" width="70%">
-
-
 
 **＜実行結果＞**
 
-<img src="image/lesson02_2_serialmonitor_result.png" width="70%">
+<img src="image/lesson02_1_serialmonitor_result.png" width="70%">
 
+
+---
+
+上のプログラムを改造して，足し算，引き算，掛け算，割り算を使って計算してみましょう．
+
+
+
+### できたらチェック
+- [ ] 足す、引く、掛ける、割るの計算が出来る
+- [ ] 計算の順序に合わせて( )を使える
 
 
 ---
