@@ -26,62 +26,76 @@
 ---
 ### 部品があるかチェックしよう
 
-このレッスンで使う部品一覧
+部品一覧：
 
 | 写真 | 名前 | 個数 | 
-| ------- |----------------------|     -----------    | 
-| <img src="image/ArduinoUNO.jpg" width="10%"> | Arduino UNO                       | 1    | 
-| <img src="image/UART WIFI module.jpg" width="10%"> | UART WiFiシールド                 | 1    | 
-| <img src="image/Motordriver.jpg" width="10%"> | モータードライバー                | 1    | 
-| <img src="image/Voltage_meter.jpg" width="10%"> | 電圧計                            | 1    | 
-| <img src="image/Gear_motor.jpg" width="10%"> | ギヤモーター                      | 4    | 
-| <img src="image/motor_holder.jpg" width="10%"> | モーター用ホルダー（ネジ付き）    | 4    | 
-| <img src="image/Wheel.jpg" width="10%"> | ホイール                          | 4    | 
-| <img src="image/chassis_upside.jpg" width="10%"> | 上部カーシャーシ                  | 1    | 
-| <img src="image/chassis_under.jpg" width="10%"> | 下部カーシャーシ                  | 1    | 
-| <img src="image/3pin_Female_Female.jpg" width="10%"> | 3ピン メスーメス ジャンパーワイヤ | 1    | 
-| <img src="image/6pin_male-male.jpg" width="10%"> | 6ピン オスーメス ジャンパーワイヤ | 1    | 
-| <img src="image/2pin_pnp.jpg" width="10%"> | 2ピン PnP ケーブル                | 1    | 
-| <img src="image/plusdriver.jpg" width="10%"> | プラスドライバー                  | 1    | 
-| <img src="image/Hex_Screwdriver.jpg" width="10%"> | 六角ドライバー                    | 1    | 
-| <img src="image/BatteryBox_9V.jpg" width="10%"> | バッテリーボックス（９V電池用）   | 1    | 
-| <img src="image/M3x10 hex.jpg" width="10%"> | M3 x 10 六角ネジ	                 | 10   | 
-| <img src="image/M3x10 plus.jpg" width="10%"> | M3 x 10 プラスネジ	               | 4    | 
-| <img src="image/M3 nut.jpg" width="10%"> | M3 ナット                         | 4    | 
-| <img src="image/spacer brass.jpg" width="10%"> | スペーサー（黄銅）                | 5    | 
-| <img src="image/screw for wheel.jpg" width="10%"> | ホイール用ネジ                    | 4    | 
-| <img src="image/M3 plastic screw.jpg" width="10%"> | M3 プラスチックネジ               | 9    | 
-| <img src="image/M3 plastic spacer.jpg" width="10%"> | M3 プラスチックスペーサー         | 10   | 
-| <img src="image/M3 plastic nut.jpg" width="10%"> | M3 プラスチックナット             | 10   | 
+| ------- |----------------------|-----------| 
+| <img src="image/parts/ArduinoUNO.jpg" width="10%"> | Arduino UNO                       | 1    | 
+| <img src="image/parts/UART WIFI module.jpg" width="10%"> | UART WiFiシールド                 | 1    |
+| <img src="image/parts/Motordriver.jpg" width="10%"> | モータードライバー                | 1    | 
+| <img src="image/parts/Voltage_meter.jpg" width="10%"> | 電圧計                            | 1    | 
+| <img src="image/parts/Gear_motor.jpg" width="10%"> | ギアモーター                      | 4    | 
+| <img src="image/parts/motor_holder.jpg" width="10%"> | モーター用ホルダー（ネジ付き）    | 4    | 
+| <img src="image/parts/Wheel.jpg" width="10%"> | ホイール                          | 4    | 
+| <img src="image/parts/chassis_upside.jpg" width="10%"> | シャーシ（上部）                  | 1    | 
+| <img src="image/parts/chassis_under.jpg" width="10%"> | シャーシ（下部）                  | 1    | 
+| <img src="image/parts/3pin_Female_Female.jpg" width="10%"> | 3ピン メスーメス ジャンパーワイヤ | 1   | 
+| <img src="image/parts/6pin_male-male.jpg" width="10%"> | 6ピン オスーメス ジャンパーワイヤ | 1    | 
+| <img src="image/parts/2pin_pnp.jpg" width="10%"> | 2ピン PnP ケーブル                | 1    | 
+| <img src="image/parts/plusdriver.jpg" width="10%"> | プラスドライバー                  | 1    | 
+| <img src="image/parts/Hex_Screwdriver.jpg" width="10%"> | 六角ドライバー                    | 1    | 
+| <img src="image/parts/BatteryBox_9V.jpg" width="10%"> | バッテリーボックス（９V電池用）   | 1    | 
+| <img src="image/parts/M3x10 hex.jpg" width="10%"> | M3 x 10 六角ネジ	                 | 10   | 
+| <img src="image/parts/M3x10 plus.jpg" width="10%"> | M3 x 10 プラスネジ	               | 4    | 
+| <img src="image/parts/M3 nut.jpg" width="10%"> | M3 ナット                         | 4    | 
+| <img src="image/parts/spacer brass.jpg" width="10%"> | スペーサー（黄銅）                | 5    | 
+| <img src="image/parts/screw for wheel.jpg" width="10%"> | ホイール用ネジ                    | 4    | 
+| <img src="image/parts/M3 plastic screw.jpg" width="10%"> | M3 プラスチックネジ               | 9    | 
+| <img src="image/parts/M3 plastic spacer.jpg" width="10%"> | M3 プラスチックスペーサー         | 10   | 
+| <img src="image/parts/M3 plastic nut.jpg" width="10%"> | M3 プラスチックナット             | 10   | 
 
 
-| 名前 | 個数 | 画像 | 
-| :-------: |:----------------------:|     -----------    | 
-| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
-| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/UART WIFI module.jpg" width="10%"> | 
-| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image//Motordriver.jpg" width="10%"> | 
-| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/Voltage_meter.jpg" width="10%"> | 
-| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
-| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
-| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
-| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
-| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
-| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
-| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
-| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
-| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
-| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
-| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
-| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
-| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
-| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
-| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
-| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
-| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
-| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
-| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
-| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
-| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
+---
+
+### モーターを取り付けよう
+
+**1.シャーシの保護フィルムをはがしましょう．**
+
+必要なもの：
+- シャーシ（上部）
+- シャーシ（下部）
+
+<img src="image/asm1.jpg" width="100%">
+
+**2.ギアモーターにモーター用ホルダーを付属のネジで固定しましょう．**
+
+必要なもの：
+- ギアモーター
+- モーター用ホルダー（ネジ付き）
+
+※取り付け向きに注意！
+
+<img src="image/asm2.jpg" width="100%">
+
+**3.モーターをシャーシ（下部）に取り付けましょう．**
+
+必要なもの：
+- シャーシ（上部）
+- シャーシ（下部）
+- 2.で組み立てたモーター
+
+※ネジはモーター用ホルダーに同封されています．新しく出す必要はありません．
+
+<img src="image/asm3.jpg" width="100%">
+
+---
+
+
+### モータードライバと電圧計を取り付けよう
+
+
+
+
 
 
 
