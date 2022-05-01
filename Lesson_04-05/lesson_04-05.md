@@ -67,7 +67,7 @@
 - シャーシ（上部）
 - シャーシ（下部）
 
-<img src="image/asm1.jpg" width="100%">
+<img src="image/assembly/asm1.jpg" width="100%">
 
 #### 2.ギアモーターにモーター用ホルダーを付属のネジで固定しましょう．
 
@@ -77,7 +77,7 @@
 
 ※取り付け向きに注意！
 
-<img src="image/asm2.jpg" width="100%">
+<img src="image/assembly/asm2.jpg" width="100%">
 
 #### 3.モーターをシャーシ（下部）に取り付けましょう．
 
@@ -88,7 +88,7 @@
 
 ※ネジはモーター用ホルダーに同封されています．新しく出す必要はありません．
 
-<img src="image/asm3.jpg" width="100%">
+<img src="image/assembly/asm3.jpg" width="100%">
 
 ---
 
