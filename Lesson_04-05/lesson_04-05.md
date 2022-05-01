@@ -28,8 +28,8 @@
 
 このレッスンで使う部品一覧
 
-| 写真                                         | 名前                              | 個数 | 
-| -------------------------------------------- | :-------------------------------- | :--: | 
+| 写真 | 名前 | 個数 | 
+| ------- | :-------------------------------- | :--: | 
 | <img src="image/ArduinoUNO.jpg" width="10%"> | Arduino UNO                       | 1    | 
 | <img src="image/UART WIFI module.jpg" width="10%"> | UART WiFiシールド                 | 1    | 
 | <img src="image/Motordriver.jpg" width="10%"> | モータードライバー                | 1    | 
