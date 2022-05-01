@@ -29,7 +29,7 @@
 このレッスンで使う部品一覧
 
 | 写真 | 名前 | 個数 | 
-| ------- | :-------------------------------- | :--: | 
+| :-------: | :---------------------- | :--: | 
 | <img src="image/ArduinoUNO.jpg" width="10%"> | Arduino UNO                       | 1    | 
 | <img src="image/UART WIFI module.jpg" width="10%"> | UART WiFiシールド                 | 1    | 
 | <img src="image/Motordriver.jpg" width="10%"> | モータードライバー                | 1    | 
@@ -53,6 +53,10 @@
 | <img src="image/M3 plastic screw.jpg" width="10%"> | M3 プラスチックネジ               | 9    | 
 | <img src="image/M3 plastic spacer.jpg" width="10%"> | M3 プラスチックスペーサー         | 10   | 
 | <img src="image/M3 plastic nut.jpg" width="10%"> | M3 プラスチックナット             | 10   | 
+
+
+
+
 
 
 ---
