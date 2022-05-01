@@ -28,38 +28,40 @@
 
 部品一覧：
 
-| 写真 | 名前 | 個数 | 
+<img src="image/parts/ArduinoUNO.jpg" width="10%"><img src="image/parts/UART WIFI module.jpg" width="10%"><img src="image/parts/Motordriver.jpg" width="10%"><img src="image/parts/Voltage_meter.jpg" width="10%"><img src="image/parts/Gear_motor.jpg" width="10%"><img src="image/parts/motor_holder.jpg" width="10%"><img src="image/parts/Wheel.jpg" width="10%"><img src="image/parts/chassis_upside.jpg" width="10%"><img src="image/parts/chassis_under.jpg" width="10%"><img src="image/parts/3pin_Female_Female.jpg" width="10%"><img src="image/parts/6pin_male-male.jpg" width="10%"><img src="image/parts/2pin_pnp.jpg" width="10%"><img src="image/parts/plusdriver.jpg" width="10%"><img src="image/parts/Hex_Screwdriver.jpg" width="10%"><img src="image/parts/BatteryBox_9V.jpg" width="10%"><img src="image/parts/M3x10 hex.jpg" width="10%"><img src="image/parts/M3x10 plus.jpg" width="10%"><img src="image/parts/M3 nut.jpg" width="10%"><img src="image/parts/spacer brass.jpg" width="10%"><img src="image/parts/screw for wheel.jpg" width="10%"><img src="image/parts/M3 plastic screw.jpg" width="10%"><img src="image/parts/M3 plastic spacer.jpg" width="10%"><img src="image/parts/M3 plastic nut.jpg" width="10%">
+
+| 番号 | 名前 | 個数 | 
 | ------- |----------------------|-----------| 
-| <img src="image/parts/ArduinoUNO.jpg" width="10%"> | Arduino UNO                       | 1    | 
-| <img src="image/parts/UART WIFI module.jpg" width="10%"> | UART WiFiシールド                 | 1    |
-| <img src="image/parts/Motordriver.jpg" width="10%"> | モータードライバー                | 1    | 
-| <img src="image/parts/Voltage_meter.jpg" width="10%"> | 電圧計                            | 1    | 
-| <img src="image/parts/Gear_motor.jpg" width="10%"> | ギアモーター                      | 4    | 
-| <img src="image/parts/motor_holder.jpg" width="10%"> | モーター用ホルダー（ネジ付き）    | 4    | 
-| <img src="image/parts/Wheel.jpg" width="10%"> | ホイール                          | 4    | 
-| <img src="image/parts/chassis_upside.jpg" width="10%"> | シャーシ（上部）                  | 1    | 
-| <img src="image/parts/chassis_under.jpg" width="10%"> | シャーシ（下部）                  | 1    | 
-| <img src="image/parts/3pin_Female_Female.jpg" width="10%"> | 3ピン メスーメス ジャンパーワイヤ | 1   | 
-| <img src="image/parts/6pin_male-male.jpg" width="10%"> | 6ピン オスーメス ジャンパーワイヤ | 1    | 
-| <img src="image/parts/2pin_pnp.jpg" width="10%"> | 2ピン PnP ケーブル                | 1    | 
-| <img src="image/parts/plusdriver.jpg" width="10%"> | プラスドライバー                  | 1    | 
-| <img src="image/parts/Hex_Screwdriver.jpg" width="10%"> | 六角ドライバー                    | 1    | 
-| <img src="image/parts/BatteryBox_9V.jpg" width="10%"> | バッテリーボックス（９V電池用）   | 1    | 
-| <img src="image/parts/M3x10 hex.jpg" width="10%"> | M3 x 10 六角ネジ	                 | 10   | 
-| <img src="image/parts/M3x10 plus.jpg" width="10%"> | M3 x 10 プラスネジ	               | 4    | 
-| <img src="image/parts/M3 nut.jpg" width="10%"> | M3 ナット                         | 4    | 
-| <img src="image/parts/spacer brass.jpg" width="10%"> | スペーサー（黄銅）                | 5    | 
-| <img src="image/parts/screw for wheel.jpg" width="10%"> | ホイール用ネジ                    | 4    | 
-| <img src="image/parts/M3 plastic screw.jpg" width="10%"> | M3 プラスチックネジ               | 9    | 
-| <img src="image/parts/M3 plastic spacer.jpg" width="10%"> | M3 プラスチックスペーサー         | 10   | 
-| <img src="image/parts/M3 plastic nut.jpg" width="10%"> | M3 プラスチックナット             | 10   | 
+| 01 | Arduino UNO                       | 1    | 
+| 02 | UART WiFiシールド                 | 1    |
+| 03 | モータードライバー                | 1    | 
+| 04 | 電圧計                            | 1    | 
+| 05 | ギアモーター                      | 4    | 
+| 06 | モーター用ホルダー（ネジ付き）    | 4    | 
+| 07 | ホイール                          | 4    | 
+| 08 | シャーシ（上部）                  | 1    | 
+| 09 | シャーシ（下部）                  | 1    | 
+| 10 | 3ピン メスーメス ジャンパーワイヤ | 1   | 
+| 11 | 6ピン オスーメス ジャンパーワイヤ | 1    | 
+| 12 | 2ピン PnP ケーブル                | 1    | 
+| 13 | プラスドライバー                  | 1    | 
+| 14 | 六角ドライバー                    | 1    | 
+| 15 | バッテリーボックス（９V電池用）   | 1    | 
+| 16 | M3 x 10 六角ネジ	                 | 10   | 
+| 17 | M3 x 10 プラスネジ	               | 4    | 
+| 18 | M3 ナット                         | 4    | 
+| 19 | スペーサー（黄銅）                | 5    | 
+| 20 | ホイール用ネジ                    | 4    | 
+| 21 | M3 プラスチックネジ               | 9    | 
+| 22 | M3 プラスチックスペーサー         | 10   | 
+| 23 | M3 プラスチックナット             | 10   | 
 
 
 ---
 
 ### モーターを取り付けよう
 
-**1.シャーシの保護フィルムをはがしましょう．**
+#### 1.シャーシの保護フィルムをはがしましょう．
 
 必要なもの：
 - シャーシ（上部）
@@ -67,7 +69,7 @@
 
 <img src="image/asm1.jpg" width="100%">
 
-**2.ギアモーターにモーター用ホルダーを付属のネジで固定しましょう．**
+#### 2.ギアモーターにモーター用ホルダーを付属のネジで固定しましょう．
 
 必要なもの：
 - ギアモーター
@@ -77,7 +79,7 @@
 
 <img src="image/asm2.jpg" width="100%">
 
-**3.モーターをシャーシ（下部）に取り付けましょう．**
+#### 3.モーターをシャーシ（下部）に取り付けましょう．
 
 必要なもの：
 - シャーシ（上部）
