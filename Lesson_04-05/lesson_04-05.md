@@ -29,7 +29,7 @@
 このレッスンで使う部品一覧
 
 | 写真 | 名前 | 個数 | 
-| :-------: | :---------------------- | :--: | 
+| ------- |----------------------|     -----------    | 
 | <img src="image/ArduinoUNO.jpg" width="10%"> | Arduino UNO                       | 1    | 
 | <img src="image/UART WIFI module.jpg" width="10%"> | UART WiFiシールド                 | 1    | 
 | <img src="image/Motordriver.jpg" width="10%"> | モータードライバー                | 1    | 
@@ -55,6 +55,33 @@
 | <img src="image/M3 plastic nut.jpg" width="10%"> | M3 プラスチックナット             | 10   | 
 
 
+| 名前 | 個数 | 画像 | 
+| :-------: |:----------------------:|     -----------    | 
+| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
+| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/UART WIFI module.jpg" width="10%"> | 
+| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image//Motordriver.jpg" width="10%"> | 
+| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/Voltage_meter.jpg" width="10%"> | 
+| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
+| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
+| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
+| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
+| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
+| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
+| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
+| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
+| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
+| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
+| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
+| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
+| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
+| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
+| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
+| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
+| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
+| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
+| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
+| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
+| ArduinoUNO  | &nbsp;&nbsp; 1 &nbsp;&nbsp; | <img src="image/ArduinoUNO.jpg" width="10%"> | 
 
 
 
