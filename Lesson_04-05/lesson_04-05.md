@@ -266,7 +266,7 @@ USBを差したら，ArduinoIDEでポートを指定しましょう．
 
 9V電池を差し込んだら，スイッチを押し込んで電源を入れよう！
 
-<img src="image/ArduinoSield_switch.png" width="70%">
+<img src="image/ArduinoSield_Switch.png" width="70%">
 
 **ロボットが前後左右に動き出したら成功！**
 
