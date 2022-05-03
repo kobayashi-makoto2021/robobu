@@ -107,20 +107,20 @@ void setup() {
   pinMode(2, OUTPUT);//LEDピンを出力へ
   Serial.begin(9600); //シリアルを9600バンドに設定する
   while (! Serial); // シリアルの初期化を許可する
-  Serial.println("Enter Y to turn on the LED:");
+  Serial.println("Yもしくはyを入力するとLEDが光るよ！");
 }
 void loop() {
-  if (Serial.available()) {
+  if (Serial.available()){
     char ch = Serial.read();
-    if (ch == 'y' || ch == 'Y') {　//キーボードのyもしくはYを押すとLEDが光る
+    if(ch=='y'||ch=='Y'){
       digitalWrite(2, HIGH);
-      Serial.println("You have turned on the LED!!");
-      Serial.println("If you want to switch it off, simply enter N or n!");
-    }
-    if (ch == 'n' || ch == 'N') {　//キーボードのnもしくはNを押すとLEDが光る
+      Serial.println("LEDが光りました!!");
+      Serial.println("スイッチをオフにする場合はNまたはnを入力するとLEDが消えるよ!");
+      }
+    if(ch=='n'||ch=='N'){
       digitalWrite(2, LOW);
-      Serial.println("You have turned off the LED!!");
-      Serial.println("If you want to switch it on, simply enter Y or y!");
+      Serial.println("LEDが消えました!!");
+      Serial.println("スイッチをオンにする場合はYもしくはyを入力するとLEDが光るよ");
     }
   }
   delay(1000);
@@ -138,7 +138,11 @@ void loop() {
 
 パソコンとArduinoを通信するよ。
 通信が始まるとこんな画面が出るよ！
+<<<<<<< HEAD:Lesson_03/Lesson_03.md
 
+=======
+<<<<<<< Updated upstream:Lesson_03/レッスン3.md
+>>>>>>> hasegawa_work1:Lesson_03/レッスン3.md
 <img src="image/serialport0.png" width="70%">
 
 シリアルポートの中に文章が出てきたね！少し読んでみよう！  
@@ -148,6 +152,10 @@ Enter Y to turn on the LED"
 
 >日本語:  
 Yボタンを押すとLEDが光る 
+=======
+
+<img src="image/serialport0.png" width="70%">  
+>>>>>>> Stashed changes:Lesson_03/Lesson_03.md
 
 一番上の入力ボックスにキーボードを使って大文字のYを入力して、エンターを押してみよう
 <img src="image/serialport1.png" width="70%">　
@@ -156,17 +164,8 @@ Yボタンを押すとLEDが光る
 <img src="image/Turn_on_the_light.jpg" width="70%">　
 <img src="image/serialport2.png" width="70%">
 
-どうやらまたシリアルポートに文章が増えたね。読んでみよう！
->英語:  
-You have turned on the LED!!  
-If you want to switch it off, simply enter N or n!
-
->日本語:  
-LEDが点灯しました!!  
-スイッチをオフにする場合は、Nまたはnを入力しましょう!
-
-この文章からキーボードのnかNを押すとLEDが消えることがわかるね。次にさっきと同じように入力ボックスにＮを入力してエンターキーを押してみよう。どうなるかな？
-
+どうやらキーボードでnかNを入力するとLEDが消えるらしいよ。  
+さっきと同じように入力ボックスにnかNを入力してみよう！
 <img src="image/serialport3.png" width="70%">
 
 そうするとLEDが消えたね。
@@ -240,27 +239,26 @@ void setup() {
   pinMode(?, OUTPUT);//LEDピンを出力へ
   Serial.begin(9600); //シリアルを9600バンドに設定する
   while (! Serial); // シリアルの初期化を許可する
-  Serial.println("Enter Y to turn on the LED:");
+  Serial.println("Yもしくはyを入力するとLEDが光るよ！");
 }
 void loop() {
-  if (Serial.available()) {
+  if (Serial.available()){
     char ch = Serial.read();
-    if (ch == 'y' || ch == 'Y') { //キーボードのyもしくはYを押すとLEDが光る
+    if(ch=='y'||ch=='Y'){
       digitalWrite(2, HIGH);
-      Serial.println("You have turned on the LED!!");
-      Serial.println("If you want to switch it off, simply enter N or n!");
-    }
-    if (ch == 'n' || ch == 'N')  { //キーボードのnもしくはNを押すとLEDが光る
+      Serial.println("LEDが光りました!!");
+      Serial.println("スイッチをオフにする場合はNまたはnを入力するとLEDが消えるよ!");
+      }
+    if(ch=='n'||ch=='N'){
       digitalWrite(2, LOW);
       digitalWrite(4, LOW);
-      Serial.println("You have turned off the LED!!");
-      Serial.println("If you want to switch it on, simply enter Y or y!");
+      Serial.println("LEDが消えました!!");
+      Serial.println("スイッチをオンにする場合はYもしくはyを入力するとLEDが光るよ");
     }
-
     if (ch == '?' || ch == '?')  {  //キーボードのmもしくはMを押すとLEDが光る
       digitalWrite(4, HIGH);
-      Serial.println("You have turned on the LED!!");
-      Serial.println("If you want to switch it off, simply enter N or n!");
+      Serial.println("LEDが光りました!!");
+      Serial.println("スイッチをオフにする場合はNまたはnを入力するとLEDが消えるよ!");
     }
   }
   delay(1000);
@@ -277,27 +275,26 @@ void setup() {
   pinMode(4, OUTPUT);//LEDピンを出力へ
   Serial.begin(9600); //シリアルを9600バンドに設定する
   while (! Serial); // シリアルの初期化を許可する
-  Serial.println("Enter Y to turn on the LED:");
+  Serial.println("Yもしくはyを入力するとLEDが光るよ！");
 }
 void loop() {
-  if (Serial.available()) {
+  if (Serial.available()){
     char ch = Serial.read();
-    if (ch == 'y' || ch == 'Y') { //キーボードのyもしくはYを押すとLEDが光る
+    if(ch=='y'||ch=='Y'){
       digitalWrite(2, HIGH);
-      Serial.println("You have turned on the LED!!");
-      Serial.println("If you want to switch it off, simply enter N or n!");
-    }
-    if (ch == 'n' || ch == 'N')  { //キーボードのnもしくはNを押すとLEDが光る
+      Serial.println("LEDが光りました!!");
+      Serial.println("スイッチをオフにする場合はNまたはnを入力するとLEDが消えるよ!");
+      }
+    if(ch=='n'||ch=='N'){
       digitalWrite(2, LOW);
       digitalWrite(4, LOW);
-      Serial.println("You have turned off the LED!!");
-      Serial.println("If you want to switch it on, simply enter Y or y!");
+      Serial.println("LEDが消えました!!");
+      Serial.println("スイッチをオンにする場合はYもしくはyを入力するとLEDが光るよ");
     }
-
-    if (ch == 'm' || ch == 'M')  {  //キーボードのmもしくはMを押すとLEDが光る
+    if (ch == '?' || ch == '?')  {  //キーボードのmもしくはMを押すとLEDが光る
       digitalWrite(4, HIGH);
-      Serial.println("You have turned on the LED!!");
-      Serial.println("If you want to switch it off, simply enter N or n!");
+      Serial.println("LEDが光りました!!");
+      Serial.println("スイッチをオフにする場合はNまたはnを入力するとLEDが消えるよ!");
     }
   }
   delay(1000);
@@ -313,6 +310,19 @@ if (条件式){
     (条件式が成立する場合の処理を記述)
 }
 ```
+条件式の中身は比較演算子と呼ばれるもので決められるよ。  
+2つの式や値を比較を行なって、真偽を確かめられるよ。  
+比較演算子は以下のようになってるよ。
+
+| 演算子 | 説明             |     | 
+| :----: | :--------------: | --- | 
+| x == y   | xとyは等しい     |     | 
+| x != y   | xとyは等しくない |     | 
+| x  < y    | xはyより小さい   |     | 
+| x  > y    | xはyより大きい   |     | 
+| x <= y   | xはy以下         |     | 
+| x > =y   | xはy以上         |     | 
+
 
 - [ ] **pinMode()** でピンの設定が出来たらチェック！
 - [ ] **if構文** を使ってプログラムを改造できたらチェック！
