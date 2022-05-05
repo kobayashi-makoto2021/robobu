@@ -1,50 +1,35 @@
-long val1,val2,result;
+int count = 0;
+//整数型の変数countを定義
 
 void setup() {
-  Serial.begin(9600); //ボーレートを指定
+  Serial.begin(9600);
+  Serial.println("Yを押してタイマースタート");
 }
-
 void loop() {
-
-  //受信データがある場合if内を処理
-  if (Serial.available() > 0){
-    
-    val1 = Serial.parseInt();    //文字列データを数値に変換
-    Serial.print(val1);          //一つ目の数字をシリアルモニタに表示
-    
-    char aop = Serial.read();    //四則演算用の文字の読み込み
-    Serial.print(aop);           //四則演算の文字をシリアルモニタに表示
- 
-    val2 = Serial.parseInt();    //文字列データを数値に変換
-    Serial.print(val2);          //2つ目の数字をシリアルモニタに表示
-    Serial.println("=");         //"="表示後改行
-    
-    switch (aop){
-      case '+' :
-          result = val1 + val2;
-          Serial.println(result ,DEC);   //加算と改行
-          Serial.println("");            //改行
-          break;
-      
-      case '-' :
-          result = val1 - val2;
-          Serial.println(result ,DEC);   //減算と改行
-          Serial.println("");            //改行
-          break;
-
-      case '*' :
-          result = val1 * val2;
-          Serial.println(result ,DEC);   //乗算と改行
-          Serial.println("");            //改行
-          break;
-
-      case '/' :
-          result = val1 / val2;
-          Serial.println(result ,DEC);   //除算と改行
-          Serial.println("");            //改行
-          break;
-      }
-      
+  if (Serial.available()) {
+  //シリアル信号を受信した場合
+    char ch = Serial.read();
+    //受信した値を変数に代入
+    if (ch == 'y' ||  ch == 'Y') {
+    //yまたはYだった場合
+      Serial.println("タイマーON");
+      Serial.println("タイマーを止めるにはNを押してください");
+      count = 0;
+      //countに0を代入
+    }
+    if (ch == 'n' ||  ch == 'N') {
+    //nまたはNだった場合
+      Serial.println("タイマーOFF");
+      Serial.print(count);
+      Serial.println(" 秒");
+      Serial.println("Yを押してタイマースタート");
+      count = 0;
+      //countに0を代入
+    }
   }
+  delay(1000);
+  //1秒待機
+  count += 1;
+  //countに1を足す
   
 }
