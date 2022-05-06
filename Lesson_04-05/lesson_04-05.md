@@ -223,7 +223,8 @@
 
 #### 1.サンプルコードをダウンロードしよう
 
-[ここからサンプルコードをダウンロード](https://osoyoo.com/driver/v2smartcar-lesson1.zip)
+[ここからサンプルコードをダウンロード] [1]
+[1]: file:///Lesson_04-05_sample/lesson_04-05_sample.ino
 
 画面の下の方にこのような表示が出たらクリック
 
@@ -268,7 +269,15 @@ USBを差したら，ArduinoIDEでポートを指定しましょう．
 
 <img src="image/ArduinoSield_Switch.png" width="70%">
 
-**ロボットが前後左右に動き出したら成功！**
+
+**4.動作を確認しよう**
+
+
+
+
+
+
+
 
 
 
