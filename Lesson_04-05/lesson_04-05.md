@@ -58,6 +58,8 @@
 
 
 
+- [ ] 部品があるか確認出来たらチェック！
+
 
 ---
 
@@ -91,6 +93,10 @@
 
 <img src="image/assembly/asm3.jpg" width="100%">
 
+- [ ] モーターを取り付けられたらチェック！
+
+---
+
 
 #### 4.モータードライバを取り付けよう．
 
@@ -117,6 +123,10 @@
 
 <img src="image/assembly/asm5.jpg" width="100%">
 
+
+- [ ] モータードライバーと電圧計を取り付けられたらチェック！
+
+---
 
 #### 6.ArduinoUNOを取り付けよう．
 
@@ -148,8 +158,7 @@
 
 <img src="image/assembly/asm8.jpg" width="100%">
 
-
-
+- [ ] Arduinoボードと電池ボックス、WIFIシールドを取り付けられたチェック！
 
 ---
 
@@ -186,7 +195,7 @@
 
 <img src="image/assembly/asm12.jpg" width="100%">
 
-
+- [ ] ジャンパーワイヤーを正しく取り付けられたらチェック！
 
 ---
 
@@ -213,6 +222,8 @@
 
 <img src="image/assembly/asm13.jpg" width="100%">
 
+- [ ] シャーシ・タイヤを取り付けられたらチェック！
+
 
 **完成！**
 
@@ -223,7 +234,7 @@
 
 #### 1.サンプルコードをダウンロードしよう
 
-[ここからサンプルコードをダウンロード] (https://github.com/kobayashi-makoto2021/robobu/raw/Takahashi-work/Lesson_04-05/lesson_04-05_sample.zip)
+[ここをクリックしてサンプルコードをダウンロード](https://github.com/kobayashi-makoto2021/robobu/raw/Takahashi-work/Lesson_04-05/lesson_04-05_sample.zip)
 
 画面の下の方にこのような表示が出たらクリック
 
@@ -236,9 +247,10 @@
 
 
 「参照」をクリックし，「デスクトップ」に展開しよう
+
 <img src="image/SampleCode_deployment2.png" width="70%">
 
-デスクトップに移動し，「v2smartcar-lesson1.ino」を開こう．
+デスクトップに移動し，「lesson_04-05_sample.ino」を開こう．
 
 
 
@@ -260,22 +272,21 @@ USBを差したら，ArduinoIDEでポートを指定しましょう．
 さいごに左上の矢印を押して（またはCtrl＋U），プログラムを書き込みましょう．
 
 
-### 3.バッテリーを取り付けて電源を入れよう
+#### 3.バッテリーを取り付けて電源を入れよう
 
 プラス・マイナスに気を付けて9V電池をバッテリーボックスに差し込もう．
 
-9V電池を差し込んだら，スイッチを押し込んで電源を入れよう！
+
+
+#### 4.動作を確認しよう
+
+**ロボットを広い場所に移動しよう**
+
+電池を差し込んだら，スイッチを押し込んで電源を入れよう！
 
 <img src="image/ArduinoSield_Switch.png" width="70%">
 
-
-**4.動作を確認しよう**
-
-
-
-
-
-
+**ロボットが前後・左右旋回したら成功！**
 
 
 
