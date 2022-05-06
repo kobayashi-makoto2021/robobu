@@ -223,7 +223,7 @@
 
 #### 1.サンプルコードをダウンロードしよう
 
-[ここからサンプルコードをダウンロード] (https://github.com/kobayashi-makoto2021/robobu/blob/Takahashi-work/Lesson_04-05/lesson_04-05_sample/lesson_04-05_sample.ino)
+[ここからサンプルコードをダウンロード] (Lesson_04-05/lesson_04-05_sample/lesson_04-05_sample.ino)
 
 画面の下の方にこのような表示が出たらクリック
 
