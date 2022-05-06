@@ -220,7 +220,7 @@
 
 ※きつく締め付けすぎるとタイヤが回らなくなります．
 
-<img src="image/assembly/asm13.jpg" width="100%">
+<img src="image/assembly/asm14.jpg" width="100%">
 
 - [ ] シャーシ・タイヤを取り付けられたらチェック！
 
