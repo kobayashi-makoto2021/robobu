@@ -19,8 +19,8 @@
 #### 組み立てに必要な物を用意しよう
 
 - [ ] Osoyoo ROBOT CAR KIT x1
-- [ ] 六角ドライバー x1
-- [ ] ラジオペンチ x1
+- [ ] 六角ドライバー（教室のもの） x1
+- [ ] ラジオペンチ（教室のもの） x1
 
 
 ---
@@ -30,33 +30,21 @@
 
 <img src="image/parts/ArduinoUNO.jpg" width="20%"><img src="image/parts/UART WIFI module.jpg" width="20%"><img src="image/parts/Motordriver.jpg" width="20%"><img src="image/parts/Voltage_meter.jpg" width="20%"><img src="image/parts/Gear_motor.jpg" width="20%"><img src="image/parts/motor_holder.jpg" width="20%"><img src="image/parts/Wheel.jpg" width="20%"><img src="image/parts/chassis_upside.jpg" width="20%"><img src="image/parts/chassis_under.jpg" width="20%"><img src="image/parts/3pin_Female_Female.jpg" width="20%"><img src="image/parts/6pin_male-male.jpg" width="20%"><img src="image/parts/2pin_pnp.jpg" width="20%"><img src="image/parts/plusdriver.jpg" width="20%"><img src="image/parts/Hex_Screwdriver.jpg" width="20%"><img src="image/parts/BatteryBox_9V.jpg" width="20%"><img src="image/parts/M3x10 hex.jpg" width="20%"><img src="image/parts/M3x10 plus.jpg" width="20%"><img src="image/parts/M3 nut.jpg" width="20%"><img src="image/parts/spacer brass.jpg" width="20%"><img src="image/parts/screw for wheel.jpg" width="20%"><img src="image/parts/M3 plastic screw.jpg" width="20%"><img src="image/parts/M3 plastic spacer.jpg" width="20%"><img src="image/parts/M3 plastic nut.jpg" width="20%">
 
-| 番号 | 名前 | 個数 | 
-| ------- |----------------------|-----------| 
-| 01 | Arduino UNO                       | 1    | 
-| 02 | WiFiシールド                 | 1    |
-| 03 | モータードライバー                | 1    | 
-| 04 | 電圧計                            | 1    | 
-| 05 | ギアモーター                      | 4    | 
-| 06 | モーター用ホルダー（ネジ付き）    | 4    | 
-| 07 | ホイール                          | 4    | 
-| 08 | シャーシ（上部）                  | 1    | 
-| 09 | シャーシ（下部）                  | 1    | 
-| 10 | 3ピン メスーメス ジャンパーワイヤ | 1   | 
-| 11 | 6ピン オスーメス ジャンパーワイヤ | 1    | 
+| 番号 | 名前 | 個数 | | 番号 | 名前 | 個数 | 
+| ----- |----|-----------|-| ------- |----------------------|-----------| 
+| 01 | Arduino UNO                       | 1    |  | 13 | プラスドライバー                  | 1    |
+| 02 | WiFiシールド                 | 1    | | 14 | 六角ドライバー                    | 1    |
+| 03 | モータードライバー                | 1    | | 15 | バッテリーボックス（９V電池用）   | 1    | 
+| 04 | 電圧計                            | 1    | | 16 | M3x10 六角ネジ	                 | 10   |
+| 05 | ギアモーター                      | 4    | | 17 | M3x10 プラスネジ	               | 4    | 
+| 06 | モーター用ホルダー（ネジ付き）    | 4    | | 18 | M3ナット                         | 4    | 
+| 07 | ホイール                          | 4    |  | 19 | 黄銅スペーサー                | 5    | 
+| 08 | シャーシ（上部）                  | 1    || 20 | ホイール用ネジ                    | 4    |
+| 09 | シャーシ（下部）                  | 1    |  | 21 | M3プラスチックネジ               | 9    | 
+| 10 | 3ピン メスーメス ジャンパーワイヤ | 1   | | 22 | M3プラスチックスペーサー         | 10   | 
+| 11 | 6ピン オスーメス ジャンパーワイヤ | 1    | | 23 | M3プラスチックナット             | 10   | 
 | 12 | 2ピン PnP ケーブル                | 1    | 
-| 13 | プラスドライバー                  | 1    | 
-| 14 | 六角ドライバー                    | 1    | 
-| 15 | バッテリーボックス（９V電池用）   | 1    | 
-| 16 | M3x10 六角ネジ	                 | 10   | 
-| 17 | M3x10 プラスネジ	               | 4    | 
-| 18 | M3ナット                         | 4    | 
-| 19 | 黄銅スペーサー                | 5    | 
-| 20 | ホイール用ネジ                    | 4    | 
-| 21 | M3プラスチックネジ               | 9    | 
-| 22 | M3プラスチックスペーサー         | 10   | 
-| 23 | M3プラスチックナット             | 10   | 
-
-
+ 
 
 - [ ] 部品があるか確認出来たらチェック！
 
