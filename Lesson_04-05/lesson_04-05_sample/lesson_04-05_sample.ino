@@ -94,9 +94,23 @@ void init_GPIO()
 void setup()
 {
   init_GPIO();
-
-//ここから下にプログラムを書く
-
+  go_Advance();//前に進む関数
+ 
+  delay(2000);
+  
+  go_Back();//後ろに下がる関数
+ 
+  delay(2000);
+  
+  go_Left();//左に旋回する関数
+ 
+  delay(2000);
+  
+  go_Right();//右に旋回する関数
+ 
+  delay(2000);
+  
+  stop_Stop();//ストップ
 }
 
 void loop() {
