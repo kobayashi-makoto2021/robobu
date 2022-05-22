@@ -33,6 +33,15 @@
 
 
 //モーターの制御
+void stop_Stop(int time = 1000)    //ストップ
+{
+  digitalWrite(RightMotorDirPin1, LOW);
+  digitalWrite(RightMotorDirPin2, LOW);
+  digitalWrite(LeftMotorDirPin1, LOW);
+  digitalWrite(LeftMotorDirPin2, LOW);
+  delay(time);
+}
+
 void go_Advance(int speed = 200, int time = 0)  //前に進む関数
 {
   digitalWrite(RightMotorDirPin1, HIGH);
@@ -45,6 +54,7 @@ void go_Advance(int speed = 200, int time = 0)  //前に進む関数
     ;
   } else {
     delay(time);
+    stop_Stop();
   }
 }
 void go_Left(int speed = 200, int time = 0) //左に旋回する関数
@@ -59,6 +69,7 @@ void go_Left(int speed = 200, int time = 0) //左に旋回する関数
     ;
   } else {
     delay(time);
+    stop_Stop();
   }
 }
 void go_Right(int speed = 200, int time = 0) //右に旋回する関数
@@ -73,6 +84,7 @@ void go_Right(int speed = 200, int time = 0) //右に旋回する関数
     ;
   } else {
     delay(time);
+    stop_Stop();
   }
 }
 void go_Back(int speed = 200, int time = 0) //後ろに下がる関数
@@ -87,16 +99,10 @@ void go_Back(int speed = 200, int time = 0) //後ろに下がる関数
     ;
   } else {
     delay(time);
+    stop_Stop();
   }
 }
-void stop_Stop(int time = 1000)    //ストップ
-{
-  digitalWrite(RightMotorDirPin1, LOW);
-  digitalWrite(RightMotorDirPin2, LOW);
-  digitalWrite(LeftMotorDirPin1, LOW);
-  digitalWrite(LeftMotorDirPin2, LOW);
-  delay(time);
-}
+
 //モーター速度の設定
 void set_Motorspeed(int speed_L, int speed_R)
 {
@@ -134,16 +140,12 @@ void loop() {
 ### ロボットをまっすぐ進ませよう
 ロボットをまっすぐ進ませるには**go_Advance関数**を使うよ。
 ```C++
-go_Advance(100);
-delay(止まるまでの時間);
-stop_Stop();
+go_Advance(スピード, 止まるまでの時間);
 ```
 のように書くと指定された時間が経つまで前に進み続けるよ。
 試しにプログラムの`//ここから下にプログラムを書く`と書いてある下に
 ```C++
-go_Advance(100);
-delay(1000);
-stop_Stop();
+go_Advance(100, 1000);
 ```
 と書いてみよう。プログラムを実行するとロボットが1秒間(1000ミリ秒間)進むよ。<br>
 >クイズ<br>
@@ -155,9 +157,7 @@ stop_Stop();
 ### ロボットを後ろに下がらせよう
 ロボットを後ろに下がらせるためには**go_Back関数**を使うよ。go_Back関数もgo_Advance関数と同じように
 ```C++
-go_Back(100);
-delay(止まるまでの時間);
-stop_Stop();
+go_Back(スピード, 止まるまでの時間);
 ```
 のように書くと指定された時間が経つまで後ろに下がり続けるよ。
 >クイズ<br>
@@ -169,40 +169,35 @@ stop_Stop();
 ### ロボットの速度を調整しよう
 今までに使ったgo_Advance関数、go_Back関数の()の中の数字を変更するとロボットのスピードが変わるよ。
 ```C++
-go_Advance(スピード);
-delay(止まるまでの時間);
-stop_Stop();
+go_Advance(スピード, 止まるまでの時間);
 ```
 と書くとロボットが前に進むスピードと時間を設定できるよ。試しに
 ```C++
-go_Advance(100);
-delay(1000);
-stop_Stop();
-delay(100);
-go_Advance(1000);
-delay(1000);
-stop_Stop();
+go_Advance(100,1000);
+go_Advance(200,1000);
 ```
 と書いてみよう。プログラムを実行させると1度目よりも2度目の方がロボットのスピードが上がっているね。
 >クイズ<br>
->スピード100で前に進んだ後に1度停止してスピード1000で後ろに下がるプログラムを書いてみよう！
+>スピード100で前に進んだ後に1度停止してスピード200で後ろに下がるプログラムを書いてみよう！
  - [ ] ロボットの進むスピードが変わっていたらチェック！
  - [ ] ロボットが後ろに下がるスピードが変更できたらチェック！
 <br><br>
 
 ### 設定した速度と前進する時間からおおよその進む距離を予想しよう
-進む距離は
->速度×時間
+速度は
+
+>進んだ距離÷時間
 
 で計算できるよ。
-試しにスピードが100で1秒間進んだ時にどのくらい移動するか計算してみよう！計算できたら実験して答えがあっているか調べよう！
+
+試しにスピードが100で1秒間進んだ時にどのくらい移動するか測ってみよう。
+測った距離から速度を計算してみよう。
 ```C++
-go_Advance(100);
-delay(1000);
-stop_Stop();
+go_Advance(100,1000);　
 ```
 >クイズ<br>
->スピードが200で1秒間進む距離とスピードが100で1秒間進む距離はどちらの方が多いかな？
+>スピードが100で1秒間進む距離とスピードが100で2秒間進む距離は何倍になるかな？
+>スピード100で1ｍ（＝１０００ｍｍ）を進ませるためには何秒を設定すればいいかな？さっき計算した速度を使って計算しよう。
 
 
  - [ ] ロボットの進む距離が計算できたらチェック！
@@ -214,7 +209,12 @@ stop_Stop();
 
 ![](image/course.png)
 
+
 #### スタートからゴールの線ギリギリで止めよう
+
+go_Advance()を使ってラインギリギリで止まろう！
+
+- [ ] ラインギリギリで止まれたらチェック！
 <!-- 
 ロボットをラインギリギリで止めるためには
 1.スタートラインからゴールラインまでの距離を測る<br>
@@ -226,9 +226,9 @@ stop_Stop();
 をするとできるよ。やってみよう！ -->
 <!-- - [ ] スタートラインからゴールラインまでの距離を測れたらチェック！ -->
 <!-- - [ ] プログラムの止まるまでの時間を計算できたらチェック！ -->
-- [ ] ラインギリギリで止まれたらチェック！
 
 #### ゴールまで行ってスタート地点まで戻ってこよう
+go_Advance()とgo_Back()を使ってラインギリギリまで行って戻ってこよう！
 - [ ] ラインギリギリで戻ってこれたらチェック！
 
 
@@ -237,15 +237,11 @@ stop_Stop();
 - **go_Advance関数** :ロボットを前に進めるための関数
 - **go_Back関数** :ロボットを後ろに下がらせるための関数
 - ```C++ 
-  go_Advance(スピード);
-  delay(止まるまでの時間);
-  stop_Stop();
+  go_Advance(スピード, 止まるまでの時間);
   ```
   →ロボットが前に進むプログラム
 - ```C++ 
-  go_Back(スピード);
-  delay(止まるまでの時間);
-  stop_Stop();
+  go_Back(スピード, 止まるまでの時間);
   ```
   →ロボットが後ろに下がるプログラム
 - `速さ×時間=進む距離` :ロボットが進む距離の計算式
