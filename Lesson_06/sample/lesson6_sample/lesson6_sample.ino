@@ -102,8 +102,7 @@ void setup()
   init_GPIO();
 
 //ここから下にプログラムを書く
-  go_Advance(100,3800);
-  go_Back(100, 3800);
+
 
 }
 
