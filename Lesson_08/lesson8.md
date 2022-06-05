@@ -76,7 +76,9 @@ USBを差したら，ArduinoIDEでボードとシリアルポートを指定し�
 ### ミッションチャレンジ
 
 #### 赤外線受信機とは？
-赤外線は人間に見えない電磁波のことだよ。電磁波というとちょっと難しく感じるかもしれないけど、赤外線はみんなの暮らしに溶け込んでいるよ。例えばテレビやエアコンのリモコンは遠くからでも電源をつけたり、消したり、温度を変えたりいろんな操作ができるよね？これはリモコンが **赤外線を送信(赤外線を送る)** してテレビやエアコンが **赤外線を受信(赤外線を受け取る)** しているからこういうことができるだよ。
+赤外線は人間に見えない光のことだよ。光は電磁波と呼ばれる波によって人間がみえる形になっていて、その波の長さによって見える光が決まってくるんだよ。ちなみに人間が見ることができる光を可視光線と呼んで、可視光線の赤の外側にある光を赤外線と呼ぶよ。逆に紫の外側にある光を紫外線と呼ぶよ。
+<img src="image/colorspectrum.png" width="70%">  
+赤外線はみんなの暮らしに溶け込んでいるよ。例えばテレビやエアコンのリモコンは遠くからでも電源をつけたり、消したり、温度を変えたりいろんな操作ができるよね？これはリモコンが 電磁波の一種である**赤外線を送信** してテレビやエアコンが **赤外線を受信** 動作するとこで機械を操作しているんだよ。
 このレッスンでは、テレビやエアコンの中にある赤外線受信機と同じようなモジュールをArduinoと配線して、リモコンからどんな値が出ているか見てみるよ！
 
 <img src="image/remotecontrol.jpg" width="70%">  
@@ -107,9 +109,10 @@ Arduinoライブラリとは世界中のプログラマが切磋琢磨して作�
 [IRremote Arduino Library](https://github.com/Arduino-IRremote/Arduino-IRremote)
 
 サイトにアクセスしたら、緑色に書いてあるCodeというボタンを押してみよう。
+
 <img src="image/library1.png" width="70%">  
 
-そうしたら、Download ZIPを押して、ライブラリをダウンロードしよう。
+そうすると、Download ZIPを押して、ライブラリをダウンロードしよう。
 
 <img src="image/library2.png" width="70%">  
 
@@ -153,7 +156,9 @@ void loop(){
 今までのレッスンを参考にスケッチをArduinoに書き込もう！
 書き込みが終わったら、ツール→シリアルモニタをクリックしてみよう
 クリックするとこんな画面が出てくるよ。「赤外線モジュールサンプルプログラムスタート」と表示されたら、プログラムがうまく動いているよ。
+
 <img src="image/serialmoniter1.png" width="70%">  
+
 そうしたら付属の赤外線コントローラを黒色の赤外線受信モジュールに向かってボタンを押してみよう！
 <img src="image/controloverview.png" width="70%">  
 すると写真のような感じでIRコードとビットが表示されるよ。
@@ -164,13 +169,13 @@ void loop(){
 ---
 
 #### クイズ！
-ここでクイズだよ！
-問題1：付属のリモコンのOKボタンを押したときのIRコードはシリアルモニタにどのように表示されるかな？
+ここでクイズだよ！  
+問題1：付属のリモコンの「OK」ボタンを押したときのIRコードはシリアルモニタにどのように表示されるかな？
 <details><summary>答えはここをクリック</summary><div>
-Rコード: FF38C7,　ビット: 32
+IRコード: FF38C7,　ビット: 32
 </div></details>
 
-問題2：ボタンを押し続けた時はシリアルモニタにどのように表示になるかな？
+問題2：付属のリモコンの「#」ボタンを押したときのIRコードはシリアルモニタにどのように表示されるかな？
 <details><summary>答えはここをクリック</summary><div>
 IRコード: FFFFFFFF,　ビット: 0
 </div></details>
@@ -178,47 +183,94 @@ IRコード: FFFFFFFF,　ビット: 0
 ２問とも正解できたかな？このクイズでわかる通り、リモコンのボタンごとに「IRコード」というのが割り振られているよ。
 
 #### ミッションチャレンジ 付属のリモコンを使ってLEDを光らせてみよう！
-付属のリモコンの「OK」ボタンを押すとブレッドボード上に配線されたLEDが光り、「#」ボタンを押すとLEDが消えるプログラムを作ってみよう！
-まずは次のイラストのように配線をしてみよう！
+さっきのクイズの結果を使って、付属のリモコンの「OK」ボタンを押すとブレッドボード上に配線されたLEDが光り、「#」ボタンを押すとLEDが消えるプログラムを作ってみよう！
+Arduinoの3番ピンを使ってLEDが光るように配線してみよう！
+配線が終わったら、下にあるプログラムをArduinoIDEにコピー＆ペーストしよう。プログラムを見てみると、0x******と書いてある部分があるね。ここにそれぞれOKボタン、「#」を押したときのIRコードを記述してみよう。成功すると、それぞれのボタンを押すことでLEDを光らせたり、消えさせたりできるよ。それではやってみよう！
 
 ```C++
-//未完成
 #include <IRremote.h>  // IRRemote.hをインクルード
-const int irReceiverPin = 3;  ///受信モジュールのSIGはpin2
+const int irReceiverPin = 2;  ///受信モジュールを２番ピンに繋げる
 IRrecv irrecv(irReceiverPin); //IRrecvタイプの変数を作成します
 decode_results results;    // 結果
 
 void setup(){
   Serial.begin(9600);    //シリアルを初期化し、ボーレートは9600に設定する
-  pinMode(3,OUTPUT);
+  pinMode(3,OUTPUT);     //LEDを３番ピンに繋げる
   irrecv.enableIRIn();   // 赤外線受信機モジュールを有効にする
-  Serial.print("赤外線モジュールサンプルプログラムスタート\n");
+  Serial.print("赤外線モジュールチャレンジプログラムスタート\n");
 }
 
 void loop(){
   if (irrecv.decode(&results)){ //赤外線受信機モジュールの受信データ
-    if(results.value==0x16726215){
+    Serial.print("IRコード: ");
+    Serial.print(results.value,HEX); //シリアルに値を出力する
+    Serial.print(",　ビット: ");  //bitsを送信する         
+    Serial.println(results.bits); //bitsを結果に出力する
+    //「OK」ボタンが押されたら、LEDが光る
+    if(results.value==0x******){
       digitalWrite(3, HIGH);
       Serial.print("HIGH\n");
       }
-    if(results.value==0x16756815){
+    //「#」ボタンが押されたら、LEDが消える
+    if(results.value==0x******){
       digitalWrite(3, LOW);
       Serial.print("LOW\n");
     }
+    irrecv.resume();// 次の値を受取る
+
+  }
+  delay(600); //600ミリ秒待機
+}
+```
+成功するとこんな感じで動くよ！みんなはできたかな？
+<img src="image/challenge.gif" width="70%">
+<details><summary>答えのプログラムはここをクリック</summary><div>
+
+```C++
+#include <IRremote.h>  // IRRemote.hをインクルード
+const int irReceiverPin = 2;  ///受信モジュールを２番ピンに繋げる
+IRrecv irrecv(irReceiverPin); //IRrecvタイプの変数を作成します
+decode_results results;    // 結果
+
+void setup(){
+  Serial.begin(9600);    //シリアルを初期化し、ボーレートは9600に設定する
+  pinMode(3,OUTPUT);     //LEDを３番ピンに繋げる
+  irrecv.enableIRIn();   // 赤外線受信機モジュールを有効にする
+  Serial.print("赤外線モジュールチャレンジプログラムスタート\n");
+}
+
+void loop(){
+  if (irrecv.decode(&results)){ //赤外線受信機モジュールの受信データ
+    Serial.print("IRコード: ");
+    Serial.print(results.value,HEX); //シリアルに値を出力する
+    Serial.print(",　ビット: ");  //bitsを送信する         
+    Serial.println(results.bits); //bitsを結果に出力する
+    //「OK」ボタンが押されたら、LEDが光る
+    if(results.value==0xFF38C7){
+      digitalWrite(3, HIGH);
+      Serial.print("HIGH\n");
+      }
+    //「#」ボタンが押されたら、LEDが消える
+    if(results.value==0xFFB04F){
+      digitalWrite(3, LOW);
+      Serial.print("LOW\n");
+    }
+    irrecv.resume();// 次の値を受取る
+
   }
   delay(600); //600ミリ秒待機
 }
 ```
 
+</div></details>
+
 #### 身の回りにある赤外線リモコンの信号を確認してみよう
-赤外線リモコンは世界でもっとも機械を操作するために使われているリモコンだよ。テレビのリモコンやエアコンのリモコンも赤外線で動いているよ。びっくりなことに今回使っている赤外線受信モジュールは市販の赤外線エアコンの信号を受け取ることができるよ！  実際にやってみよう。  
-最初のサンプルプログラムで赤外線受信モジュールにリモコンを近づけてみて、どんな信号が出るか確認してみよう！
+赤外線リモコンは世界で一番機械を操作するために使われているリモコンだよ。テレビのリモコンやエアコンのリモコンも赤外線で動いているよ。びっくりなことに今回使っている赤外線受信モジュールは市販の赤外線エアコンの信号を受け取ることができるよ！最初のサンプルプログラムで赤外線受信モジュールにリモコンを近づけてみて、どんな信号が出るか確認してみよう！
 <img src="image/coolercontroloverview.jpg" width="70%"> 
 
 <img src="image/serialmoniter3.png" width="70%">
 
 ### まとめ
-
 - **赤外線受信モジュール** :リモコンから送られる赤外線を受信するモジュール
 - **ライブラリ**:プログラムを効率的に開発できるツール
 
