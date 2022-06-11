@@ -27,21 +27,22 @@
 
 ### digitalWrite()とdelay()を使って、いろいろなブザーの鳴らし方を作ろう！
 ```C++
-const int buzzerPin = 13;//13ピンをブザーに接続します
+const int buzzerPin = 13;//13ピンをブザーに割り当て
 
 void setup() {
+    pinMode(buzzerPin,OUTPUT);//ブザーのピン番号を出力に設定
 }
 
 void loop() {
-    digitalwrite(buzerPin,LOW);//ブザーのビーブ音（低音）
-    delay(200);                 //200ms待機
-    digitalwrite(buzzerPin,HIGH);//ブザーを停止
-    delay(200);                 //200ms待機
+    digitalWrite(buzzerPin,LOW);//ブザーのビーブ音（低音）
+    delay(1000);                 //200ms待機
+    digitalWrite(buzzerPin,HIGH);//ブザーを停止
+    delay(1000);                 //200ms待機
 }
 ```
 上のプログラムをコピーして実行してみよう！ブザーから音が鳴るよ。
 似たプログラムを見たことがないかな？実はLEDを光らせる時と同じプログラムでブザーで音を鳴らすことができるんだ。
->やってみよう<br>
+>**やってみよう**<br>
 >ブザーが鳴る時間を500msにしてみよう！
 - [ ] ブザーを鳴らせたらチェック！
 - [ ] 鳴る時間を変更できたらチェック！
@@ -70,7 +71,7 @@ void loop()
     Serial.println(results.bits); //bitsを結果に出力する
     irrecv.resume(); // Receive the next value 
   } 
-  delay(600); //delay 600ms
+
   if(results.value == 0xFF38C7)//「OK」ボタンを押すと、受信モジュールは0xFF38C7を受信します
   {
     digitalWrite(buzzerPin,LOW);//ブザーのビーブ音（低音）
@@ -79,6 +80,7 @@ void loop()
   {
     digitalWrite(buzzerPin,HIGH);//stop beep
   }
+    delay(400); //delay 400ms
 }
 ```
 このプログラムを空のスケッチにコピー&ペーストしよう！
@@ -86,8 +88,12 @@ void loop()
  - [ ] サンプルプログラムが実行できたらチェック
 
 ### サンプルコードを改造して他のボタンに他の音を割り当てよう！
+OKボタンの他にも音を割り当てられるよ。
+
+1. ![serial_monitor_button.png](image/serial_monitor_button.png) を押してシリアルモニターから各ボタンの信号を読み取ってみよう。
+2. サンプルコードのOKボタンの信号を読み取った信号に書き換えてみよう。
 ```C++
-if(results.value == 0xFF38C7)//「OK」ボタンを押すと、受信モジュールは0xFF38C7を受信します
+if(results.value == 0x{ここに読み取った信号を入力})//「OK」ボタンを押すと、受信モジュールは0xFF38C7を受信します
   {
     digitalWrite(buzzerPin,LOW);//ブザーのビーブ音（低音）
   }
@@ -96,10 +102,12 @@ if(results.value == 0xFF38C7)//「OK」ボタンを押すと、受信モジュ�
     digitalWrite(buzzerPin,HIGH);//stop beep
   }
 ```
-の部分をコピーして条件式を変更すると他のボタンにも音を割り当てられるよ。
->やってみよう<br>
->#ボタンを押しても音が鳴るようにしてみよう。#ボタンは0x16756815だよ。
+
+
+**出来たらチェック**
 - [ ] 他のボタンにも音を割り当てられる
+
+
 ---
 ### まとめ
 - **ブザー** :音が出る素子
