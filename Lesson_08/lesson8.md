@@ -223,7 +223,7 @@ void loop(){
 }
 ```
 成功するとこんな感じで動くよ！みんなはできたかな？
-<img src="image/challenge.gif" width="70%">
+<img src="image/gif/challenge.gif" width="70%">
 <details><summary>答えのプログラムはここをクリック</summary><div>
 
 ```C++
