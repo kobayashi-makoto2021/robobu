@@ -69,7 +69,7 @@ USBを差したら，ArduinoIDEでボードとシリアルポートを指定し�
 
 次にツール→シリアルポートをクリックして，「COM～（Arduino UNO）」となっているものをクリックしましょう．（COM～の数字は毎回変わります．）
 
-<img src="image/ArduinoIDE_port_setting.png" width="70%">
+<img src="image/ArduinoIDE_port_setting.png" width="100%">
 
 ---
 
@@ -177,7 +177,7 @@ IRコード: FF38C7,　ビット: 32
 
 問題2：付属のリモコンの「#」ボタンを押したときのIRコードはシリアルモニタにどのように表示されるかな？
 <details><summary>答えはここをクリック</summary><div>
-IRコード: FFFFFFFF,　ビット: 0
+IRコード: FFB04F,　ビット: 32
 </div></details>
 
 ２問とも正解できたかな？このクイズでわかる通り、リモコンのボタンごとに「IRコード」というのが割り振られているよ。
