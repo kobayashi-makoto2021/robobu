@@ -19,6 +19,40 @@
 - [ ] USBケーブルx 1
 - [ ] パソコン x 1
 
+#### 0.ArduinoIDEを起動しよう
+
+デスクトップにあるAruduinoのアイコンをダブルクリックしてArduinoIDEを起動しましょう．
+
+<img src="image/ArduinoIDE_icon.png" width="10%">
+
+---
+
+#### 1.スケッチを保存しよう
+
+(Arduinoでは，プログラムのことを「スケッチ」といいます．)
+
+ファイル→保存をクリック（Ctrl+SでもOK）して，デスクトップに「lesson_09_1」という名前で保存しましょう．
+
+<img src="image/ArduinoIDE_save.png" width="50%">
+
+---
+#### 2.Arduinoとパソコンを接続しよう
+
+Arduino UNOボードとパソコンをUSBケーブルでつなぎましょう．
+
+<img src="image/Arduino_USBcable.png" width="30%">
+
+【注意】USBを抜き差しするときは向きを確認して，ていねいにあつかうこと．
+
+USBを差したら，ArduinoIDEでボードとシリアルポートを指定しましょう．　　
+
+ツール→ボードをクリックして、Arduino/Genuino UNOをクリックしましょう。　　
+
+次にツール→シリアルポートをクリックして，「COM～（Arduino UNO）」となっているものをクリックしましょう．（COM～の数字は毎回変わります．）
+
+<img src="image/ArduinoIDE_port_setting.png" width="100%">
+
+---
 ## ミッションチャレンジ
 ### ブザーと赤外線受信モジュールの回路を作ろう！
 ![1](image/1.png)
@@ -50,7 +84,7 @@ void loop() {
 ### サンプルコードを実行しよう！
 ```C++
 #include <IRremote.h>
-const int irReceiverPin =3; //受信モジュールのSIGはpin3
+const int irReceiverPin =2; //受信モジュールのSIGはpin2
 const int buzzerPin = 13;//13ピンをブザーに接続します
 IRrecv irrecv(irReceiverPin); //IRrecv タイプの変数を作成します
 decode_results results;
@@ -65,9 +99,9 @@ void loop()
 {
   if (irrecv.decode(&results)) //赤外線受信モジュールの受信データ
   { 
-    Serial.print("irCode: "); //"irCode: "を送信する出力
+    Serial.print("IRコード: "); //"irCode: "を送信する出力
     Serial.print(results.value, HEX); //値を16進数で出力します
-    Serial.print(", bits: "); //" , bits: " を送信する
+    Serial.print(",　ビット"); //" , bits: " を送信する
     Serial.println(results.bits); //bitsを結果に出力する
     irrecv.resume(); // Receive the next value 
   } 

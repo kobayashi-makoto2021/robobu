@@ -51,7 +51,7 @@ Arduino UNOボードとパソコンをUSBケーブルでつなぎましょう．
 
 シリアルポートとの接続もしておこう。
 
-<img src="image/ArduinoIDE_port_setting.png" width="70%">
+<img src="image/ArduinoIDE_port_setting.png" width="100%">
 
 ---
 
@@ -167,7 +167,7 @@ IRコード: FF38C7,　ビット: 32
 
 問題2：付属のリモコンの「#」ボタンを押したときのIRコードはシリアルモニタにどのように表示されるかな？
 <details><summary>答えはここをクリック</summary><div>
-IRコード: FFFFFFFF,　ビット: 0
+IRコード: FFB04F,　ビット: 32
 </div></details>
 
 ２問とも正解できたかな？このクイズでわかる通り、リモコンのボタンごとに「IRコード」というのが割り振られているよ。
@@ -213,7 +213,7 @@ void loop(){
 }
 ```
 成功するとこんな感じで動くよ！みんなはできたかな？
-<img src="image/challenge.gif" width="70%">
+<img src="image/gif/challenge.gif" width="70%">
 <details><summary>答えのプログラムはここをクリック</summary><div>
 
 ```C++
