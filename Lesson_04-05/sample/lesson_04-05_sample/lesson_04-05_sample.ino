@@ -7,6 +7,15 @@
 
 
 //モーターの制御
+void stop_Stop(int time = 1000)    //ストップ
+{
+  digitalWrite(RightMotorDirPin1, LOW);
+  digitalWrite(RightMotorDirPin2, LOW);
+  digitalWrite(LeftMotorDirPin1, LOW);
+  digitalWrite(LeftMotorDirPin2, LOW);
+  delay(time);
+}
+
 void go_Advance(int speed = 200, int time = 0)  //前に進む関数
 {
   digitalWrite(RightMotorDirPin1, HIGH);
@@ -19,6 +28,7 @@ void go_Advance(int speed = 200, int time = 0)  //前に進む関数
     ;
   } else {
     delay(time);
+    stop_Stop();
   }
 }
 void go_Left(int speed = 200, int time = 0) //左に旋回する関数
@@ -33,6 +43,7 @@ void go_Left(int speed = 200, int time = 0) //左に旋回する関数
     ;
   } else {
     delay(time);
+    stop_Stop();
   }
 }
 void go_Right(int speed = 200, int time = 0) //右に旋回する関数
@@ -47,6 +58,7 @@ void go_Right(int speed = 200, int time = 0) //右に旋回する関数
     ;
   } else {
     delay(time);
+    stop_Stop();
   }
 }
 void go_Back(int speed = 200, int time = 0) //後ろに下がる関数
@@ -61,16 +73,10 @@ void go_Back(int speed = 200, int time = 0) //後ろに下がる関数
     ;
   } else {
     delay(time);
+    stop_Stop();
   }
 }
-void stop_Stop(int time = 1000)    //ストップ
-{
-  digitalWrite(RightMotorDirPin1, LOW);
-  digitalWrite(RightMotorDirPin2, LOW);
-  digitalWrite(LeftMotorDirPin1, LOW);
-  digitalWrite(LeftMotorDirPin2, LOW);
-  delay(time);
-}
+
 //モーター速度の設定
 void set_Motorspeed(int speed_L, int speed_R)
 {
