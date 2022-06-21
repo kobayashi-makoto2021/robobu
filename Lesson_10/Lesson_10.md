@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 # レッスン7 赤外線リモコンでロボットを動かそう！
 
 ## **赤外線リモコンでロボットをコントロールしてコースを走破する
+=======
+# レッスン10 赤外線リモコンでロボットを動かそう！
+
+## **赤外線リモコンでロボットをコントロールしてコースを走破する**
+>>>>>>> hasegawa_branch2
 
 ![コース図](image/course.png)
 
@@ -27,7 +33,11 @@
 
 (Arduinoでは，プログラムのことを「スケッチ」といいます．)
 
+<<<<<<< HEAD
 ファイル→保存をクリック（Ctrl+SでもOK）して，デスクトップに「lesson_08_1」という名前で保存しましょう．
+=======
+ファイル→保存をクリック（Ctrl+SでもOK）して，デスクトップに「lesson_10_1」という名前で保存しましょう．
+>>>>>>> hasegawa_branch2
 
 <img src="image/ArduinoIDE_save.png" width="50%">
 
@@ -341,6 +351,7 @@ void loop()
 だから次のサンプルコードを使って調べてみよう！
 
 ```C++
+<<<<<<< HEAD
 #include <IRremote.h>
 int input_pin = 10; //connect D10 to IR receiver S pin
 IRrecv irrecv(input_pin);
@@ -355,6 +366,28 @@ if (irrecv.decode(&signals)) {
 		Serial.println(signals.value, HEX);
 		irrecv.resume(); // get the next signal
 	}
+=======
+#include <IRremote.h>  // IRRemote.hをインクルード
+const int irReceiverPin = 2;  ///受信モジュールのSIGはpin2
+IRrecv irrecv(irReceiverPin); //IRrecvタイプの変数を作成します
+decode_results results;    // 結果
+
+void setup(){
+  Serial.begin(9600);    //シリアルを初期化し、ボーレートは9600に設定する
+  irrecv.enableIRIn();   // 赤外線受信機モジュールを有効にする
+  Serial.print("赤外線モジュールサンプルプログラムスタート\n");
+}
+
+void loop(){
+  if (irrecv.decode(&results)){ //赤外線受信機モジュールの受信データ
+    Serial.print("IRコード: ");
+    Serial.print(results.value, HEX); //シリアルに値を出力する
+    Serial.print(",　ビット: ");  //bitsを送信する         
+    Serial.println(results.bits); //bitsを結果に出力する
+    irrecv.resume();// 次の値を受取る
+  }  
+  delay(600); //600ミリ秒待機
+>>>>>>> hasegawa_branch2
 }
 ```
 
