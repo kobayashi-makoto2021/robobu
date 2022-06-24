@@ -23,7 +23,6 @@ void loop() {
     Serial.println("clear");
     digitalWrite(LEDPin, LOW); //LEDをOFF
     digitalWrite(buzzerPin, HIGH); //ブザーをOFF
-
   }
   delay(200);
 }
