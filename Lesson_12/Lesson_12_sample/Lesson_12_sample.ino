@@ -1,14 +1,14 @@
-#define speedPinR 9   　　　　// PWM右ピン接続
-#define RightDirectPin1  12  //  右モーター方向ピン1
-#define RightDirectPin2  11  // 右モーター方向ピン2
-#define speedPinL 6        　//  PWM右ピン接続
-#define LeftDirectPin1  7    // 左モーター方向ピン
-#define LeftDirectPin2  8   　//左モーター方向ピン
+#define speedPinR 9          //PWM右ピン接続
+#define RightDirectPin1  12  //右モーター方向ピン1
+#define RightDirectPin2  11  //右モーター方向ピン2
+#define speedPinL 6          //PWM右ピン接続
+#define LeftDirectPin1  7    //左モーター方向ピン
+#define LeftDirectPin2  8    //左モーター方向ピン
 
 
 /*左からD 3、A 1-A 3、D 10に接続します*/
 #define RightObstacleSensor 2  //右障害物センサーからD2
-#define LeftObstacleSensor 3   /左障害物センサーからD3
+#define LeftObstacleSensor 3   //左障害物センサーからD3
 
 #define SPEED   180 //モータ速度
 void go_Advance(void)  //前進
@@ -63,7 +63,7 @@ void setup()
  pinMode(speedPinR,OUTPUT); //右モーターPWMピン
  pinMode(RightDirectPin1,OUTPUT); //左モーター方向ピン1
  pinMode(RightDirectPin2,OUTPUT); //左モーター方向ピン2
- pinMode(LeftDirectPin1,OUTPUT); 　//右モーター方向ピン1
+ pinMode(LeftDirectPin1,OUTPUT);  //右モーター方向ピン1
  pinMode(LeftDirectPin2,OUTPUT);  //右モーター方向ピン2
 
   /*障害物センサ初期設定 */
