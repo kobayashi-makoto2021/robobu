@@ -84,7 +84,7 @@ void loop() {
 ### サンプルコードを実行しよう！
 ```C++
 #include <IRremote.h>
-const int irReceiverPin =2; //受信モジュールのSIGはpin2
+const int irReceiverPin =3; //受信モジュールのSIGはpin3
 const int buzzerPin = 13;//13ピンをブザーに接続します
 IRrecv irrecv(irReceiverPin); //IRrecv タイプの変数を作成します
 decode_results results;
@@ -99,9 +99,9 @@ void loop()
 {
   if (irrecv.decode(&results)) //赤外線受信モジュールの受信データ
   { 
-    Serial.print("IRコード: "); //"irCode: "を送信する出力
+    Serial.print("irCode: "); //"irCode: "を送信する出力
     Serial.print(results.value, HEX); //値を16進数で出力します
-    Serial.print(",　ビット"); //" , bits: " を送信する
+    Serial.print(", bits: "); //" , bits: " を送信する
     Serial.println(results.bits); //bitsを結果に出力する
     irrecv.resume(); // Receive the next value 
   } 
@@ -116,6 +116,7 @@ void loop()
   }
     delay(400); //delay 400ms
 }
+
 ```
 このプログラムを空のスケッチにコピー&ペーストしよう！
 アップロードが完了後に数秒間待ってからOKボタンを押すとブザーが鳴り続けるよ。止めたかったら他のボタンを押してね。
