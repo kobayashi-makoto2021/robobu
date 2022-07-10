@@ -89,11 +89,7 @@ USBを差したら，ArduinoIDEでボードとシリアルポートを指定し�
 #### ジャンパー線を使って赤外線受信モジュールの配線しよう
 赤外線受信機とブレッドボード、Arduino、ジャンパー線を使って写真と同じように配線してみよう
 
-<img src="image/wire1_v1.png" width="70%">  
-
-実際に回路を作るとこんな感じになるよ！
-
-<img src="image/wire2_v1.png" width="70%">  
+<img src="image/wire_fritzing.png" width="70%">  
  
 - [ ] ジャンパー線を使って赤外線受信モジュールの配線ができる
 
