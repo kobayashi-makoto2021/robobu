@@ -7,7 +7,7 @@
 
 - [ ] ブレッドボードにサーボモーターと赤外線受信モジュールを使った回路を作ることが出来る
 - [ ] サンプルコードを実行できる
-- [ ] サンプルコードを改造して（工夫できる課題）
+- [ ] サンプルコードを改造して他のリモコンでもモーターを動かすことができる
 
 ---
 
@@ -118,6 +118,10 @@ void loop()
 
 ### リモコンでサーボモーターを操作しよう！
 
+ロボットのタイヤを動かしているモーターは何回転でもできるかわりに，決まった角度に動かすことはできないよね．
+
+今回動かす「サーボモーター」は，0度から180度までしか動かないかわりに，決まった角度に動かすことができるんだ！
+
 ArduinoIDEを開き，ファイル→名前を付けて保存をクリックして，「name_lesson_16_2」という名前で保存しましょう．
 
 スケッチに以下のコードをコピー＆ペーストして，スケッチを実行してみよう．
@@ -180,7 +184,6 @@ void loop()
 - [ ] モーターが動くことが確認出来たらチェック！
 
 
-
 ---
 ### 数字ボタンを押したら決まった角度に動くように改造しよう！
 
@@ -189,18 +192,12 @@ ArduinoIDEを開き，ファイル→名前を付けて保存をクリックし�
 スケッチに以下のコードをコピー＆ペーストして，スケッチを実行してみよう．
 
 ``` C++
-#include <IRLibAll.h>
-#include <Servo.h> 
+#include <IRremote.h>      //IRremoteライブラリをアルドゥイーノライブラリにコピーする必要があります
+#include <Servo.h>
 
-//  プロトコルに応じてこれらの値を設定する必要があります
-// ここで使用しているリモートコードはAdafruit用です
-// ミニリモコン
-#define MY_PROTOCOL NEC
 #define RIGHT_ARROW   0xFF5AA5 //時計回りに回転する
 #define LEFT_ARROW    0xFF10EF //反時計回りに回転する
 #define SELECT_BUTTON 0xFF38C7 //サーボの回転位置が中心
-#define UP_ARROW      0xFF18E7 //サーボの速度を早くする
-#define DOWN_ARROW    0xFF4AB5 //サーボの速度を遅くする
 #define BUTTON_0 0xFF9867  //ボタン0〜9を押すと、決まった位置に移動します
 #define BUTTON_1 0xFFA25D  // 20度ずつ回転
 #define BUTTON_2 0xFF629D
@@ -212,74 +209,61 @@ ArduinoIDEを開き，ファイル→名前を付けて保存をクリックし�
 #define BUTTON_8 0xFFA857
 #define BUTTON_9 0xFF906F
 
-IRrecv myReceiver(2); //受信機のピン番号
-IRdecode myDecoder;
-
-Servo myServo;  // サーボを制御するサーボオブジェクトを作成する
+int RECV_PIN = 3;       //赤外線受信機のピン
 int16_t pos;         // サーボ位置を保存する変数を設定する
-int16_t Speed;       // 左/右ボタンが押されるたびに移動する度数
-uint32_t Previous;//NEC繰り返しコードを処理します
+Servo servo;
+IRrecv irrecv(RECV_PIN);
+decode_results results;
 
-void setup() { 
-  myServo.attach(9);      // ピン9のサーボをサーボオブジェクトに接続します
+void setup()
+{
+  Serial.begin(9600);
+  irrecv.enableIRIn(); // 受信機を起動する
+  servo.attach(9);     //サーボピン
   pos = 90;               // 中間点90度から開始
-  Speed = 3;              // 左/右を押すたびにサーボが3度移動します
-  myServo.write(pos);     // 初期位置を設定
-  myReceiver.enableIRIn(); // 受信機を起動する
-} 
-  
-void loop() 
-{ 
-    if (myReceiver.getResults()) {
-       myDecoder.decode();
-       if(myDecoder.protocolNum==MY_PROTOCOL) {
-         if(myDecoder.value==0xFFFFFFFF)
-           myDecoder.value=Previous;
-         switch(myDecoder.value) {
-            case LEFT_ARROW:    pos=min(180,pos+Speed); break;
-            case RIGHT_ARROW:   pos=max(0,pos-Speed); break;
-            case SELECT_BUTTON: pos=90; break;
-            case UP_ARROW:      Speed=min(10, Speed+1); break;
-            case DOWN_ARROW:    Speed=max(1, Speed-1); break;
-            case BUTTON_0:      pos=0*20; break;
-            case BUTTON_1:      pos=1*20; break;
-            case BUTTON_2:      pos=2*20; break;
-            case BUTTON_3:      pos=3*20; break;
-            case BUTTON_4:      pos=4*20; break;
-            case BUTTON_5:      pos=5*20; break;
-            case BUTTON_6:      pos=6*20; break;
-            case BUTTON_7:      pos=7*20; break;
-            case BUTTON_8:      pos=8*20; break;
-            case BUTTON_9:      pos=9*20; break;
-         }
-         myServo.write(pos); // 変数 'pos'の位置に移動するようサーボに指示する
-         Previous=myDecoder.value;
-       }
-       myReceiver.enableIRIn();
+  servo.write(pos);     // 初期位置を設定
+}
+
+void loop()
+{
+  if (irrecv.decode(&results)) {
+    irrecv.resume(); 
+    switch (results.value) {  //ボタンに応じてサーボを動かす
+      case LEFT_ARROW:    pos = min(180, pos + 5); break;
+      case RIGHT_ARROW:   pos = max(0, pos - 5); break;
+      case SELECT_BUTTON: pos = 90; break;
+      case BUTTON_0:      pos = 0 * 20; break;
+      case BUTTON_1:      pos = 1 * 20; break;
+      case BUTTON_2:      pos = 2 * 20; break;
+      case BUTTON_3:      pos = 3 * 20; break;
+      case BUTTON_4:      pos = 4 * 20; break;
+      case BUTTON_5:      pos = 5 * 20; break;
+      case BUTTON_6:      pos = 6 * 20; break;
+      case BUTTON_7:      pos = 7 * 20; break;
+      case BUTTON_8:      pos = 8 * 20; break;
+      case BUTTON_9:      pos = 9 * 20; break;
     }
+    servo.write(pos);
+  }
 }
 ```
 
 
-
 **他の（プロジェクターやテレビ等の）リモコンでも試してみよう！**
 
-
 - [ ] 数字ボタンでサーボモーターが動いたらチェック！
+- [ ] 左右の矢印でサーボモーターの位置を細かく変更出来たらチェック！
 
 ---
 ### まとめ
-- 内蔵LEDは13番（`LEDPin = 13`で指定できる）
-- 障害物センサーは`digitalRead(isObstaclePin);`で読み取る
-- 障害物センサーはネジを回すことで反応距離を調整できる
 
+- 赤外線受信モジュールを使うためのライブラリは`IRremote.h`
+- サーボモーターを使うためのライブラリは`Servo.h`
 
 
 ---
 
 #### 出来たことをチェックしよう
-
-- [ ] ブレッドボードを使って障害物センサーとブザーの入った回路を作成できる
-- [ ] 障害物センサーの感度を調整できる
+- [ ] ブレッドボードにサーボモーターと赤外線受信モジュールを使った回路を作ることが出来る
 - [ ] サンプルコードを実行できる
-- [ ] 10cmでブザーが鳴る人感センサーを作ることができる
+- [ ] サンプルコードを改造して他のリモコンでもモーターを動かすことができる
