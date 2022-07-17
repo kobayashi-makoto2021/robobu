@@ -36,8 +36,8 @@
 <img src="image/IRsensor-arduino_circuit_image.jpg" width="100%">
 
 **※注意！**
-
-**ブザーに書かれている「VCC」と「GND」は実際には反対です．気を付けて配線しましょう．**
+**ブザーが鳴らないとき・・・**
+**ブザーによっては書かれている「VCC」と「GND」は実際には反対の場合があります（生産工場のミス）．配線しなおしてましょう．**
 
 
 - [ ] 回路が作れたらチェック！
@@ -54,7 +54,7 @@ ArduinoIDEを開き，ファイル→名前を付けて保存をクリックし�
 
 
 ``` C++
-int LEDPin = 13;  //LEDピンを13番に設定
+int LEDPin = 13;  //LEDピンを13番に設定　（Arduino本体のLED）
 int isObstaclePin = 2;  // 2番ピンを赤外線センサーに接続
 int isObstacle = HIGH;  // 障害物が無い場合
 
@@ -68,12 +68,12 @@ void loop() {
   isObstacle = digitalRead(isObstaclePin);
   if (isObstacle == LOW)  //障害物がある場合
   {
-    Serial.println("OBSTACLE!!, OBSTACLE!!"); //Obstacleは「障害物」の意味
+    Serial.println("物体を検知しました！！　LEDをオン"); 
     digitalWrite(LEDPin, HIGH); //LEDをON
   }
   else  //障害物がない場合
   {
-    Serial.println("clear");
+    Serial.println("物体はありません　LEDオフ");
     digitalWrite(LEDPin, LOW); //LEDをOFF
   }
   delay(200);
@@ -105,7 +105,7 @@ ArduinoIDEを開き，ファイル→名前を付けて保存をクリックし�
 スケッチに以下のコードをコピー＆ペーストして，スケッチを実行してみよう．
 
 ``` C++
-int LEDPin = 13;  //LEDピンを13番に設定
+int LEDPin = 13;  //LEDピンを13番に設定　（Arduino本体のLED）
 int buzzerPin = 3;  //3番ピンをブザーに接続
 int isObstaclePin = 2;  // 2番ピンを赤外線センサーに接続
 int isObstacle = HIGH;  // 障害物が無い場合
@@ -121,13 +121,13 @@ void loop() {
   isObstacle = digitalRead(isObstaclePin);
   if (isObstacle == LOW)  //障害物がある場合
   {
-    Serial.println("OBSTACLE!!, OBSTACLE!!"); //Obstacleは「障害物」の意味
+    Serial.println("物体を検知しました！！　LED・ブザーをオン"); 
     digitalWrite(LEDPin, HIGH); //LEDをON
     digitalWrite(buzzerPin, LOW); //ブザーをON
   }
   else  //障害物がない場合
   {
-    Serial.println("clear");
+    Serial.println("物体はありません　LED・ブザーをオフ");
     digitalWrite(LEDPin, LOW); //LEDをOFF
     digitalWrite(buzzerPin, HIGH); //ブザーをOFF
   }
