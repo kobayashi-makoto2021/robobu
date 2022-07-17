@@ -7,7 +7,7 @@
 
 - [ ] ブレッドボードにサーボモーターと赤外線受信モジュールを使った回路を作ることが出来る
 - [ ] サンプルコードを実行できる
-- [ ] サンプルコードを改造して（工夫できる課題）
+- [ ] サンプルコードを改造して他のリモコンでもモーターを動かすことができる
 
 ---
 
@@ -40,7 +40,7 @@
 
 (Arduinoでは，プログラムのことを「スケッチ」といいます．)
 
-ファイル→保存をクリック（Ctrl+SでもOK）して，デスクトップに「lesson_16_1」という名前で保存しましょう．
+ファイル→保存をクリック（Ctrl+SでもOK）して，デスクトップに「name_lesson_16_1」という名前で保存しましょう．
 
 <img src="image/ArduinoIDE_save.png" width="50%">
 
@@ -75,7 +75,6 @@ USBを差したら，ArduinoIDEでポートを指定しましょう．
 
 ### リモコンからの信号をシリアルモニタに表示しよう！
 
-ArduinoIDEを開き，ファイル→名前を付けて保存をクリックして，「lesson_16_1」という名前で保存しましょう．
 
 スケッチに以下のコードをコピー＆ペーストして，スケッチを実行してみよう．
 
@@ -117,74 +116,154 @@ void loop()
 
 ---
 
-### 障害物センサーの感度を調整しよう
+### リモコンでサーボモーターを操作しよう！
 
-回路につないだまま，プラスドライバーで障害物センサーのネジをまわしてみよう！ネジを回す方向によって反応する距離がどのように変化するかな？
+ロボットのタイヤを動かしているモーターは何回転でもできるかわりに，決まった角度に動かすことはできないよね．
 
-<img src="image/IRsensor_variable resistor.png" width="50%">
+今回動かす「サーボモーター」は，0度から180度までしか動かないかわりに，決まった角度に動かすことができるんだ！
 
-- [ ] ネジを回して反応距離が変化することが確認出来たらチェック！
-
----
-### ちょうど10cmでブザーが鳴る人感センサーを作ろう！
-
-ArduinoIDEを開き，ファイル→名前を付けて保存をクリックして，「lesson_11_2」という名前で保存しましょう．
+ArduinoIDEを開き，ファイル→名前を付けて保存をクリックして，「name_lesson_16_2」という名前で保存しましょう．
 
 スケッチに以下のコードをコピー＆ペーストして，スケッチを実行してみよう．
 
 ``` C++
-int LEDPin = 13;  //LEDピンを13番に設定
-int buzzerPin = 3;  //3番ピンをブザーに接続
-int isObstaclePin = 2;  // 2番ピンを赤外線センサーに接続
-int isObstacle = HIGH;  // 障害物が無い場合
+#include <IRremote.h>      //IRremoteライブラリをアルドゥイーノライブラリにコピーする必要があります
+#include <Servo.h>
+#define plus 0xFF18E7   //時計回りのボタン
+#define minus 0xFF4AB5  //反時計回りのボタン
 
-void setup() {
-  pinMode(buzzerPin, OUTPUT);
-  pinMode(isObstaclePin, INPUT);
-  pinMode(LEDPin, OUTPUT);
+int RECV_PIN = 3;       //赤外線受信機のピン
+Servo servo;
+int val;                //回転角度
+bool cwRotation, ccwRotation;  //回転の状態
+
+IRrecv irrecv(RECV_PIN);
+
+decode_results results;
+
+void setup()
+{
   Serial.begin(9600);
+  irrecv.enableIRIn(); // 受信機を起動する
+  servo.attach(9);     //サーボピン
 }
 
-void loop() {
-  isObstacle = digitalRead(isObstaclePin);
-  if (isObstacle == LOW)  //障害物がある場合
-  {
-    Serial.println("OBSTACLE!!, OBSTACLE!!"); //Obstacleは「障害物」の意味
-    digitalWrite(LEDPin, HIGH); //LEDをON
-    digitalWrite(buzzerPin, LOW); //ブザーをON
+void loop() 
+{
+  if (irrecv.decode(&results)) {
+    Serial.println(results.value, HEX);
+    irrecv.resume(); // Receive the next value
+
+    if (results.value == plus)
+    {
+      cwRotation = !cwRotation;      //回転角度の値を切り替えます
+      ccwRotation = false;         //これ以上回転しません
+    }
+
+    if (results.value == minus)
+    {
+      ccwRotation = !ccwRotation;   
+      cwRotation = false;            //回転角度の値を切り替えます
+    }
   }
-  else  //障害物がない場合
-  {
-    Serial.println("clear");
-    digitalWrite(LEDPin, LOW); //LEDをOFF
-    digitalWrite(buzzerPin, HIGH); //ブザーをOFF
+  if (cwRotation && (val != 175))  {
+    val++;                         //連動ボタン用
   }
-  delay(200);
+  if (ccwRotation && (val != 0))  {
+    val--;                         //カウンター連動ボタン用
+  }
+  servo.write(val);
+  delay(20);          //回転速度
+}
+```
+
+リモコンの▲/▼ボタンを押してみよう！
+
+同じボタンを2回押すと回転が止まります．
+
+- [ ] モーターが動くことが確認出来たらチェック！
+
+
+---
+### 数字ボタンを押したら決まった角度に動くように改造しよう！
+
+ArduinoIDEを開き，ファイル→名前を付けて保存をクリックして，「name_lesson_16_3」という名前で保存しましょう．
+
+スケッチに以下のコードをコピー＆ペーストして，スケッチを実行してみよう．
+
+``` C++
+#include <IRremote.h>      //IRremoteライブラリをアルドゥイーノライブラリにコピーする必要があります
+#include <Servo.h>
+
+#define RIGHT_ARROW   0xFF5AA5 //時計回りに回転する
+#define LEFT_ARROW    0xFF10EF //反時計回りに回転する
+#define SELECT_BUTTON 0xFF38C7 //サーボの回転位置が中心
+#define BUTTON_0 0xFF9867  //ボタン0〜9を押すと、決まった位置に移動します
+#define BUTTON_1 0xFFA25D  // 20度ずつ回転
+#define BUTTON_2 0xFF629D
+#define BUTTON_3 0xFFE21D
+#define BUTTON_4 0xFF22DD
+#define BUTTON_5 0xFF02FD
+#define BUTTON_6 0xFFC23D
+#define BUTTON_7 0xFFE01F
+#define BUTTON_8 0xFFA857
+#define BUTTON_9 0xFF906F
+
+int RECV_PIN = 3;       //赤外線受信機のピン
+int16_t pos;         // サーボ位置を保存する変数を設定する
+Servo servo;
+IRrecv irrecv(RECV_PIN);
+decode_results results;
+
+void setup()
+{
+  Serial.begin(9600);
+  irrecv.enableIRIn(); // 受信機を起動する
+  servo.attach(9);     //サーボピン
+  pos = 90;               // 中間点90度から開始
+  servo.write(pos);     // 初期位置を設定
 }
 
+void loop()
+{
+  if (irrecv.decode(&results)) {
+    irrecv.resume(); 
+    switch (results.value) {  //ボタンに応じてサーボを動かす
+      case LEFT_ARROW:    pos = min(180, pos + 5); break;
+      case RIGHT_ARROW:   pos = max(0, pos - 5); break;
+      case SELECT_BUTTON: pos = 90; break;
+      case BUTTON_0:      pos = 0 * 20; break;
+      case BUTTON_1:      pos = 1 * 20; break;
+      case BUTTON_2:      pos = 2 * 20; break;
+      case BUTTON_3:      pos = 3 * 20; break;
+      case BUTTON_4:      pos = 4 * 20; break;
+      case BUTTON_5:      pos = 5 * 20; break;
+      case BUTTON_6:      pos = 6 * 20; break;
+      case BUTTON_7:      pos = 7 * 20; break;
+      case BUTTON_8:      pos = 8 * 20; break;
+      case BUTTON_9:      pos = 9 * 20; break;
+    }
+    servo.write(pos);
+  }
+}
 ```
 
 
-**定規などを使って，反応する距離を10cmになるように調整しよう！**
+**他の（プロジェクターやテレビ等の）リモコンでも試してみよう！**
 
-
-
-- [ ] ちょうど10cmでブザーが鳴ったらチェック！
+- [ ] 数字ボタンでサーボモーターが動いたらチェック！
+- [ ] 左右の矢印でサーボモーターの位置を細かく変更出来たらチェック！
 
 ---
 ### まとめ
-- 内蔵LEDは13番（`LEDPin = 13`で指定できる）
-- 障害物センサーは`digitalRead(isObstaclePin);`で読み取る
-- 障害物センサーはネジを回すことで反応距離を調整できる
 
-
+- 赤外線受信モジュールを使うためのライブラリは`IRremote.h`
+- サーボモーターを使うためのライブラリは`Servo.h`
 
 
 ---
 
 #### 出来たことをチェックしよう
-
-- [ ] ブレッドボードを使って障害物センサーとブザーの入った回路を作成できる
-- [ ] 障害物センサーの感度を調整できる
+- [ ] ブレッドボードにサーボモーターと赤外線受信モジュールを使った回路を作ることが出来る
 - [ ] サンプルコードを実行できる
-- [ ] 10cmでブザーが鳴る人感センサーを作ることができる
+- [ ] サンプルコードを改造して他のリモコンでもモーターを動かすことができる
