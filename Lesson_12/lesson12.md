@@ -34,7 +34,7 @@
 
 (Arduinoでは，プログラムのことを「スケッチ」といいます．)
 
-ファイル→保存をクリック（Ctrl+SでもOK）して，デスクトップに「lesson_09_1」という名前で保存しましょう．
+ファイル→保存をクリック（Ctrl+SでもOK）して，デスクトップに「lesson_12」という名前で保存しましょう．
 
 <img src="image/ArduinoIDE_save.png" width="50%">
 
