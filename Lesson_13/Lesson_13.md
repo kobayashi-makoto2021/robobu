@@ -32,7 +32,7 @@
 ArduinoIDEを開き，ファイル→名前を付けて保存をクリックして，「lesson_13」という名前で保存しよう。
 スケッチに以下のコードをコピー＆ペーストして，スケッチを実行してみよう。
 ``` C++
-int IR[] = {A0,A1,A2,A3,A4}
+int IR[] = {A0,A1,A2,A3,A4};
 
 int get_IR(int id){
     int state = digitalRead(IR[id]);
@@ -41,11 +41,11 @@ int get_IR(int id){
 
 void setup(){
     Serial.begin(9600);
-    pinMode(IR0,INPUT);
-    pinMode(IR1,INPUT);
-    pinMode(IR2,INPUT);
-    pinMode(IR3,INPUT);
-    pinMode(IR4,INPUT);
+    pinMode(IR[0],INPUT);
+    pinMode(IR[1],INPUT);
+    pinMode(IR[2],INPUT);
+    pinMode(IR[3],INPUT);
+    pinMode(IR[4],INPUT);
 }
 
 void loop(){
@@ -60,7 +60,7 @@ void loop(){
     Serial.print(State3);
     Serial.print(State4);
     Serial.print("\n");
-    delay(100);
+    delay(500);
 }
 ```
 - [ ] サンプルコードが実行できたらチェック！
