@@ -1,6 +1,6 @@
 #define echoPin 3
 #define trigPin 2
-#define LEDPin 8
+#define LEDPin 9
 
 void setup() {
   Serial.begin (9600);

@@ -81,19 +81,24 @@ void loop() {
 
 - [ ] シリアルモニタに上の画像のような表示が出たらチェック！
 
-
 ---
 
 ### 超音波センサとは？
 
 ここで，超音波センサの仕組みについて簡単に説明するよ．
 
+「超音波」とは，人間には聞こえない高さの音のことで，音は空気中を波として伝わっていくよ．
+
+超音波を対象物に向かって出すと，対象物に当たってセンサーに返ってくるよ．超音波を出してから返ってくるまでに少しだけ時間がかかるよ．
+
+例えば，音は**1秒で340m**くらい進むから，340m先に対象物があったら，返ってくるまでに往復で2秒かかるよ．
 
 
+**返ってくるまでにかかった時間から，対象物がどのくらい遠くにあるかを計算できるよ．これが超音波センサの簡単な仕組みだよ．**
 
+実際にはセンサから出てくる信号を使いやすい単位（cmなど）に直して表示したりするよ．
 
-
-
+<img src="image/UltrasonicSensor_diagram.gif" width="100%">
 
 ---
 
@@ -153,6 +158,7 @@ void loop() {
 - [ ] 超音波センサで測定した距離に応じてLEDが光ったらチェック！
 
 
+
 ---
 ### 超音波センサで測定した距離に応じてLEDの明るさを変えよう！
 
@@ -161,26 +167,49 @@ ArduinoIDEを開き，ファイル→名前を付けて保存をクリックし�
 スケッチに以下のコードをコピー＆ペーストして，スケッチを実行してみよう．
 
 ``` C++
+#define echoPin 3
+#define trigPin 2
+#define LEDPin 9
 
+void setup() {
+  Serial.begin (9600);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(LEDPin, OUTPUT);
 
+}
 
+void loop() {
+  float duration, distance;
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
 
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
 
+  duration = pulseIn(echoPin, HIGH);
+  distance = (duration / 2) * 0.0344;
 
+  Serial.print("Distance = ");
+  Serial.print(distance);
+  Serial.println(" cm");
 
+  float duty=map(distance,0,180,0,255);
+  
+  analogWrite(LEDPin, duty);
+  delay(10);
+}
 ```
 
-
-**他の（プロジェクターやテレビ等の）リモコンでも試してみよう！**
-
-- [ ] 数字ボタンでサーボモーターが動いたらチェック！
-- [ ] 左右の矢印でサーボモーターの位置を細かく変更出来たらチェック！
+- [ ] このようにLEDの明るさが変化したらチェック！
+<img src="image/UltrasonicSensor_demo.gif" width="100%">
 
 ---
 ### まとめ
 
-- 
-
+- 超音波センサは，返ってくるまでにかかった時間から，対象物がどのくらい遠くにあるかを計算できる
+- 実際にはセンサから出てくる信号を使いやすい単位（cmなど）に直す．
 
 ---
 
