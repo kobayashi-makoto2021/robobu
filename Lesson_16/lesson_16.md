@@ -30,34 +30,6 @@
 - [ ] USBケーブルx 1
 - [ ] パソコン x 1
 
-#### 1.ArduinoIDEを起動しよう（復習）
-
-デスクトップにあるAruduinoのアイコンをダブルクリックしてArduinoIDEを起動しましょう．
-
-<img src="image/ArduinoIDE_icon.png" width="10%">
-
-#### 2.スケッチを保存しよう（復習）
-
-(Arduinoでは，プログラムのことを「スケッチ」といいます．)
-
-ファイル→保存をクリック（Ctrl+SでもOK）して，デスクトップに「name_lesson_16_1」という名前で保存しましょう．
-
-<img src="image/ArduinoIDE_save.png" width="50%">
-
-#### 3.Arduinoとパソコンを接続しよう（復習）
-
-Arduino UNOボードとパソコンをUSBケーブルでつなぎましょう．
-
-<img src="image/Arduino_USBcable.png" width="20%">
-
-【注意】USBを抜き差しするときは向きを確認して，ていねいにあつかうこと．
-
-USBを差したら，ArduinoIDEでポートを指定しましょう．
-
-ツール→シリアルポートをクリックして，「COM～（Arduino UNO）」となっているものをクリックしましょう．（COM～の数字は毎回変わります．）
-
-<img src="image/ArduinoIDE_port_setting.png" width="70%">
-
 
 ---
 ## ミッションチャレンジ
@@ -259,9 +231,6 @@ void loop()
 
 - 赤外線受信モジュールを使うためのライブラリは`IRremote.h`
 - サーボモーターを使うためのライブラリは`Servo.h`
-
-
----
 
 #### 出来たことをチェックしよう
 - [ ] ブレッドボードにサーボモーターと赤外線受信モジュールを使った回路を作ることが出来る
