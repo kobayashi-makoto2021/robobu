@@ -14,41 +14,6 @@
 - [ ] （発展）テレビなどのリモコンを使ってロボットを動かすことが出来る
 
 ---
-
-#### 0.ArduinoIDEを起動しよう
-
-デスクトップにあるAruduinoのアイコンをダブルクリックしてArduinoIDEを起動しましょう．
-
-<img src="image/ArduinoIDE_icon.png" width="10%">
-
----
-
-#### 1.スケッチを保存しよう
-
-(Arduinoでは，プログラムのことを「スケッチ」といいます．)
-
-ファイル→保存をクリック（Ctrl+SでもOK）して，デスクトップに「lesson_10_1」という名前で保存しましょう．
-
-
-<img src="image/ArduinoIDE_save.png" width="50%">
-
----
-#### 2.Arduinoとパソコンを接続しよう
-
-Arduino UNOボードとパソコンをUSBケーブルでつなぎましょう．
-
-<img src="image/Arduino_USBcable.png" width="30%">
-
-【注意】USBを抜き差しするときは向きを確認して，ていねいにあつかうこと．
-
-USBを差したら，ArduinoIDEでボードとシリアルポートを指定しましょう．　　
-
-ツール→ボードをクリックして、Arduino/Genuino UNOをクリックしましょう。　　
-
-次にツール→シリアルポートをクリックして，「COM～（Arduino UNO）」となっているものをクリックしましょう．（COM～の数字は毎回変わります．）
-
-<img src="image/ArduinoIDE_port_setting.png" width="100%">
-
 ---
 
 ### ミッションチャレンジ
@@ -73,31 +38,10 @@ USBを差したら，ArduinoIDEでボードとシリアルポートを指定し�
 
 
 #### （復習）IRremote**ライブラリ**を追加しよう
-Arduinoライブラリとは？
-Arduinoライブラリとはプログラムを費やす時間を短縮できたり、難しいプログラムを自分で組まなくても、ライブラリから利用することで効率的に開発ができる優れたものなんだよ！
-実際にプログラムをお仕事にしている人たちもライブラリを駆使して、プログラムを作っているよ。
-ライブラリをArduinoIDEに追加する方法はいくつかあるけど、今回はGitHubと呼ばれるサイトからzipファイルでインストールする方法をやってみよう！
-まずは赤外線受信モジュール用のライブラリのサイトにアクセスしよう！  
-↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓  
-[IRremote Arduino Library](https://github.com/Arduino-IRremote/Arduino-IRremote)
 
-サイトにアクセスしたら、緑色に書いてあるCodeというボタンを押してみよう。
-<img src="image/library1.png" width="100%">  
-
-そうしたら、Download ZIPを押して、ライブラリをダウンロードしよう。
-
-<img src="image/library2.png" width="100%">  
-
-ダウンロードが終わったら、Arduino IDEに戻って
-スケッチ→ライブラリをインクルード→ZIP形式のライブラリをインストールを押そう！
-
-<img src="image/library3.png" width="100%"> 
-
-さっきサイトからダウンロードしたライブラリのzipファイルを探して、最後に開くボタンを押すとインクルードできるよ。
-
-<img src="image/library4.png" width="100%"> 
-
-- [ ] （復習）IRremoteライブラリを追加できる
+ライブラリが入ってなかったときには[レッスン8](https://github.com/kobayashi-makoto2021/robobu/blob/main/Lesson_08/lesson_8.md)をみよう！
+**（復習）**
+- [ ]IRremoteライブラリを追加できる
 
 
 #### サンプルスケッチを実行して、実験してみよう
@@ -395,9 +339,9 @@ void loop(){
 
 ### まとめ
 
-リモコンのボタンを押すと赤外線の文字情報が出力される。
+リモコンのボタンを押したときの赤外線の信号を出力。
 
-出力された情報を今回ロボットに取り付けた赤外線センサが読み取ることでロボットが動く。
+出力された信号にロボットの動きを割り当てる。
 
 
 ### 出来たことをチェックしよう

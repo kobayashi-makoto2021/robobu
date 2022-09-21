@@ -29,29 +29,12 @@
 
 - [ ] パソコン x 1
 
-- [ ] M / Mジャンパー線 x 1
+- [ ] メス-メス ジャンパー線 x 1
 
 - [ ] 赤外線受信機　x 1
 
 - [ ] リモートコントローラ　x 1
 
-
----
-
-#### 0.ArduinoIDEを起動して白紙のスケッチを保存しよう
-
-1. 「ファイル」＞「新規ファイル」　で白紙のスケッチを作成
-2.  「ファイル」＞「名前をつけて保存」でファイルを保存。ファイル名は分かりやすいものにしておこう。
-
-#### 1.Arduinoとパソコンを接続しよう
-
-Arduino UNOボードとパソコンをUSBケーブルでつなぎましょう．
-
-<img src="image/Arduino_USBcable.png" width="30%">
-
-シリアルポートとの接続もしておこう。
-
-<img src="image/ArduinoIDE_port_setting.png" width="100%">
 
 ---
 
@@ -68,7 +51,6 @@ Arduino UNOボードとパソコンをUSBケーブルでつなぎましょう．
 #### ジャンパー線を使って赤外線受信モジュールの配線しよう
 赤外線受信機とブレッドボード、Arduino、ジャンパー線を使って写真と同じように配線してみよう.
 
-<<<<<<< HEAD:Lesson_08/lesson_8.md
 <img src="image/wire1_v1.png" width="70%">  
 
 実際に回路を作るとこんな感じになるよ！
@@ -79,9 +61,10 @@ Arduino UNOボードとパソコンをUSBケーブルでつなぎましょう．
 
 - [ ]  赤外線が身近に利用されているものは何だろう？ノートに書こう。
 - [ ] ジャンパー線を使って赤外線受信モジュールの配線ができたらチェックしよう。
-=======
+
 <img src="image/wire_fritzing.png" width="70%">  
- 
+
+**できたらチェック** 
 - [ ] ジャンパー線を使って赤外線受信モジュールの配線ができる
 
 
@@ -93,8 +76,8 @@ Arduinoライブラリとは世界中のプログラマが作ってくれた便�
 実際にプログラムをお仕事にしている人たちもライブラリを駆使して、プログラムを作っているよ。
 ライブラリをArduinoIDEに追加する方法はいくつかあるけど、今回はGitHubと呼ばれるサイトからzipファイルでインストールする方法をやってみよう！
 まずは赤外線受信モジュール用のライブラリのサイトにアクセスしよう！  
-↓↓↓↓↓↓↓↓↓↓クリック↓↓↓↓↓↓↓↓↓↓↓↓↓↓  
-[IRremote Arduino Library](https://github.com/Arduino-IRremote/Arduino-IRremote)
+
+[IRremote Arduino Library](https://github.com/Arduino-IRremote/Arduino-IRremote)　←　クリックしよう
 
 サイトにアクセスしたら、緑色に書いてあるCodeというボタンを押してみよう。
 
@@ -206,12 +189,12 @@ void loop(){
     Serial.print(",　ビット: ");  //bitsを送信する         
     Serial.println(results.bits); //bitsを結果に出力する
     //「OK」ボタンが押されたら、LEDが光る
-    if(results.value==0x******){
+    if(results.value==0x******){  // ←【ここを書き換えよう】
       digitalWrite(3, HIGH);
       Serial.print("HIGH\n");
       }
     //「#」ボタンが押されたら、LEDが消える
-    if(results.value==0x******){
+    if(results.value==0x******){  // ←【ここを書き換えよう】
       digitalWrite(3, LOW);
       Serial.print("LOW\n");
     }
@@ -265,6 +248,7 @@ void loop(){
 
 #### 身の回りにある赤外線リモコンの信号を確認してみよう
 赤外線リモコンは世界で一番機械を操作するために使われているリモコンだよ。テレビのリモコンやエアコンのリモコンも赤外線で動いているよ。びっくりなことに今回使っている赤外線受信モジュールは市販の赤外線エアコンの信号を受け取ることができるよ！最初のサンプルプログラムで赤外線受信モジュールにリモコンを近づけてみて、どんな信号が出るか確認してみよう！
+
 <img src="image/coolercontroloverview.jpg" width="70%"> 
 
 <img src="image/serialmoniter3.png" >
