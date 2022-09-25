@@ -41,8 +41,8 @@ ArduinoIDEを開き，ファイル→名前を付けて保存をクリックし�
 
 
 ``` C++
-#define echoPin 3
-#define trigPin 2
+#define echoPin 2
+#define trigPin 3
 
 void setup() {
   Serial.begin (9600);
