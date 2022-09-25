@@ -117,8 +117,8 @@ ArduinoIDEを開き，ファイル→名前を付けて保存をクリックし�
 スケッチに以下のコードをコピー＆ペーストして，スケッチを実行してみよう．
 
 ``` C++
-#define echoPin 3
-#define trigPin 2
+#define echoPin 2
+#define trigPin 3
 #define LEDPin 8
 
 void setup() {
@@ -167,8 +167,8 @@ ArduinoIDEを開き，ファイル→名前を付けて保存をクリックし�
 スケッチに以下のコードをコピー＆ペーストして，スケッチを実行してみよう．
 
 ``` C++
-#define echoPin 3
-#define trigPin 2
+#define echoPin 2
+#define trigPin 3
 #define LEDPin 9
 
 void setup() {
