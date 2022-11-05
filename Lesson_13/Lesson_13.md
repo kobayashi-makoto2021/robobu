@@ -61,25 +61,26 @@ void loop(){
   int s4 = digitalRead(ir4);  //右センサー
   int s5 = digitalRead(ir5);  //右端のセンサ
  
- Serial.print(!s1);
+  Serial.print(!s1);
   Serial.print(!s2);
   Serial.print(!s3);
   Serial.print(!s4);
   Serial.println(!s5);
-    delay(500);
+  delay(500);
 }
 ```
 - [ ] サンプルコードが実行できたらチェック！
 
 ### 特定の反応の時にPCに〇を表示しよう！
 ``` C++
-    Serial.print(State0);
-    Serial.print(State1);
-    Serial.print(State2);
-    Serial.print(State3);
-    Serial.print(State4);
+  Serial.print(!s1);
+  Serial.print(!s2);
+  Serial.print(!s3);
+  Serial.print(!s4);
+  Serial.println(!s5);
 ```
-の部分をコメントアウトして**00110**の時にPCに〇を表示するプログラムを書いてみよう！できたら先生に見せよう！
+この後にif文を追加して　「00011」　のときに「ok!」を表示してみよう。
+if文は[レッスン３](https://github.com/kobayashi-makoto2021/robobu/blob/main/Lesson_03/lesson_03.md)も確認しよう！
 
 ### まとめ
 - [ ] トラッキングセンサーはdigital.Readで読むことができる
