@@ -119,7 +119,7 @@ ArduinoIDEを開き，ファイル→名前を付けて保存をクリックし�
 ``` C++
 #define echoPin 2
 #define trigPin 3
-#define LEDPin 8
+#define LEDPin 9
 
 void setup() {
   Serial.begin (9600);
