@@ -1,6 +1,6 @@
 # レッスン17 迷路チャレンジ！(2)
 
-## **ロボットの超音波センサを工夫して決められた迷路をクリアしよう！
+## ロボットの超音波センサを工夫して決められた迷路をクリアしよう！
 
 ## このレッスンで身につける力
 
@@ -68,23 +68,10 @@ USBを差したら，ArduinoIDEでボードとシリアルポートを指定し�
 ### サンプルスケッチを実行して、実験してみよう
 スケッチに以下のコードをコピー＆ペーストして、スケッチを実行してみよう。
 
-<details><summary>サンプルコードはここからコピー＆ペーストしよう</summary><div>
 
 ```C++
-/*  ___   ___  ___  _   _  ___   ___   ____ ___  ____  
- * / _ \ /___)/ _ \| | | |/ _ \ / _ \ / ___) _ \|    \ 
- *| |_| |___ | |_| | |_| | |_| | |_| ( (__| |_| | | | |
- * \___/(___/ \___/ \__  |\___/ \___(_)____)___/|_|_|_|
- *                  (____/ 
- * Arduino Smart Car Tutorial Lesson 5
- * Tutorial URL http://osoyoo.com/2018/12/19/osoyoo-robot-car-kit-lesson-4-obstacle-avoidance-robot-car/
- * CopyRight www.osoyoo.com
 
- * This project will show you how to make Osoyoo robot car in auto drive mode and avoid obstacles
- *   
- * 
- */
-  #include <Servo.h>
+#include <Servo.h>
 /*Declare L298N Dual H-Bridge Motor Controller directly since there is not a library to load.*/
 //Define L298N Dual H-Bridge Motor Controller Pins
 #define speedPinR 3   // RIGHT PWM pin connect MODEL-X ENA
@@ -374,7 +361,6 @@ void loop() {
 }
 ```
 
-</div></details>
 
 #### 迷路を解いてみよう！
 Lesson7ではセンサに頼ることなく、モータの動く時間で制御して迷路をクリアしたね。今回は超音波センサーを使って迷路をクリアしてみよう
