@@ -72,68 +72,68 @@ USBを差したら，ArduinoIDEでボードとシリアルポートを指定し�
 ```C++
 
 #include <Servo.h>
-/*Declare L298N Dual H-Bridge Motor Controller directly since there is not a library to load.*/
-//Define L298N Dual H-Bridge Motor Controller Pins
-#define speedPinR 3   // RIGHT PWM pin connect MODEL-X ENA
-#define RightDirectPin1  12    //  Right Motor direction pin 1 to MODEL-X IN1 
-#define RightDirectPin2  11    // Right Motor direction pin 2 to MODEL-X IN2
-#define speedPinL 6        //  Left PWM pin connect MODEL-X ENB
-#define LeftDirectPin1  7    // Left Motor direction pin 1 to MODEL-X IN3
-#define LeftDirectPin2  8   ///Left Motor direction pin 1 to MODEL-X IN4
-#define LPT 2 // scan loop coumter
+/*ロードするライブラリがないため、L298NデュアルH-ブリッジモーターコントローラを直接宣言します。*/
+//L298N デュアル H ブリッジ モーター コントローラー ピンの定義
+#define speedPinR 3   // 右側PWM ピン接続 MODEL-X ENA
+#define RightDirectPin1  12    //  右側モーター方向ピン 1 から MODEL-X IN1
+#define RightDirectPin2  11    // 右側モーター方向ピン 2 から MODEL-X IN1
+#define speedPinL 6        //  左側PWM ピン接続 MODEL-X ENB
+#define LeftDirectPin1  7    // 左モーター方向ピン 1 から MODEL-X IN3
+#define LeftDirectPin2  8   // 左モーター方向ピン 2 から MODEL-X IN4
+#define LPT 2 // スキャンループカウンター(ループを数える)
 
-#define SERVO_PIN     9  //servo connect to D9
+#define SERVO_PIN     9  //サーボをD9に接続
 
-#define Echo_PIN    2 // Ultrasonic Echo pin connect to D11
-#define Trig_PIN    10  // Ultrasonic Trig pin connect to D12
+#define Echo_PIN    2 // 超音波エコーピンを D11 に接続
+#define Trig_PIN    10  // 超音波トリガーピンを D12 に接続
 
 #define BUZZ_PIN     13
-#define FAST_SPEED  250     //both sides of the motor speed
-#define SPEED  120     //both sides of the motor speed
-#define TURN_SPEED  200     //both sides of the motor speed
-#define BACK_SPEED1  255     //back speed
-#define BACK_SPEED2  90     //back speed
+#define FAST_SPEED  250     //速いモーター速度
+#define SPEED  120     //モーター速度
+#define TURN_SPEED  200     //曲がるときのモーター速度 
+#define BACK_SPEED1  255     //後退時のモーター速度1
+#define BACK_SPEED2  90     //後退時のモーター速度2
 
 int leftscanval, centerscanval, rightscanval, ldiagonalscanval, rdiagonalscanval;
-const int distancelimit = 30; //distance limit for obstacles in front           
-const int sidedistancelimit = 30; //minimum distance in cm to obstacles at both sides (the car will allow a shorter distance sideways)
+const int distancelimit = 30; //前方障害物の距離制限           
+const int sidedistancelimit = 30; //両側の障害物までの最小距離 (cm) (車は横方向の短い距離を許容します)
 int distance;
 int numcycles = 0;
-const int turntime = 250; //Time the robot spends turning (miliseconds)
-const int backtime = 300; //Time the robot spends turning (miliseconds)
+const int turntime = 250; //ロボットが曲がるのに費やした時間 (ミリ秒)
+const int backtime = 300; //ロボットが後退に費やした時間 (ミリ秒)
 
 int thereis;
 Servo head;
-/*motor control*/
-void go_Advance(void)  //Forward
+/*モーター制御*/
+void go_Advance(void)  //前進
 {
   digitalWrite(RightDirectPin1, HIGH);
   digitalWrite(RightDirectPin2,LOW);
   digitalWrite(LeftDirectPin1,HIGH);
   digitalWrite(LeftDirectPin2,LOW);
 }
-void go_Left()  //Turn left
+void go_Left()  //
 {
   digitalWrite(RightDirectPin1, HIGH);
   digitalWrite(RightDirectPin2,LOW);
   digitalWrite(LeftDirectPin1,LOW);
   digitalWrite(LeftDirectPin2,HIGH);
 }
-void go_Right()  //Turn right
+void go_Right()  //右に曲がる
 {
   digitalWrite(RightDirectPin1, LOW);
   digitalWrite(RightDirectPin2,HIGH);
   digitalWrite(LeftDirectPin1,HIGH);
   digitalWrite(LeftDirectPin2,LOW);
 }
-void go_Back()  //Reverse
+void go_Back()  //後退
 {
   digitalWrite(RightDirectPin1, LOW);
   digitalWrite(RightDirectPin2,HIGH);
   digitalWrite(LeftDirectPin1,LOW);
   digitalWrite(LeftDirectPin2,HIGH);
 }
-void stop_Stop()    //Stop
+void stop_Stop()    //停止
 {
   digitalWrite(RightDirectPin1, LOW);
   digitalWrite(RightDirectPin2,LOW);
@@ -142,14 +142,14 @@ void stop_Stop()    //Stop
   set_Motorspeed(0,0);
 }
 
-/*set motor speed */
+/*モーター速度の設定*/
 void set_Motorspeed(int speed_L,int speed_R)
 {
   analogWrite(speedPinL,speed_L); 
   analogWrite(speedPinR,speed_R);   
 }
 
-void buzz_ON()   //open buzzer
+void buzz_ON()   //ブザーを鳴らす
 {
   
   for(int i=0;i<100;i++)
@@ -160,7 +160,7 @@ void buzz_ON()   //open buzzer
    delay(2);//wait for 1ms
   }
 }
-void buzz_OFF()  //close buzzer
+void buzz_OFF()  //ブザーを止める
 {
   digitalWrite(BUZZ_PIN, HIGH);
   
@@ -171,7 +171,7 @@ void alarm(){
    buzz_OFF();
 }
 
-/*detection of ultrasonic distance*/
+/*超音波距離の検出*/
 int watch(){
   long echo_distance;
   digitalWrite(Trig_PIN,LOW);
@@ -180,16 +180,14 @@ int watch(){
   delayMicroseconds(15);
   digitalWrite(Trig_PIN,LOW);
   echo_distance=pulseIn(Echo_PIN,HIGH);
-  echo_distance=echo_distance*0.01657; //how far away is the object in cm
+  echo_distance=echo_distance*0.01657; //物体までの距離は何cmか？
   //Serial.println((int)echo_distance);
   return round(echo_distance);
 }
-//Meassures distances to the right, left, front, left diagonal, right diagonal and asign them in cm to the variables rightscanval, 
-//leftscanval, centerscanval, ldiagonalscanval and rdiagonalscanval (there are 5 points for distance testing)
+//右、左、前、左対角線、右対角線までの距離を測定し、cm 単位で変数 rightscanval に割り当てます。
+//leftscanval、centerscanval、ldiagonalscanval、rdiagonalscanval (距離のテストには 5 つのポイントがあります)
 String watchsurrounding(){
-/*  obstacle_status is a binary integer, its last 5 digits stands for if there is any obstacles in 5 directions,
- *   for example B101000 last 5 digits is 01000, which stands for Left front has obstacle, B100111 means front, right front and right ha
- */
+/*  Failure_status は 2 進数の整数で、下 5 桁は 5 方向に障害物があるかどうかを表します。　*/
  
 int obstacle_status =B100000;
   centerscanval = watch();
@@ -206,7 +204,7 @@ int obstacle_status =B100000;
     alarm();
      obstacle_status  =obstacle_status | B1000;
     }
-  head.write(170); //Didn't use 180 degrees because my servo is not able to take this angle
+  head.write(170); //注：サーボはこの角度を取ることができないため、180 度を使用しませんでした
   delay(300);
   leftscanval = watch();
   if(leftscanval<sidedistancelimit){
@@ -215,7 +213,7 @@ int obstacle_status =B100000;
      obstacle_status  =obstacle_status | B10000;
     }
 
-  head.write(90); //use 90 degrees if you are moving your servo through the whole 180 degrees
+  head.write(90); //サーボを 180 度全体に動かす場合は、90 度を使用します。
   delay(100);
   centerscanval = watch();
   if(centerscanval<distancelimit){
@@ -239,20 +237,20 @@ int obstacle_status =B100000;
     alarm();
     obstacle_status  =obstacle_status | 1;
     }
-  head.write(90); //Finish looking around (look forward again)
+  head.write(90); //見回し終える(また前を向く)
   delay(300);
    String obstacle_str= String(obstacle_status,BIN);
   obstacle_str= obstacle_str.substring(1,6);
   
-  return obstacle_str; //return 5-character string standing for 5 direction obstacle status
+  return obstacle_str; 
 }
 
 void auto_avoidance(){
 
   ++numcycles;
-  if(numcycles>=LPT){ //Watch if something is around every LPT loops while moving forward 
+  if(numcycles>=LPT){ //前進中にすべてのLPTループの周りに何かがあるかどうかを確認します
      stop_Stop();
-    String obstacle_sign=watchsurrounding(); // 5 digits of obstacle_sign binary value means the 5 direction obstacle status
+    String obstacle_sign=watchsurrounding(); //5桁のobject_signバイナリ値は、5方向の障害ステータスを意味します
       Serial.print("begin str=");
         Serial.println(obstacle_sign);
                     if( obstacle_sign=="10000"){
@@ -280,7 +278,7 @@ void auto_avoidance(){
     } 
     else if( obstacle_sign=="00010" || obstacle_sign=="00111" || obstacle_sign=="00011"  || obstacle_sign=="00101" || obstacle_sign=="00110" || obstacle_sign=="01010" ){
     Serial.println("hand left");
-     go_Left();//Turn left
+     go_Left();//左に曲がる
      set_Motorspeed(TURN_SPEED,TURN_SPEED);
       delay(turntime);
       stop_Stop();
@@ -302,51 +300,51 @@ void auto_avoidance(){
         }    
   
         else Serial.println("no handle");
-    numcycles=0; //Restart count of cycles
+    numcycles=0; //サイクルの再開回数
   } else {
      set_Motorspeed(SPEED,SPEED);
-     go_Advance();  // if nothing is wrong go forward using go() function above.
+     go_Advance();  // 何も問題がなければ、上記の go() 関数を使用して先に進みます。
         delay(backtime);
           stop_Stop();
   }
   
   //else  Serial.println(numcycles);
   
-  distance = watch(); // use the watch() function to see if anything is ahead (when the robot is just moving forward and not looking around it will test the distance in front)
-  if (distance<distancelimit){ // The robot will just stop if it is completely sure there's an obstacle ahead (must test 25 times) (needed to ignore ultrasonic sensor's false signals)
+  distance = watch(); // watch() 関数を使用して、前方に何かがあるかどうかを確認します (ロボットが前進しているだけで周囲を見回していない場合、前方の距離をテストします)
+  if (distance<distancelimit){ //前方に障害物があると完全に確信できる場合、ロボットは停止します (25 回テストする必要があります) (超音波センサーの誤信号を無視する必要があります)。
  Serial.println("final go back");
     go_Right();
     set_Motorspeed( SPEED,FAST_SPEED);
   delay(backtime*3/2);
       ++thereis;}
   if (distance>distancelimit){
-      thereis=0;} //Count is restarted
+      thereis=0;} //カウント再開
   if (thereis > 25){
   Serial.println("final stop");
-    stop_Stop(); // Since something is ahead, stop moving.
+    stop_Stop(); //何かが先にあるので、動きを止めてください。
     thereis=0;
   }
 }
 
 void setup() {
-  /*setup L298N pin mode*/
+  /*L298N pin モードのセットアップ*/
   pinMode(RightDirectPin1, OUTPUT); 
   pinMode(RightDirectPin2, OUTPUT); 
   pinMode(speedPinL, OUTPUT);  
   pinMode(LeftDirectPin1, OUTPUT);
   pinMode(LeftDirectPin2, OUTPUT); 
   pinMode(speedPinR, OUTPUT); 
-  stop_Stop();//stop move
-  /*init HC-SR04*/
+  stop_Stop();//動きを止める
+  /*HC-SR04の初期化*/
   pinMode(Trig_PIN, OUTPUT); 
   pinMode(Echo_PIN,INPUT); 
-  /*init buzzer*/
+  /*ブザーの初期化*/
   pinMode(BUZZ_PIN, OUTPUT);
   digitalWrite(BUZZ_PIN, HIGH);  
   buzz_OFF(); 
 
   digitalWrite(Trig_PIN,LOW);
-  /*init servo*/
+  /*サーボの初期化*/
   head.attach(SERVO_PIN); 
   head.write(90);
    delay(2000);
