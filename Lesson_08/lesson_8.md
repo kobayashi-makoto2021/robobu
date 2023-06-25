@@ -77,13 +77,9 @@ Arduinoライブラリとは世界中のプログラマが作ってくれた便�
 ライブラリをArduinoIDEに追加する方法はいくつかあるけど、今回はGitHubと呼ばれるサイトからzipファイルでインストールする方法をやってみよう！
 まずは赤外線受信モジュール用のライブラリのサイトにアクセスしよう！  
 
-[IRremote Arduino Library](https://github.com/Arduino-IRremote/Arduino-IRremote)　←　クリックしよう
+[IRremote Arduino Library](https://osoyoo.com/wp-content/uploads/samplecode/IRremote.zip)　←　クリックしよう
 
-サイトにアクセスしたら、緑色に書いてあるCodeというボタンを押してみよう。
-
-<img src="image/library1.png" width="70%">  
-
-そうすると、Download ZIPを押して、ライブラリをダウンロードしよう。
+そうするとダウンロードする場所を聞くダイアログが開くので「デスクトップ」を選んでダウンロードしよう。
 
 <img src="image/library2.png" width="70%">  
 
