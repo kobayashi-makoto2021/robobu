@@ -14,7 +14,7 @@
 
 ## ミッションの準備
 
-## ハードウェアを用意しよう
+### ハードウェアを用意しよう
 - [ ] Osoyoo ロボット(Arduino UNO rev.3と完全互換) x 1
 - [ ] USBケーブル x 1
 - [ ] パソコン x 1
@@ -703,6 +703,7 @@ void printWifiStatus()
 <img src="image/kensakumado.png" width="70%"> 
 
 そこに教室のSSIDを先生に教えてもらって入力しましょう。「” ”」で囲まれた中を編集します。大文字小文字も区別して入力してください。同じようにその下の行にある「YOUR_ROUTER_WIFI_PASSWORD」も書き換えます。
+<img src="image/your_router_ssid.png" width="70%"> 
 
 書き換えたら、アプリを開き右上の「 Setting 」のボタンを教えてセッティング画面を開きましょう。そこの「IP Address」にロボットに割り当てられたIPアドレスを入力します。
 <img src="image/set1.jpg" width="70%"> 
