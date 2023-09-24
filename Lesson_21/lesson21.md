@@ -66,7 +66,7 @@ Osoyooロボットカーのグループが2つ必要で、各グループには�
 
 ステップ 1:次のリンクからスケッチをダウンロードしてプログラムを動かしてみよう。
 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓  
-[WiFiEsp Library](https://osoyoo.com/driver/WiFiEsp-master.zip)　　
+[サンプルコード](https://github.com/kobayashi-makoto2021/robobu/tree/main/Lesson_21/sample)　　
 
 
 ステップ 2: チームAロボットのv2smartcar-lesson8Aフォルダーにコード「v2smartcar-lesson8A.ino」をアップロードし、チームBロボットのv2smartcar-lesson8Bフォルダーにコード「v2smartcar-lesson8B.ino」をアップロードします。
