@@ -2,7 +2,7 @@
 
 ## ロボットの超音波センサを工夫して決められた迷路をクリアしよう！
 
-## このレッスンで身につける力
+### このレッスンで身につける力
 
 - [ ] 超音波センサを正しく取り付けることができる
 - [ ] ジャンパーワイヤーを正しく接続できる
@@ -13,9 +13,9 @@
 
 ---
 
-## ミッションの準備
+### ミッションの準備
 
-## ハードウェアを用意しよう
+#### 0.必要なハードウェアを用意しよう
 - [ ] Osoyoo ロボット(Arduino UNO rev.3と完全互換) x 1
 - [ ] USBケーブル x 1
 - [ ] パソコン x 1
@@ -23,51 +23,44 @@
 - [ ] サーボモータ x 1
 - [ ] 取り付け用ねじなど
 ---
-#### 0.ArduinoIDEを起動しよう
+#### 1.ハードウェアを取り付けよう
+##### ジャンパーピンを取り外そう
+以前のレッスンで使ったジャンパーピンは一度すべて取り外します。
 
-デスクトップにあるAruduinoのアイコンをダブルクリックしてArduinoIDEを起動しましょう．
+##### 超音波センサーとホルダーを取り付ける
+<img src="image/hardware_setup00.jpg" width="50%">
+M1.4*8ネジとナットを使ってホルダーと超音波センサーを固定します。ねじとナットが小さいので注意しよう。
+<img src="image/hardware_setup01.jpg" width="50%">
 
-<img src="image/ArduinoIDE_icon.png" width="10%">
+##### 上シャーシを外してモータードライバーとサーボモーターをつなげよう
+1. 上シャーシを外します。
+2. 下シャーシのモータードライバーとサーボモーターのジャンパーワイヤーを取り付けます。<img src="image/hardware_setup02.jpg" width="50%">
+3. モータードライバーからジャンパー線を一本出しておきます。
 
----
+#### サーボモーターを上シャーシに取り付けよう
+<img src="image/hardware_setup03.jpg" width="50%">
+<img src="image/hardware_setup04.jpg" width="50%">
 
-#### 1.スケッチを保存しよう
+##### ブザーを取り付けよう
+<img src="image/hardware_setup05.jpg" width="50%">
 
-(Arduinoでは，プログラムのことを「スケッチ」といいます．)
+##### ジャンパーピンを取り付けよう
+下の図を見ながらジャンパーピンを取り付ける。
+<img src="image/1.png" width="75%">
+<img src="image/2.png" width="75%">
 
-ファイル→保存をクリック（Ctrl+SでもOK）して，デスクトップに「lesson_08_1」という名前で保存しましょう．
+##### 超音波ホルダーをサーボモータに取り付けよう
+<img src="image/hardware_setup06.jpg" width="50%">
+<img src="image/hardware_setup07.jpg" width="50%">
+後で、ホルダーの位置を調整するのでここでは仮止めでとどめておく。
 
-<img src="image/ArduinoIDE_save.png" width="50%">
+#### 2.ホルダーの位置を調整しよう
+サーボモーターはどのくらい回転しているかを記憶して、正確に回転位置を出せるモーターです。なのではじめの位置を調整する必要があります。
 
----
-#### 2.Arduinoとパソコンを接続しよう
+サーボモーターは壊れやすいので、**無理やり手で回してしまうと簡単に壊れてしまいます。絶対にやめましょう。**
 
-Arduino UNOボードとパソコンをUSBケーブルでつなぎましょう．
-
-<img src="image/Arduino_USBcable.png" width="30%">
-
-【注意】USBを抜き差しするときは向きを確認して，ていねいにあつかうこと．
-
-USBを差したら，ArduinoIDEでボードとシリアルポートを指定しましょう．　　
-
-ツール→ボードをクリックして、Arduino/Genuino UNOをクリックしましょう。　　
-
-次にツール→シリアルポートをクリックして，「COM～（Arduino UNO）」となっているものをクリックしましょう．（COM～の数字は毎回変わります．）
-
-<img src="image/ArduinoIDE_port_setting.png" width="100%">
-
----
-
-## ミッションチャレンジ
-### 配線をしよう
-今回新たに取り付けるのはサーボモータと超音波センサだよ。これらをジャンパー線を用いて配線を行なおう！
-写真と同じようにして配線をしてみよう。
-<img src="image/1.png" width="100%">
-<img src="image/2.png" width="100%">
-
-### サンプルスケッチを実行して、実験してみよう
-スケッチに以下のコードをコピー＆ペーストして、スケッチを実行してみよう。
-
+##### サンプルスケッチを実行してみる
+調整するために、スケッチに以下のコードをコピー＆ペーストして、スケッチを実行してみましょう。超音波センサーが変なところを向いてしまうかもしれません。これを調整します。
 
 ```C++
 
@@ -160,6 +153,18 @@ void buzz_ON()   //ブザーを鳴らす
    delay(2);//wait for 1ms
   }
 }
+
+void atention()   //ブザーを鳴らす
+{
+   for(int i=0;i<3;i++)
+  {
+   digitalWrite(BUZZ_PIN,LOW);
+   delay(200);//wait for 1ms
+   digitalWrite(BUZZ_PIN,HIGH);
+   delay(200);//wait for 1ms
+  }
+}
+
 void buzz_OFF()  //ブザーを止める
 {
   digitalWrite(BUZZ_PIN, HIGH);
@@ -245,7 +250,7 @@ int obstacle_status =B100000;
   return obstacle_str; 
 }
 
-void auto_avoidance(){
+void auto_avoidance(){//障害物を感知して回避する
 
   ++numcycles;
   if(numcycles>=LPT){ //前進中にすべてのLPTループの周りに何かがあるかどうかを確認します
@@ -271,7 +276,7 @@ void auto_avoidance(){
     }
     else if( obstacle_sign=="11100" || obstacle_sign=="01000" || obstacle_sign=="11000"  || obstacle_sign=="10100"  || obstacle_sign=="01100" ||obstacle_sign=="00100"  ||obstacle_sign=="01000" ){
      Serial.println("hand right");
-	    go_Right();
+      go_Right();
       set_Motorspeed(TURN_SPEED,TURN_SPEED);
       delay(turntime);
       stop_Stop();
@@ -286,8 +291,8 @@ void auto_avoidance(){
  
     else if(  obstacle_sign=="01111" ||  obstacle_sign=="10111" || obstacle_sign=="11111"  ){
     Serial.println("hand back right");
-	  go_Left();
-		set_Motorspeed( FAST_SPEED,SPEED);
+    go_Left();
+    set_Motorspeed( FAST_SPEED,SPEED);
        delay(backtime);
           stop_Stop();
         } 
@@ -343,15 +348,16 @@ void setup() {
   digitalWrite(BUZZ_PIN, HIGH);  
   buzz_OFF(); 
 
+  delay(1000);
+  atention();
   digitalWrite(Trig_PIN,LOW);
   /*サーボの初期化*/
   head.attach(SERVO_PIN); 
   head.write(90);
-   delay(2000);
-  
+  /*正面を向いて3秒待機（調整用）*/
+  delay(3000);
+  atention();
   Serial.begin(9600);
- 
- 
 }
 
 void loop() {
@@ -359,16 +365,28 @@ void loop() {
 }
 ```
 
+##### ホルダーを一度取り外して調整する
+プログラムを実行すると、ピピピという音の後に3秒サーボモーターが静止します。ここで電源を切って、ホルダーのねじを取り外して、この位置で超音波センサーが正面に向くように調整しましょう。
 
+調整が成功するとこういう感じになります。※動画
+
+https://www.youtube.com/embed/hYld9d5zTak?si=kk0jfPL_co6i4WDr
+
+---
+### ミッションチャレンジ
 #### 迷路を解いてみよう！
-Lesson7ではセンサに頼ることなく、モータの動く時間で制御して迷路をクリアしたね。今回は超音波センサーを使って迷路をクリアしてみよう!
+今回は超音波センサーを使って迷路をクリアしてみよう!
 
-<img src="image/course.png" width="100%">
+<img src="image/course.png" width="50%">
 
-### 出来たことをチェックしよう
+障害物との距離（distancelimit, sidedistancelimit）やスピード、曲がる時間（turntime, backtime）などを調整して、迷路をクリアーしよう。
+
+### まとめ
+迷路をそうはできたら、このミッションはクリア。できたことをチェックしていこう。
+
+#### 出来たことをチェックしよう
 - [ ] 超音波センサを正しく取り付けることができる
 - [ ] ジャンパーワイヤーを正しく接続できる
-- [ ] トラッキングセンサの感度を調整できる
+- [ ] 超音波センサーの位置を調整できる
 - [ ] サンプルコードを実行できる
-- [ ] 条件式の書き方を理解してコードを修正できる
 - [ ] コースを走破するためにサンプルコードを修正できる
