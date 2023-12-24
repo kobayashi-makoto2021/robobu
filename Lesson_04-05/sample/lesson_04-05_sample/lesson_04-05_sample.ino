@@ -1,10 +1,9 @@
 #define speedPinR 9    //  右側のPWM信号を送信するピンの設定
-#define RightMotorDirPin1  12    //右後ろのモーターの信号ピンの設定 
-#define RightMotorDirPin2  11    //右前のモーターの信号ピンの設定
+#define RightMotorDirPin1  12    //右のモーターの信号ピン1の設定 
+#define RightMotorDirPin2  11    //右のモーターの信号ピン2の設定
 #define speedPinL 6    // 左のPWM信号を送信するピンの設定
-#define LeftMotorDirPin1  7    //左後ろのモーターの信号ピンの設定 
-#define LeftMotorDirPin2  8   //左前のモーターの信号ピンの設定  
-
+#define LeftMotorDirPin1  7    //左のモーターの信号ピン1の設定
+#define LeftMotorDirPin2  8   //左のモーターの信号ピン2の設定
 
 //モーターの制御
 void stop_Stop(int time = 1000)    //ストップ
