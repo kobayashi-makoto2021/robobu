@@ -78,7 +78,7 @@ void loop() {
 
 1. コピー＆ペーストができたら左上の矢印 ![upload_button.png](image/upload_button.png)を押して（またはCtrl＋U），プログラムを書き込みましょう．
 2. 右上の![](image/serial_monitor_button.png)をクリックしましょう．
-3. シリアルモニタが表示されたら，ボーレートを **9600** に，改行の設定を「 **改行なし** 」にしましょう．
+3. シリアルモニタが表示されたら，ボーレートを **9600** になっていることを確認しましょう．なってなかったら変更します。
 
 
 
@@ -201,7 +201,7 @@ void loop() {
 
 **＜実行結果＞**
 
-<img src="image/lesson02_2_ver.1_serialmonitor_result.png" width="70%">
+<img src="image/lesson02_2_ver.3_serialmonitor_result.png" width="70%">
 
 - [ ] 整数型を使ってタイマーを作れたらチェック
 ---
