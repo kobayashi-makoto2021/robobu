@@ -71,7 +71,7 @@ USBを差したら，ArduinoIDEでボードとシリアルポートを指定し�
 
 ツール→ボードをクリックして、Arduino/Genuino UNOをクリックしましょう。　　
 
-次にツール→シリアルポートをクリックして，「COM～（Arduino UNO）」となっているものをクリックしましょう．（COM～の数字は毎回変わります．）
+次にツール→シリアルポートをクリックして，「COM～（USB）」となっているものをクリックしましょう．（COM～の数字は毎回変わります．）
 
 <img src="image/ArduinoIDE_port_setting.png" width="70%">
 
