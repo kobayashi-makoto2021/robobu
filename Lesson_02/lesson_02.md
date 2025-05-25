@@ -21,9 +21,13 @@
 
 #### 1.ArduinoIDEを起動しよう（復習）
 
-デスクトップにあるAruduinoのアイコンをダブルクリックしてArduinoIDEを起動しましょう．
+デスクトップにあるAruduinoのアイコン<img src="image/ArduinoIDE_icon.png" width="10%">をダブルクリックしてArduinoIDEを起動して白紙のスケッチを作っておきましょう．
 
-<img src="image/ArduinoIDE_icon.png" width="10%">
+<img src="image\create_new_sketch.png" width="70%" >
+
+
+
+
 
 #### 2.スケッチを保存しよう（復習）
 
@@ -47,7 +51,7 @@ USBを差したら，ArduinoIDEでポートを指定しましょう．
 
 ツール→シリアルポートをクリックして，「COM～（USB）」となっているものをクリックしましょう．（COM～の数字は毎回変わります．）
 
-<img src="image/ArduinoIDE_port_setting.png" width="70%">
+<img src="image/setting_port.png" width="70%">
 
 
 ---
