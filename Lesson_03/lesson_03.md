@@ -318,7 +318,7 @@ void loop() {
       Serial.println("LEDが消えました!!");
       Serial.println("スイッチをオンにする場合はYもしくはyを入力するとLEDが光るよ");
     }
-    if (ch == '?' || ch == '?')  {  //キーボードのmもしくはMを押すとLEDが光る
+    if (ch == 'm' || ch == 'M')  {  //キーボードのmもしくはMを押すとLEDが光る
       digitalWrite(4, HIGH);
       Serial.println("LEDが光りました!!");
       Serial.println("スイッチをオフにする場合はNまたはnを入力するとLEDが消えるよ!");
