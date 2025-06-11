@@ -23,7 +23,7 @@
 
 #### ハードウェアを用意しよう
 
-- [ ] Osoyoo UNO Board（ Arduino UNO rev.3と完全互換）x 1 ** ※ロボットカーから取り外す **
+- [ ] Osoyoo UNO Board（ Arduino UNO rev.3と完全互換）x 1 **※ロボットカーから取り外す**
 
 - [ ] USBケーブルx 1
 
