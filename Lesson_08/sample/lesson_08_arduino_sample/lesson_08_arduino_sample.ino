@@ -1,4 +1,4 @@
-#include <IRremote.h>  // IRRemote.hをインクルード
+#include <IRremote.h>  // IRRemote.hをインクルード ここでライブラリが使えるようになる
 const int irReceiverPin = 2;  ///受信モジュールのSIGはpin2
 IRrecv irrecv(irReceiverPin); //IRrecvタイプの変数を作成します
 decode_results results;    // 結果
