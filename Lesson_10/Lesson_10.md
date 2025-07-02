@@ -53,12 +53,13 @@
 #define IR_PIN    10 //赤外線レシーバ信号ピンはArduinoピンD 10に接続 
  IRrecv IR(IR_PIN);  //  IRrecvオブジェクトIRリモコンからコードを取得する
  decode_results IRresults;   
-#define speedPinR 9    //  RIGHT PWMピン接続MODEL-X ENA
-#define RightDirectPin1  12    //右モーター方向ピン1~MODEL-X IN 1
-#define RightDirectPin2  11    //右モーター方向ピン2からMODEL-X IN 2
-#define speedPinL 6    // 左PWMピン接続MODEL-X ENB
-#define LeftDirectPin1  7    //左モーター方向ピン1~MODEL-X IN 3
-#define LeftDirectPin2  8   //左モーター方向ピン1~MODEL-X IN 4
+
+#define speedPinR 9    //  右側のPWM信号を送信するピンの設定
+#define RightMotorDirPin1  12    //右のモーターの信号ピン1の設定 
+#define RightMotorDirPin2  11    //右のモーターの信号ピン2の設定
+#define speedPinL 6    // 左のPWM信号を送信するピンの設定
+#define LeftMotorDirPin1  7    //左のモーターの信号ピン1の設定
+#define LeftMotorDirPin2  8   //左のモーターの信号ピン2の設定
 
  #define IR_ADVANCE       0x00FF18E7       //IRコントローラー 「▲」 ボタンのコード
  #define IR_BACK          0x00FF4AB5       //IRコントローラー 「▼」 ボタンのコード
@@ -165,26 +166,33 @@ void do_IR_Tick()
 {
   if(IR.decode(&IRresults))
   {
+    Serial.print(IRresults.value,HEX); //シリアルに値を出力する
     if(IRresults.value==IR_ADVANCE)
     {
       Drive_Num=GO_ADVANCE;
+      Serial.print(" >> GO_ADVANCE");
     }
     else if(IRresults.value==IR_RIGHT)
     {
        Drive_Num=GO_RIGHT;
+       Serial.print(" >> GO_RIGHT");
     }
     else if(IRresults.value==IR_LEFT)
     {
        Drive_Num=GO_LEFT;
+       Serial.print(" >> GO_LEFT");
     }
     else if(IRresults.value==IR_BACK)
     {
         Drive_Num=GO_BACK;
+        Serial.print(" >> GO_BACK");
     }
     else if(IRresults.value==IR_STOP)
     {
         Drive_Num=STOP_STOP;
+        Serial.print(" >> STOP_STOP");
     }
+    Serial.println("");
     IRresults.value = 0;
     IR.resume();
   }
@@ -196,25 +204,25 @@ void do_Drive_Tick()
     switch (Drive_Num) 
     {
       case GO_ADVANCE://GO_ADVANCEコードが検出された場合、前に進みます。
-        go_Advance(200, 1000);
+        go_Advance(200, 1000); //ここのパラメータを調整しよう
         JogFlag = true;
         JogTimeCnt = 1;
         JogTime=millis();
         break;
-      case GO_LEFT: 
-        go_Left(200, 1000);//GO_LEFTコードが検出された場合は、左に曲がります。
+      case GO_LEFT: //GO_LEFTコードが検出された場合は、左に曲がります。
+        go_Left(200, 1000);//ここのパラメータを調整しよう
         JogFlag = true;
         JogTimeCnt = 1;
         JogTime=millis();
         break;
       case GO_RIGHT://GO_RIGHTコードが検出された場合は右に曲がる
-        go_Right(200, 1000);
+        go_Right(200, 1000);//ここのパラメータを調整しよう
         JogFlag = true;
         JogTimeCnt = 1;
         JogTime=millis();
         break;
       case GO_BACK://GO_BACKコードが検出された場合、バックします
-        go_Back(200, 1000);
+        go_Back(200, 1000);//ここのパラメータを調整しよう
         JogFlag = true;
         JogTimeCnt = 1;
         JogTime=millis();
@@ -248,18 +256,24 @@ void do_Drive_Tick()
 
 void setup()
 {
-  //Pinの設定を行う
-  pinMode(RightDirectPin1, OUTPUT); 
-  pinMode(RightDirectPin2, OUTPUT); 
-  pinMode(speedPinL, OUTPUT);  
-  pinMode(LeftDirectPin1, OUTPUT);
-  pinMode(LeftDirectPin2, OUTPUT); 
-  pinMode(speedPinR, OUTPUT); 
-  stop_Stop();
+  //モーターのPinの設定を行う
+  pinMode(RightMotorDirPin1, OUTPUT);
+  pinMode(RightMotorDirPin2, OUTPUT);
+  pinMode(speedPinL, OUTPUT);
 
+  pinMode(LeftMotorDirPin1, OUTPUT);
+  pinMode(LeftMotorDirPin2, OUTPUT);
+  pinMode(speedPinR, OUTPUT);
+  stop_Stop();
+  
+  //赤外線受信機モジュールを有効にする
   pinMode(IR_PIN, INPUT); 
   digitalWrite(IR_PIN, HIGH);  
-  IR.enableIRIn();       
+  IR.enableIRIn();
+
+  //シリアルを初期化し、ボーレートは9600に設定する       
+  Serial.begin(9600);
+  Serial.println("--プログラムスタート！--");
 }
 
 
@@ -320,15 +334,17 @@ void loop()
  #define IR_STOP          0x00FF38C7       //IRコントローラー 「OK」 ボタンのコード
  #define IR_turnsmallleft 0x00FFB04F       //IRコントローラー 「#」 ボタンのコード
 ```
-真ん中あたりに変な数字と文字が混ざった文字が書いてあることを確認しよう！
+コードの中に数字と文字が混ざった「0x00FF18E7」とか「0x00FF10EF」のような文字があることを確認しよう。
 
-「0x00FF18E7」とか「0x00FF10EF」のような文字だよ。
+これらはリモコンのボタンから赤外線センサから出る信号。この信号が来たら、どの動きをするかを割り当ててるんだ。
 
-これらはリモコンのボタンから赤外線センサから出る文字だよ。
+次に、シリアルモニターを使って、リモコンからの信号を確認しよう。
 
-だから「１」とか「２」とかを押すと別な文字情報がリモコンから出てくるんだよ！
+「FF18E7 >> GO_ADVANCE」といった表示が出てくるはず。これはコードの「0x00FF18E7」から「0x00」を取り除いたものだね。この「FF18E7」がリモコンから受け取った信号ということだよ。
 
-豆知識になるけど、身の回りにあるテレビやエアコンのリモコンのボタンも今回使っているリモコンと同じようにボタンを押すといろんな文字情報を発信するんだよ。
+だから「１」とか「２」とかを押すと別な信号がリモコンから出てくるんだよ！
+
+豆知識になるけど、身の回りにあるテレビやエアコンのリモコンのボタンも今回使っているリモコンと同じようにボタンを押すといろん信号を発信するんだよ。
 
 これを利用してテレビやエアコンのリモコンを利用してロボットを動かしてみよう！
 
@@ -336,43 +352,7 @@ void loop()
 
 <img src="image/remotecontrol.jpg" width="70%"> 
 
-用意してもらったんだけど、これらのリモコンのボタンからどんな文字が出てるかがわからないと思うんだ。
-
-だから次のサンプルコードを使って調べてみよう！
-
-```C++
-#include <IRremote.h>  // IRRemote.hをインクルード
-const int irReceiverPin = 2;  ///受信モジュールのSIGはpin2
-IRrecv irrecv(irReceiverPin); //IRrecvタイプの変数を作成します
-decode_results results;    // 結果
-
-void setup(){
-  Serial.begin(9600);    //シリアルを初期化し、ボーレートは9600に設定する
-  irrecv.enableIRIn();   // 赤外線受信機モジュールを有効にする
-  Serial.print("赤外線モジュールサンプルプログラムスタート\n");
-}
-
-void loop(){
-  if (irrecv.decode(&results)){ //赤外線受信機モジュールの受信データ
-    Serial.print("IRコード: ");
-    Serial.print(results.value, HEX); //シリアルに値を出力する
-    Serial.print(",　ビット: ");  //bitsを送信する         
-    Serial.println(results.bits); //bitsを結果に出力する
-    irrecv.resume();// 次の値を受取る
-  }  
-  delay(600); //600ミリ秒待機
-}
-```
-
-今までのレッスンを参考にスケッチをArduinoに書き込もう！
-
-書き込みが終わったら、ツール→シリアルモニタをクリックしてみよう。
-
-そうするとボタンを押すといろんな文字が出てくると思うんだ。
-
-この文字たちを最初のサンプルコードに利用するよ。
-
-今回使ったサンプルコードの上の範囲をもう一度見てみよう。
+用意してもらったんだけど、これらのリモコンのボタンからどんな信号が出てるかを確認してその信号をコードに書き込んで、そのリモコンでロボットを動かしてみよう！
 
 ```C++
  #define IR_ADVANCE       0x00FF18E7       //IRコントローラー 「▲」 ボタンのコード
@@ -382,11 +362,7 @@ void loop(){
  #define IR_STOP          0x00FF38C7       //IRコントローラー 「OK」 ボタンのコード
  #define IR_turnsmallleft 0x00FFB04F       //IRコントローラー 「#」 ボタンのコード
 ```
-こんな感じだったんだと思うけど変な文字が書いてあると思うんだ。
-
-用意してもらったリモコンから出てきた文字と入れ替えることでロボットが動くようになるよ。
-
-文字を入れ替えたらもう一度ロボットを動かしてみよう！
+ここの記述を書き換えればロボットの動きの割り当てを変えることができそうだね！
 
 動いたらコントローラの入れ替えが成功したことになるよ。
 

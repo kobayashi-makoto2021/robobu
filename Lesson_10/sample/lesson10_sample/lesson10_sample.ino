@@ -2,12 +2,13 @@
 #define IR_PIN    10 //赤外線レシーバ信号ピンはArduinoピンD 10に接続 
  IRrecv IR(IR_PIN);  //  IRrecvオブジェクトIRリモコンからコードを取得する
  decode_results IRresults;   
-#define speedPinR 9    //  RIGHT PWMピン接続MODEL-X ENA
-#define RightDirectPin1  12    //右モーター方向ピン1~MODEL-X IN 1
-#define RightDirectPin2  11    //右モーター方向ピン2からMODEL-X IN 2
-#define speedPinL 6    // 左PWMピン接続MODEL-X ENB
-#define LeftDirectPin1  7    //左モーター方向ピン1~MODEL-X IN 3
-#define LeftDirectPin2  8   //左モーター方向ピン1~MODEL-X IN 4
+
+#define speedPinR 9    //  右側のPWM信号を送信するピンの設定
+#define RightMotorDirPin1  12    //右のモーターの信号ピン1の設定 
+#define RightMotorDirPin2  11    //右のモーターの信号ピン2の設定
+#define speedPinL 6    // 左のPWM信号を送信するピンの設定
+#define LeftMotorDirPin1  7    //左のモーターの信号ピン1の設定
+#define LeftMotorDirPin2  8   //左のモーターの信号ピン2の設定
 
  #define IR_ADVANCE       0x00FF18E7       //IRコントローラー 「▲」 ボタンのコード
  #define IR_BACK          0x00FF4AB5       //IRコントローラー 「▼」 ボタンのコード
@@ -114,26 +115,33 @@ void do_IR_Tick()
 {
   if(IR.decode(&IRresults))
   {
+    Serial.print(IRresults.value,HEX); //シリアルに値を出力する
     if(IRresults.value==IR_ADVANCE)
     {
       Drive_Num=GO_ADVANCE;
+      Serial.print(" >> GO_ADVANCE");
     }
     else if(IRresults.value==IR_RIGHT)
     {
        Drive_Num=GO_RIGHT;
+       Serial.print(" >> GO_RIGHT");
     }
     else if(IRresults.value==IR_LEFT)
     {
        Drive_Num=GO_LEFT;
+       Serial.print(" >> GO_LEFT");
     }
     else if(IRresults.value==IR_BACK)
     {
         Drive_Num=GO_BACK;
+        Serial.print(" >> GO_BACK");
     }
     else if(IRresults.value==IR_STOP)
     {
         Drive_Num=STOP_STOP;
+        Serial.print(" >> STOP_STOP");
     }
+    Serial.println("");
     IRresults.value = 0;
     IR.resume();
   }
@@ -145,25 +153,25 @@ void do_Drive_Tick()
     switch (Drive_Num) 
     {
       case GO_ADVANCE://GO_ADVANCEコードが検出された場合、前に進みます。
-        go_Advance(200, 1000);
+        go_Advance(200, 1000); //ここのパラメータを調整しよう
         JogFlag = true;
         JogTimeCnt = 1;
         JogTime=millis();
         break;
-      case GO_LEFT: 
-        go_Left(200, 1000);//GO_LEFTコードが検出された場合は、左に曲がります。
+      case GO_LEFT: //GO_LEFTコードが検出された場合は、左に曲がります。
+        go_Left(200, 1000);//ここのパラメータを調整しよう
         JogFlag = true;
         JogTimeCnt = 1;
         JogTime=millis();
         break;
       case GO_RIGHT://GO_RIGHTコードが検出された場合は右に曲がる
-        go_Right(200, 1000);
+        go_Right(200, 1000);//ここのパラメータを調整しよう
         JogFlag = true;
         JogTimeCnt = 1;
         JogTime=millis();
         break;
       case GO_BACK://GO_BACKコードが検出された場合、バックします
-        go_Back(200, 1000);
+        go_Back(200, 1000);//ここのパラメータを調整しよう
         JogFlag = true;
         JogTimeCnt = 1;
         JogTime=millis();
@@ -197,18 +205,24 @@ void do_Drive_Tick()
 
 void setup()
 {
-  //Pinの設定を行う
-  pinMode(RightDirectPin1, OUTPUT); 
-  pinMode(RightDirectPin2, OUTPUT); 
-  pinMode(speedPinL, OUTPUT);  
-  pinMode(LeftDirectPin1, OUTPUT);
-  pinMode(LeftDirectPin2, OUTPUT); 
-  pinMode(speedPinR, OUTPUT); 
-  stop_Stop();
+  //モーターのPinの設定を行う
+  pinMode(RightMotorDirPin1, OUTPUT);
+  pinMode(RightMotorDirPin2, OUTPUT);
+  pinMode(speedPinL, OUTPUT);
 
+  pinMode(LeftMotorDirPin1, OUTPUT);
+  pinMode(LeftMotorDirPin2, OUTPUT);
+  pinMode(speedPinR, OUTPUT);
+  stop_Stop();
+  
+  //赤外線受信機モジュールを有効にする
   pinMode(IR_PIN, INPUT); 
   digitalWrite(IR_PIN, HIGH);  
-  IR.enableIRIn();       
+  IR.enableIRIn();
+
+  //シリアルを初期化し、ボーレートは9600に設定する       
+  Serial.begin(9600);
+  Serial.println("--プログラムスタート！--");
 }
 
 
