@@ -83,51 +83,81 @@ uint16_t JogTimeCnt = 0;
 uint32_t JogTime=0;
 uint8_t motor_update_flag = 0;
 /***************モーター制御***************/
-void go_Advance(void)  //前進
+void stop_Stop(int time = 1000)    //ストップ
 {
-  digitalWrite(RightDirectPin1, HIGH);
-  digitalWrite(RightDirectPin2,LOW);
-  digitalWrite(LeftDirectPin1,HIGH);
-  digitalWrite(LeftDirectPin2,LOW);
-  analogWrite(speedPinL,255);
-  analogWrite(speedPinR,255);
+  digitalWrite(RightMotorDirPin1, LOW);
+  digitalWrite(RightMotorDirPin2, LOW);
+  digitalWrite(LeftMotorDirPin1, LOW);
+  digitalWrite(LeftMotorDirPin2, LOW);
+  delay(time);
 }
-void go_Left(int t=0)  //左折
+
+void go_Advance(int speed = 200, int time = 0)  //前に進む関数
 {
-  digitalWrite(RightDirectPin1, HIGH);
-  digitalWrite(RightDirectPin2,LOW);
-  digitalWrite(LeftDirectPin1,LOW);
-  digitalWrite(LeftDirectPin2,HIGH);
-  analogWrite(speedPinL,200);
-  analogWrite(speedPinR,200);
-  delay(t);
+  digitalWrite(RightMotorDirPin1, HIGH);
+  digitalWrite(RightMotorDirPin2, LOW);
+  digitalWrite(LeftMotorDirPin1, HIGH);
+  digitalWrite(LeftMotorDirPin2, LOW);
+  analogWrite(speedPinL, speed);
+  analogWrite(speedPinR, speed);
+  if (time == 0) {
+    ;
+  } else {
+    delay(time);
+    stop_Stop();
+  }
 }
-void go_Right(int t=0)  //右折
+void go_Left(int speed = 200, int time = 0) //左に旋回する関数
 {
-  digitalWrite(RightDirectPin1, LOW);
-  digitalWrite(RightDirectPin2,HIGH);
-  digitalWrite(LeftDirectPin1,HIGH);
-  digitalWrite(LeftDirectPin2,LOW);
-  analogWrite(speedPinL,200);
-  analogWrite(speedPinR,200);
-  delay(t);
+  digitalWrite(RightMotorDirPin1, HIGH);
+  digitalWrite(RightMotorDirPin2, LOW);
+  digitalWrite(LeftMotorDirPin1, LOW);
+  digitalWrite(LeftMotorDirPin2, HIGH);
+  analogWrite(speedPinL, speed);
+  analogWrite(speedPinR, speed);
+  if (time == 0) {
+    ;
+  } else {
+    delay(time);
+    stop_Stop();
+  }
 }
-void go_Back(int t=0)  //後進
+void go_Right(int speed = 200, int time = 0) //右に旋回する関数
 {
-  digitalWrite(RightDirectPin1, LOW);
-  digitalWrite(RightDirectPin2,HIGH);
-  digitalWrite(LeftDirectPin1,LOW);
-  digitalWrite(LeftDirectPin2,HIGH);
-  analogWrite(speedPinL,255);
-  analogWrite(speedPinR,255);
-  delay(t);
+  digitalWrite(RightMotorDirPin1, LOW);
+  digitalWrite(RightMotorDirPin2, HIGH);
+  digitalWrite(LeftMotorDirPin1, HIGH);
+  digitalWrite(LeftMotorDirPin2, LOW);
+  analogWrite(speedPinL, speed);
+  analogWrite(speedPinR, speed);
+  if (time == 0) {
+    ;
+  } else {
+    delay(time);
+    stop_Stop();
+  }
 }
-void stop_Stop()    //止まる
+void go_Back(int speed = 200, int time = 0) //後ろに下がる関数
 {
-  digitalWrite(RightDirectPin1, LOW);
-  digitalWrite(RightDirectPin2,LOW);
-  digitalWrite(LeftDirectPin1,LOW);
-  digitalWrite(LeftDirectPin2,LOW);
+  digitalWrite(RightMotorDirPin1, LOW);
+  digitalWrite(RightMotorDirPin2, HIGH);
+  digitalWrite(LeftMotorDirPin1, LOW);
+  digitalWrite(LeftMotorDirPin2, HIGH);
+  analogWrite(speedPinL, speed);
+  analogWrite(speedPinR, speed);
+  if (time == 0) {
+    ;
+  } else {
+    delay(time);
+    stop_Stop();
+  }
+}
+
+//モーター速度の設定
+void set_Motorspeed(int speed_L, int speed_R)
+{
+  analogWrite(speedPinL, speed_L);
+  analogWrite(speedPinR, speed_R);
 }
 
 /**************赤外線コードを検出する***************/
@@ -165,11 +195,34 @@ void do_Drive_Tick()
 {
     switch (Drive_Num) 
     {
-      case GO_ADVANCE:go_Advance();JogFlag = true;JogTimeCnt = 1;JogTime=millis();break;//GO_ADVANCEコードが検出された場合、次に進みます。
-      case GO_LEFT: go_Left();JogFlag = true;JogTimeCnt = 1;JogTime=millis();break;//GO_LEFTコードが検出された場合は、左に曲がります。
-      case GO_RIGHT:  go_Right();JogFlag = true;JogTimeCnt = 1;JogTime=millis();break;//GO_RIGHTコードが検出された場合は右に曲がる
-      case GO_BACK: go_Back();JogFlag = true;JogTimeCnt = 1;JogTime=millis();break;//GO_BACKコードが検出された場合、逆方向
-      case STOP_STOP: stop_Stop();JogTime = 0;break;//stop
+      case GO_ADVANCE://GO_ADVANCEコードが検出された場合、前に進みます。
+        go_Advance(200, 1000);
+        JogFlag = true;
+        JogTimeCnt = 1;
+        JogTime=millis();
+        break;
+      case GO_LEFT: 
+        go_Left(200, 1000);//GO_LEFTコードが検出された場合は、左に曲がります。
+        JogFlag = true;
+        JogTimeCnt = 1;
+        JogTime=millis();
+        break;
+      case GO_RIGHT://GO_RIGHTコードが検出された場合は右に曲がる
+        go_Right(200, 1000);
+        JogFlag = true;
+        JogTimeCnt = 1;
+        JogTime=millis();
+        break;
+      case GO_BACK://GO_BACKコードが検出された場合、バックします
+        go_Back(200, 1000);
+        JogFlag = true;
+        JogTimeCnt = 1;
+        JogTime=millis();
+        break;
+      case STOP_STOP://STOP_STOPコードが検出された場合、ストップします。
+        stop_Stop();
+        JogTime = 0;
+        break;
       default:break;
     }
     Drive_Num=DEF;
@@ -195,6 +248,7 @@ void do_Drive_Tick()
 
 void setup()
 {
+  //Pinの設定を行う
   pinMode(RightDirectPin1, OUTPUT); 
   pinMode(RightDirectPin2, OUTPUT); 
   pinMode(speedPinL, OUTPUT);  
@@ -214,6 +268,7 @@ void loop()
   do_IR_Tick();
   do_Drive_Tick();
 }
+
 ```
 
 今までのレッスンを参考にスケッチをArduinoに書き込もう！
