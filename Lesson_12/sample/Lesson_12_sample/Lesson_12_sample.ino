@@ -1,9 +1,9 @@
 #define speedPinR 9          //PWM右ピン接続
-#define RightDirectPin1  12  //右モーター方向ピン1
-#define RightDirectPin2  11  //右モーター方向ピン2
+#define RightMotorDirPin1  12  //右モーター方向ピン1
+#define RightMotorDirPin2  11  //右モーター方向ピン2
 #define speedPinL 6          //PWM右ピン接続
-#define LeftDirectPin1  7    //左モーター方向ピン
-#define LeftDirectPin2  8    //左モーター方向ピン
+#define LeftMotorDirPin1  7    //左モーター方向ピン
+#define LeftMotorDirPin2  8    //左モーター方向ピン
 
 
 /*左からD 3、A 1-A 3、D 10に接続します*/
@@ -11,70 +11,135 @@
 #define LeftObstacleSensor 3   //左障害物センサーからD3
 
 #define SPEED   180 //モータ速度
-void go_Advance(void)  //前進
+/***************モーター制御***************/
+void stop_Stop(int time = 1000)    //ストップ
 {
-  digitalWrite(RightDirectPin1, HIGH);
-  digitalWrite(RightDirectPin2,LOW);
-  digitalWrite(LeftDirectPin1,HIGH);
-  digitalWrite(LeftDirectPin2,LOW);
-    set_Motorspeed(SPEED,SPEED);
+  digitalWrite(RightMotorDirPin1, LOW);
+  digitalWrite(RightMotorDirPin2, LOW);
+  digitalWrite(LeftMotorDirPin1, LOW);
+  digitalWrite(LeftMotorDirPin2, LOW);
+  delay(time);
 }
-void back_Right(void)  //左折
+
+void go_Advance(int speed = 200, int time = 0)  //前に進む関数
 {
-  digitalWrite(RightDirectPin1, HIGH);
-  digitalWrite(RightDirectPin2,LOW);
-  digitalWrite(LeftDirectPin1,LOW);
-  digitalWrite(LeftDirectPin2,HIGH);
-    set_Motorspeed(SPEED,0);
+  digitalWrite(RightMotorDirPin1, HIGH);
+  digitalWrite(RightMotorDirPin2, LOW);
+  digitalWrite(LeftMotorDirPin1, HIGH);
+  digitalWrite(LeftMotorDirPin2, LOW);
+  analogWrite(speedPinL, speed);
+  analogWrite(speedPinR, speed);
+  if (time == 0) {
+    ;
+  } else {
+    delay(time);
+    stop_Stop();
+  }
 }
-void back_Left(void)  //右折
+void go_Left(int speed = 200, int time = 0) //左に旋回する関数
 {
-  digitalWrite(RightDirectPin1, LOW);
-  digitalWrite(RightDirectPin2,HIGH);
-  digitalWrite(LeftDirectPin1,HIGH);
-  digitalWrite(LeftDirectPin2,LOW);
-    set_Motorspeed(0,SPEED);
+  digitalWrite(RightMotorDirPin1, HIGH);
+  digitalWrite(RightMotorDirPin2, LOW);
+  digitalWrite(LeftMotorDirPin1, LOW);
+  digitalWrite(LeftMotorDirPin2, HIGH);
+  analogWrite(speedPinL, speed);
+  analogWrite(speedPinR, speed);
+  if (time == 0) {
+    ;
+  } else {
+    delay(time);
+    stop_Stop();
+  }
 }
-void go_Back(void)  //後進
+void go_Right(int speed = 200, int time = 0) //右に旋回する関数
 {
-  digitalWrite(RightDirectPin1, LOW);
-  digitalWrite(RightDirectPin2,HIGH);
-  digitalWrite(LeftDirectPin1,LOW);
-  digitalWrite(LeftDirectPin2,HIGH);
-    set_Motorspeed(SPEED,SPEED);
+  digitalWrite(RightMotorDirPin1, LOW);
+  digitalWrite(RightMotorDirPin2, HIGH);
+  digitalWrite(LeftMotorDirPin1, HIGH);
+  digitalWrite(LeftMotorDirPin2, LOW);
+  analogWrite(speedPinL, speed);
+  analogWrite(speedPinR, speed);
+  if (time == 0) {
+    ;
+  } else {
+    delay(time);
+    stop_Stop();
+  }
 }
-void stop_Stop()    //止まる
+void go_Back(int speed = 200, int time = 0) //後ろに下がる関数
 {
-  digitalWrite(RightDirectPin1, LOW);
-  digitalWrite(RightDirectPin2,LOW);
-  digitalWrite(LeftDirectPin1,LOW);
-  digitalWrite(LeftDirectPin2,LOW);
+  digitalWrite(RightMotorDirPin1, LOW);
+  digitalWrite(RightMotorDirPin2, HIGH);
+  digitalWrite(LeftMotorDirPin1, LOW);
+  digitalWrite(LeftMotorDirPin2, HIGH);
+  analogWrite(speedPinL, speed);
+  analogWrite(speedPinR, speed);
+  if (time == 0) {
+    ;
+  } else {
+    delay(time);
+    stop_Stop();
+  }
 }
-/*モーター速度を設定*/
-void set_Motorspeed(int speed_L,int speed_R)
+
+
+void back_Right(int speed = 200, int time = 0)  //左折
 {
-  analogWrite(speedPinL,speed_L); 
-  analogWrite(speedPinR,speed_R);   
+  digitalWrite(RightMotorDirPin1, HIGH);
+  digitalWrite(RightMotorDirPin2,LOW);
+  digitalWrite(LeftMotorDirPin1,LOW);
+  digitalWrite(LeftMotorDirPin2,HIGH);
+  analogWrite(speedPinL, speed);
+  analogWrite(speedPinR, speed);
+  if (time == 0) {
+    ;
+  } else {
+    delay(time);
+    stop_Stop();
+  }
 }
+void back_Left(int speed = 200, int time = 0)  //右折
+{
+  digitalWrite(RightMotorDirPin1, LOW);
+  digitalWrite(RightMotorDirPin2,HIGH);
+  digitalWrite(LeftMotorDirPin1,HIGH);
+  digitalWrite(LeftMotorDirPin1,LOW);
+  analogWrite(speedPinL, speed);
+  analogWrite(speedPinR, speed);
+  if (time == 0) {
+    ;
+  } else {
+    delay(time);
+    stop_Stop();
+  }
+}
+
+//モーター速度の設定
+void set_Motorspeed(int speed_L, int speed_R)
+{
+  analogWrite(speedPinL, speed_L);
+  analogWrite(speedPinR, speed_R);
+}
+
 
 void setup()
 {
  pinMode(speedPinL,OUTPUT); //左モーターPWMピン
  pinMode(speedPinR,OUTPUT); //右モーターPWMピン
- pinMode(RightDirectPin1,OUTPUT); //左モーター方向ピン1
- pinMode(RightDirectPin2,OUTPUT); //左モーター方向ピン2
- pinMode(LeftDirectPin1,OUTPUT);  //右モーター方向ピン1
- pinMode(LeftDirectPin2,OUTPUT);  //右モーター方向ピン2
+ pinMode(RightMotorDirPin1,OUTPUT); //左モーター方向ピン1
+ pinMode(RightMotorDirPin2,OUTPUT); //左モーター方向ピン2
+ pinMode(LeftMotorDirPin1,OUTPUT);  //右モーター方向ピン1
+ pinMode(LeftMotorDirPin2,OUTPUT);  //右モーター方向ピン2
 
   /*障害物センサ初期設定 */
  pinMode(RightObstacleSensor,INPUT); 
-  pinMode(LeftObstacleSensor,INPUT); 
+ pinMode(LeftObstacleSensor,INPUT); 
  Serial.begin(9600);
 }
 
 void auto_following(){
  int IRvalueLeft= digitalRead(RightObstacleSensor);
-  int IRvalueRight=digitalRead(LeftObstacleSensor);
+ int IRvalueRight=digitalRead(LeftObstacleSensor);
  if (IRvalueLeft==LOW && IRvalueRight==LOW)
  { 
   //両方のセンサーが障害物を検出しました。先に進みます。
