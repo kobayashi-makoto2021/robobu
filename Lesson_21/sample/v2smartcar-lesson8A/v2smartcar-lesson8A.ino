@@ -1,6 +1,7 @@
 #include <SoftwareSerial.h>
 SoftwareSerial BTSerial(4, 5);  //RX,TX
 #include <IRremote.h>
+
  #define RECV_PIN   10 // IR receiver pin connect to D10
 IRrecv irrecv(RECV_PIN);
 IRsend irsend;
