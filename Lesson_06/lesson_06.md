@@ -21,118 +21,31 @@
 
 #### 1. ArduinoIDEを起動して白紙のスケッチを作ろう<br>
 最初にArduinoIDEを起動しよう。次に起動したらスケッチに名前を付けてデスクトップに保存してみよう。やり方が分からなかったらレッスン1のテキストを見て復習しよう！
-#### 2. サンプルコードをコピー&ペーストしよう<br>
-サンプルコードを1で作ったスケッチにコピー&ペーストしよう
+#### 2. motor_driver.h をスケッチフォルダにコピーしよう<br>
+`Lesson_common` フォルダにある `motor_driver.h` を、今回のスケッチフォルダにコピーしよう。
+
+```
+lesson_06_sample/
+├── lesson_06_sample.ino
+└── motor_driver.h     ← ここにコピー
+```
+
+#### 3. サンプルコードをコピー&ペーストしよう<br>
+サンプルコードを2で作ったスケッチにコピー&ペーストしよう
+
 ```C++
-#define speedPinR 9    //  右側のPWM信号を送信するピンの設定
-#define RightMotorDirPin1  12    //右後ろのモーターの信号ピンの設定 
-#define RightMotorDirPin2  11    //右前のモーターの信号ピンの設定
-#define speedPinL 6    // 左のPWM信号を送信するピンの設定
-#define LeftMotorDirPin1  7    //左後ろのモーターの信号ピンの設定 
-#define LeftMotorDirPin2  8   //左前のモーターの信号ピンの設定  
-
-
-//モーターの制御
-void stop_Stop(int time = 1000)    //ストップ
-{
-  digitalWrite(RightMotorDirPin1, LOW);
-  digitalWrite(RightMotorDirPin2, LOW);
-  digitalWrite(LeftMotorDirPin1, LOW);
-  digitalWrite(LeftMotorDirPin2, LOW);
-  delay(time);
-}
-
-void go_Advance(int speed = 200, int time = 0)  //前に進む関数
-{
-  digitalWrite(RightMotorDirPin1, HIGH);
-  digitalWrite(RightMotorDirPin2, LOW);
-  digitalWrite(LeftMotorDirPin1, HIGH);
-  digitalWrite(LeftMotorDirPin2, LOW);
-  analogWrite(speedPinL, speed);
-  analogWrite(speedPinR, speed);
-  if (time == 0) {
-    ;
-  } else {
-    delay(time);
-    stop_Stop();
-  }
-}
-void go_Left(int speed = 200, int time = 0) //左に旋回する関数
-{
-  digitalWrite(RightMotorDirPin1, HIGH);
-  digitalWrite(RightMotorDirPin2, LOW);
-  digitalWrite(LeftMotorDirPin1, LOW);
-  digitalWrite(LeftMotorDirPin2, HIGH);
-  analogWrite(speedPinL, speed);
-  analogWrite(speedPinR, speed);
-  if (time == 0) {
-    ;
-  } else {
-    delay(time);
-    stop_Stop();
-  }
-}
-void go_Right(int speed = 200, int time = 0) //右に旋回する関数
-{
-  digitalWrite(RightMotorDirPin1, LOW);
-  digitalWrite(RightMotorDirPin2, HIGH);
-  digitalWrite(LeftMotorDirPin1, HIGH);
-  digitalWrite(LeftMotorDirPin2, LOW);
-  analogWrite(speedPinL, speed);
-  analogWrite(speedPinR, speed);
-  if (time == 0) {
-    ;
-  } else {
-    delay(time);
-    stop_Stop();
-  }
-}
-void go_Back(int speed = 200, int time = 0) //後ろに下がる関数
-{
-  digitalWrite(RightMotorDirPin1, LOW);
-  digitalWrite(RightMotorDirPin2, HIGH);
-  digitalWrite(LeftMotorDirPin1, LOW);
-  digitalWrite(LeftMotorDirPin2, HIGH);
-  analogWrite(speedPinL, speed);
-  analogWrite(speedPinR, speed);
-  if (time == 0) {
-    ;
-  } else {
-    delay(time);
-    stop_Stop();
-  }
-}
-
-//モーター速度の設定
-void set_Motorspeed(int speed_L, int speed_R)
-{
-  analogWrite(speedPinL, speed_L);
-  analogWrite(speedPinR, speed_R);
-}
-
-//ピンの初期化
-void init_GPIO()
-{
-  pinMode(RightMotorDirPin1, OUTPUT);
-  pinMode(RightMotorDirPin2, OUTPUT);
-  pinMode(speedPinL, OUTPUT);
-
-  pinMode(LeftMotorDirPin1, OUTPUT);
-  pinMode(LeftMotorDirPin2, OUTPUT);
-  pinMode(speedPinR, OUTPUT);
-  stop_Stop();
-}
+#include "motor_driver.h"  // モーター制御ライブラリ
 
 void setup()
 {
-  init_GPIO();
+  init_GPIO();  // ピンの初期化
 
-//ここから下にプログラムを書く
+  // ここから下にプログラムを書く
 
 }
 
 void loop() {
-} 
+}
 ```
 ---
 
