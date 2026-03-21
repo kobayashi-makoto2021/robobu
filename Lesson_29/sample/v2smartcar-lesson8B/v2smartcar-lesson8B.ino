@@ -1,14 +1,10 @@
 #include <SoftwareSerial.h>
-#include <IRremote.h>
+#include <IRremote.hpp>
 #include "motor_driver.h"  // 標準モーター制御ライブラリ（ENA=D3, ENB=D6 など）
 
 SoftwareSerial BTSerial(4, 5);  // Bluetooth RX=D4, TX=D5
 
 #define RECV_PIN    10  // 赤外線受信モジュール → D10
-IRrecv irrecv(RECV_PIN);
-IRsend irsend;
-decode_results results;
-int buttonState;
 
 #define BUZZ_PIN    13   // ブザー → D13
 #define IR_BULLET    0xBBB  // 受け取る弾のコード（チームAから飛んでくる）
@@ -21,6 +17,8 @@ int buttonState;
 char buffUART[MAX_PACKETSIZE];
 unsigned int buffUARTIndex = 0;
 unsigned long preUARTTick = 0;
+
+int buttonState;
 
 // 斜め移動（back_Left / back_Right）
 void back_Left()  { go_Right(); set_Motorspeed(0, TURNSPEED); }
@@ -90,11 +88,7 @@ void shoot()
 {
   Serial.print("shooting bullet :");
   Serial.println(MY_BULLET, HEX);
-  for (int i = 0; i < 3; i++)
-  {
-    irsend.sendSony(MY_BULLET, 12);
-    delay(40);
-  }
+  IrSender.sendSony(MY_BULLET, 12, 3);  // Sonyプロトコルで3回送信
 }
 
 // 被弾したときの動作
@@ -126,7 +120,8 @@ void setup()
 {
   init_GPIO();  // モーターピンを初期化
 
-  irrecv.enableIRIn();
+  IrReceiver.begin(RECV_PIN, ENABLE_LED_FEEDBACK);  // 赤外線受信モジュールを有効にする
+  IrSender.begin(DISABLE_LED_FEEDBACK);              // 赤外線送信モジュールを有効にする
 
   pinMode(BUZZ_PIN, OUTPUT);
   buzz_OFF();
@@ -140,17 +135,16 @@ void loop()
 {
   if (buttonState) {
     buttonState = 0;
-    irrecv.enableIRIn();
-    irrecv.resume();
+    IrReceiver.resume();  // 発射後に受信を再開する
   }
-  else if (irrecv.decode(&results)) {
-    int data = results.value;
+  else if (IrReceiver.decode()) {
+    int data = IrReceiver.decodedIRData.decodedRawData;
     Serial.print("ir code:");
     Serial.println(data);
+    IrReceiver.resume();
     if (data == IR_BULLET) {
       deadAlarm();
     }
-    irrecv.resume();
   }
   lastButtonState = buttonState;
   do_Uart_Tick();

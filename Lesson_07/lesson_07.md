@@ -51,40 +51,42 @@ void loop() {
 
 ### サンプルコードを実行しよう！
 ```C++
-#include <IRremote.h>
-const int irReceiverPin =3; //受信モジュールのSIGはpin3
-const int buzzerPin = 13;//13ピンをブザーに接続します
-IRrecv irrecv(irReceiverPin); //IRrecv タイプの変数を作成します
-decode_results results;
+#include <IRremote.hpp>
+#define IR_PIN 3
+const int buzzerPin = 13;  // 13ピンをブザーに接続します
+
+uint32_t irCode = 0;  // 受信したコードを保存する
+
 void setup()
 {
-  pinMode(buzzerPin,OUTPUT);//ブザーピンを出力として設定します
-  digitalWrite(buzzerPin,HIGH);
-  Serial.begin(9600);//irrecvを初期化します。
-  irrecv.enableIRIn(); // ir受信機モジュールを有効にする
+  pinMode(buzzerPin, OUTPUT);  // ブザーピンを出力として設定します
+  digitalWrite(buzzerPin, HIGH);
+  Serial.begin(9600);
+  IrReceiver.begin(IR_PIN, ENABLE_LED_FEEDBACK);  // 赤外線受信機を有効にする
 }
-void loop() 
-{
-  if (irrecv.decode(&results)) //赤外線受信モジュールの受信データ
-  { 
-    Serial.print("irCode: "); //"irCode: "を送信する出力
-    Serial.print(results.value, HEX); //値を16進数で出力します
-    Serial.print(", bits: "); //" , bits: " を送信する
-    Serial.println(results.bits); //bitsを結果に出力する
-    irrecv.resume(); // Receive the next value 
-  } 
 
-  if(results.value == 0xFF38C7)//「OK」ボタンを押すと、受信モジュールは0xFF38C7を受信します
+void loop()
+{
+  if (IrReceiver.decode())  // 赤外線受信モジュールの受信データ
   {
-    digitalWrite(buzzerPin,LOW);//ブザーのビーブ音（低音）
+    Serial.print("irCode: ");
+    Serial.print(IrReceiver.decodedIRData.decodedRawData, HEX);  // 値を16進数で出力します
+    Serial.print(", bits: ");
+    Serial.println(IrReceiver.decodedIRData.numberOfBits);        // ビット数を出力する
+    irCode = IrReceiver.decodedIRData.decodedRawData;
+    IrReceiver.resume();  // 次のデータを受信する
+  }
+
+  if (irCode == 0xFF38C7)  // 「OK」ボタンを押すと0xFF38C7を受信します
+  {
+    digitalWrite(buzzerPin, LOW);   // ブザーのビーブ音（低音）
   }
   else
   {
-    digitalWrite(buzzerPin,HIGH);//stop beep
+    digitalWrite(buzzerPin, HIGH);  // ブザーを止める
   }
-    delay(400); //delay 400ms
+  delay(400);  // 400ms待機
 }
-
 ```
 このプログラムを空のスケッチにコピー&ペーストしよう！
 アップロードが完了後に数秒間待ってからOKボタンを押すとブザーが鳴り続けるよ。止めたかったら他のボタンを押してね。
@@ -98,13 +100,13 @@ OKボタンの他にも音を割り当てられるよ。
 1. ![serial_monitor_button.png](image/serial_monitor_button.png) を押してシリアルモニターから各ボタンの信号を読み取ってみよう。
 2. サンプルコードのOKボタンの信号を読み取った信号に書き換えてみよう。
 ```C++
-if(results.value == 0x{ここに読み取った信号を入力})//「OK」ボタンを押すと、受信モジュールは0xFF38C7を受信します
+if (irCode == 0x{ここに読み取った信号を入力})  // 「OK」ボタンを押すと0xFF38C7を受信します
   {
-    digitalWrite(buzzerPin,LOW);//ブザーのビーブ音（低音）
+    digitalWrite(buzzerPin, LOW);   // ブザーのビーブ音（低音）
   }
   else
   {
-    digitalWrite(buzzerPin,HIGH);//stop beep
+    digitalWrite(buzzerPin, HIGH);  // ブザーを止める
   }
 ```
 

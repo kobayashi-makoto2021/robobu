@@ -49,10 +49,8 @@
 スケッチに以下のコードをコピー＆ペーストして、スケッチを実行してみよう。
 
 ```C++
-#include <IRremote.h>  
-#define IR_PIN    10 //赤外線レシーバ信号ピンはArduinoピンD 10に接続 
- IRrecv IR(IR_PIN);  //  IRrecvオブジェクトIRリモコンからコードを取得する
- decode_results IRresults;   
+#include <IRremote.hpp>
+#define IR_PIN    10  // 赤外線レシーバ信号ピンはArduinoピンD10に接続
 
 #define speedPinR 9    //  右側のPWM信号を送信するピンの設定
 #define RightMotorDirPin1  12    //右のモーターの信号ピン1の設定 
@@ -164,37 +162,37 @@ void set_Motorspeed(int speed_L, int speed_R)
 /**************赤外線コードを検出する***************/
 void do_IR_Tick()
 {
-  if(IR.decode(&IRresults))
+  if (IrReceiver.decode())
   {
-    Serial.print(IRresults.value,HEX); //シリアルに値を出力する
-    if(IRresults.value==IR_ADVANCE)
+    uint32_t code = IrReceiver.decodedIRData.decodedRawData;
+    Serial.print(code, HEX);  // シリアルに値を出力する
+    if (code == IR_ADVANCE)
     {
-      Drive_Num=GO_ADVANCE;
+      Drive_Num = GO_ADVANCE;
       Serial.print(" >> GO_ADVANCE");
     }
-    else if(IRresults.value==IR_RIGHT)
+    else if (code == IR_RIGHT)
     {
-       Drive_Num=GO_RIGHT;
-       Serial.print(" >> GO_RIGHT");
+      Drive_Num = GO_RIGHT;
+      Serial.print(" >> GO_RIGHT");
     }
-    else if(IRresults.value==IR_LEFT)
+    else if (code == IR_LEFT)
     {
-       Drive_Num=GO_LEFT;
-       Serial.print(" >> GO_LEFT");
+      Drive_Num = GO_LEFT;
+      Serial.print(" >> GO_LEFT");
     }
-    else if(IRresults.value==IR_BACK)
+    else if (code == IR_BACK)
     {
-        Drive_Num=GO_BACK;
-        Serial.print(" >> GO_BACK");
+      Drive_Num = GO_BACK;
+      Serial.print(" >> GO_BACK");
     }
-    else if(IRresults.value==IR_STOP)
+    else if (code == IR_STOP)
     {
-        Drive_Num=STOP_STOP;
-        Serial.print(" >> STOP_STOP");
+      Drive_Num = STOP_STOP;
+      Serial.print(" >> STOP_STOP");
     }
     Serial.println("");
-    IRresults.value = 0;
-    IR.resume();
+    IrReceiver.resume();
   }
 }
 
@@ -266,10 +264,8 @@ void setup()
   pinMode(speedPinR, OUTPUT);
   stop_Stop();
   
-  //赤外線受信機モジュールを有効にする
-  pinMode(IR_PIN, INPUT); 
-  digitalWrite(IR_PIN, HIGH);  
-  IR.enableIRIn();
+  // 赤外線受信モジュールを有効にする
+  IrReceiver.begin(IR_PIN, ENABLE_LED_FEEDBACK);
 
   //シリアルを初期化し、ボーレートは9600に設定する       
   Serial.begin(9600);

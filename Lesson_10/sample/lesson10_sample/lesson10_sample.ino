@@ -1,9 +1,7 @@
-#include <IRremote.h>
+#include <IRremote.hpp>
 #include "motor_driver.h"  // 標準モーター制御ライブラリ（ENA=D3, ENB=D6 など）
 
 #define IR_PIN    10  // 赤外線受信モジュールをD10に接続
-IRrecv IR(IR_PIN);
-decode_results IRresults;
 
 // リモコンのボタンコード
 #define IR_ADVANCE       0x00FF18E7  // 「▲」ボタン
@@ -31,37 +29,37 @@ uint32_t JogTime = 0;
 // 赤外線コードを受信して走行状態を更新する
 void do_IR_Tick()
 {
-  if (IR.decode(&IRresults))
+  if (IrReceiver.decode())
   {
-    Serial.print(IRresults.value, HEX);
-    if (IRresults.value == IR_ADVANCE)
+    uint32_t code = IrReceiver.decodedIRData.decodedRawData;
+    Serial.print(code, HEX);
+    if (code == IR_ADVANCE)
     {
       Drive_Num = GO_ADVANCE;
       Serial.print(" >> GO_ADVANCE");
     }
-    else if (IRresults.value == IR_RIGHT)
+    else if (code == IR_RIGHT)
     {
       Drive_Num = GO_RIGHT;
       Serial.print(" >> GO_RIGHT");
     }
-    else if (IRresults.value == IR_LEFT)
+    else if (code == IR_LEFT)
     {
       Drive_Num = GO_LEFT;
       Serial.print(" >> GO_LEFT");
     }
-    else if (IRresults.value == IR_BACK)
+    else if (code == IR_BACK)
     {
       Drive_Num = GO_BACK;
       Serial.print(" >> GO_BACK");
     }
-    else if (IRresults.value == IR_STOP)
+    else if (code == IR_STOP)
     {
       Drive_Num = STOP_STOP;
       Serial.print(" >> STOP_STOP");
     }
     Serial.println("");
-    IRresults.value = 0;
-    IR.resume();
+    IrReceiver.resume();
   }
 }
 
@@ -128,9 +126,7 @@ void setup()
   init_GPIO();  // モーターピンを初期化
 
   // 赤外線受信モジュールを有効にする
-  pinMode(IR_PIN, INPUT);
-  digitalWrite(IR_PIN, HIGH);
-  IR.enableIRIn();
+  IrReceiver.begin(IR_PIN, ENABLE_LED_FEEDBACK);
 
   Serial.begin(9600);
   Serial.println("--プログラムスタート！--");

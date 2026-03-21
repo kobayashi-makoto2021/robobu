@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ロボ部 レッスン一覧</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Hiragino Sans", "Meiryo", sans-serif;
+      font-size: 14px;
+      background: #f5f5f5;
+      color: #333;
+      padding: 32px 24px;
+    }
+
+    header {
+      margin-bottom: 28px;
+    }
+
+    header h1 {
+      font-size: 24px;
+      font-weight: bold;
+      color: #1a1a2e;
+      margin-bottom: 6px;
+    }
+
+    header p {
+      color: #666;
+      font-size: 13px;
+    }
+
+    /* 凡例 */
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #444;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .badge-intro       { background: #e8eaf6; color: #3949ab; }
+    .badge-electronics { background: #e8f5e9; color: #2e7d32; }
+    .badge-robot       { background: #fff3e0; color: #e65100; }
+    .badge-programming { background: #fce4ec; color: #c62828; }
+    .badge-build       { background: #f3e5f5; color: #6a1b9a; }
+    .badge-battle      { background: #fbe9e7; color: #bf360c; }
+
+    /* テーブル */
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 10px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+    }
+
+    thead tr {
+      background: #1a1a2e;
+      color: #fff;
+    }
+
+    thead th {
+      padding: 12px 14px;
+      text-align: left;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #eee;
+      transition: background 0.15s;
+    }
+
+    tbody tr:hover {
+      background: #f9f9ff;
+    }
+
+    /* カテゴリ別の左ボーダー */
+    tr.cat-intro       { border-left: 4px solid #3949ab; }
+    tr.cat-electronics { border-left: 4px solid #43a047; }
+    tr.cat-robot       { border-left: 4px solid #fb8c00; }
+    tr.cat-programming { border-left: 4px solid #e53935; }
+    tr.cat-build       { border-left: 4px solid #8e24aa; }
+    tr.cat-battle      { border-left: 4px solid #f4511e; }
+
+    td {
+      padding: 10px 14px;
+      vertical-align: top;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    td.num {
+      font-size: 12px;
+      color: #888;
+      white-space: nowrap;
+      width: 48px;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    td.title {
+      font-weight: bold;
+      font-size: 13px;
+      min-width: 160px;
+    }
+
+    td.title small {
+      display: block;
+      font-weight: normal;
+      color: #888;
+      font-size: 11px;
+      margin-top: 3px;
+    }
+
+    td.summary {
+      min-width: 200px;
+      max-width: 280px;
+      color: #444;
+    }
+
+    td.skills {
+      min-width: 200px;
+    }
+
+    td.skills ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    td.skills ul li::before {
+      content: "✓ ";
+      color: #43a047;
+      font-size: 11px;
+    }
+
+    td.difficulty {
+      white-space: nowrap;
+      width: 90px;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .stars {
+      color: #f9a825;
+      letter-spacing: 1px;
+      font-size: 14px;
+    }
+
+    .stars-empty {
+      color: #ddd;
+    }
+
+    @media print {
+      body { padding: 10px; font-size: 11px; }
+      .table-wrap { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🤖 ロボ部 レッスン一覧</h1>
+  <p>全 32 レッスン ／ 保護者向け資料</p>
+</header>
+
+<div class="legend">
+  <span class="legend-item"><span class="badge badge-intro">導入</span></span>
+  <span class="legend-item"><span class="badge badge-electronics">電子部品</span> ブレッドボードで回路を作る</span>
+  <span class="legend-item"><span class="badge badge-robot">ロボット</span> ロボットにプログラムを書く</span>
+  <span class="legend-item"><span class="badge badge-programming">プログラミング</span> 構文・アルゴリズムを学ぶ</span>
+  <span class="legend-item"><span class="badge badge-build">製作</span> オリジナルロボットを作る</span>
+  <span class="legend-item"><span class="badge badge-battle">対戦</span> ロボット対戦ゲーム</span>
+</div>
+
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr>
+      <th>No.</th>
+      <th>種別</th>
+      <th>タイトル</th>
+      <th>概要</th>
+      <th>身につける力</th>
+      <th>難易度</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <tr class="cat-intro">
+      <td class="num">L00</td>
+      <td><span class="badge badge-intro">導入</span></td>
+      <td class="title">オリエンテーション<small>ロボ部へようこそ！</small></td>
+      <td class="summary">Arduinoとオープンソースの説明。ロボ部の活動内容の紹介とPC基本操作を確認します。</td>
+      <td class="skills"><ul>
+        <li>Arduinoについて説明できる</li>
+        <li>オープンソースの利点を説明できる</li>
+        <li>レッスンに必要なPC操作ができる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★</span><span class="stars-empty">★★★★</span></td>
+    </tr>
+
+    <tr class="cat-electronics">
+      <td class="num">L01</td>
+      <td><span class="badge badge-electronics">電子部品</span></td>
+      <td class="title">Hello World！<small>シリアルモニターに文字を表示</small></td>
+      <td class="summary">ArduinoとPCをUSBでつなぎ、画面に「Hello World！」を表示。プログラミングの第一歩を体験します。</td>
+      <td class="skills"><ul>
+        <li>Arduino IDEを起動・操作できる</li>
+        <li>スケッチにコメントを書ける</li>
+        <li>Serial.println()で文字を表示できる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★</span><span class="stars-empty">★★★</span></td>
+    </tr>
+
+    <tr class="cat-electronics">
+      <td class="num">L02</td>
+      <td><span class="badge badge-electronics">電子部品</span></td>
+      <td class="title">タイマーを作ろう<small>変数・計算・delay()</small></td>
+      <td class="summary">四則演算・変数・delay()を使って、指定した時間を計るタイマーをプログラムします。</td>
+      <td class="skills"><ul>
+        <li>変数（int / float）を使った計算ができる</li>
+        <li>delay()でタイマーを作れる</li>
+        <li>シリアルモニターで結果を確認できる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★</span><span class="stars-empty">★★★</span></td>
+    </tr>
+
+    <tr class="cat-electronics">
+      <td class="num">L03</td>
+      <td><span class="badge badge-electronics">電子部品</span></td>
+      <td class="title">LEDを光らせよう<small>ブレッドボード・if文</small></td>
+      <td class="summary">ブレッドボードでLED回路を作り、シリアルモニターへの入力でON/OFFを切り替えます。</td>
+      <td class="skills"><ul>
+        <li>ブレッドボードで回路を作れる</li>
+        <li>pinMode() / digitalWrite() を使える</li>
+        <li>if文で条件分岐できる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★</span><span class="stars-empty">★★★</span></td>
+    </tr>
+
+    <tr class="cat-robot">
+      <td class="num">L04</td>
+      <td><span class="badge badge-robot">ロボット</span></td>
+      <td class="title">ロボット組み立て (1)<small>シャーシと部品の取り付け</small></td>
+      <td class="summary">ロボットカーキットの部品を確認し、シャーシにモーターやArduinoを組み付けます。</td>
+      <td class="skills"><ul>
+        <li>部品の種類と役割を説明できる</li>
+        <li>モーターをシャーシに固定できる</li>
+        <li>モータードライバーを取り付けられる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★</span><span class="stars-empty">★★★</span></td>
+    </tr>
+
+    <tr class="cat-robot">
+      <td class="num">L05</td>
+      <td><span class="badge badge-robot">ロボット</span></td>
+      <td class="title">ロボット組み立て (2)<small>配線してロボットを動かそう</small></td>
+      <td class="summary">電源・モーターの配線を行い、サンプルコードを書き込んでロボットを初めて走らせます。</td>
+      <td class="skills"><ul>
+        <li>ジャンパーワイヤーを正しく接続できる</li>
+        <li>タイヤ・シャーシを完成させられる</li>
+        <li>サンプルコードでロボットを動かせる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★</span><span class="stars-empty">★★★</span></td>
+    </tr>
+
+    <tr class="cat-robot">
+      <td class="num">L06</td>
+      <td><span class="badge badge-robot">ロボット</span></td>
+      <td class="title">チキンラン！<small>ラインぎりぎりで止まれ</small></td>
+      <td class="summary">前進・後退の命令とスピード・時間を調整し、停止ラインぎりぎりでロボットを止める「チキンラン」に挑戦します。</td>
+      <td class="skills"><ul>
+        <li>ロボットを前進・後退させられる</li>
+        <li>スピードと時間を調整して距離を合わせられる</li>
+        <li>ラインぎりぎりで止まれる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★★</span><span class="stars-empty">★★</span></td>
+    </tr>
+
+    <tr class="cat-electronics">
+      <td class="num">L07</td>
+      <td><span class="badge badge-electronics">電子部品</span></td>
+      <td class="title">赤外線でブザーを鳴らそう<small>リモコン信号でブザーを制御</small></td>
+      <td class="summary">ブレッドボードにブザーと赤外線受信モジュールを接続し、リモコンのボタンに応じてブザーを鳴らします。</td>
+      <td class="skills"><ul>
+        <li>ブザー＋赤外線受信の回路を作れる</li>
+        <li>digitalWrite()で音の鳴らし方を変えられる</li>
+        <li>ボタンごとに音を割り当てられる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★</span><span class="stars-empty">★★★</span></td>
+    </tr>
+
+    <tr class="cat-robot">
+      <td class="num">L08</td>
+      <td><span class="badge badge-robot">ロボット</span></td>
+      <td class="title">ブザーロボット・音デバッグ<small>動きに合わせた音でロボットと「会話」</small></td>
+      <td class="summary">ロボットにブザーを搭載し、前進・後退・旋回ごとに異なる音を鳴らして動作を「聞いて確認」する音デバッグを学びます。</td>
+      <td class="skills"><ul>
+        <li>ブザーをロボットに接続できる</li>
+        <li>動作ごとに異なる音の関数を作れる</li>
+        <li>音でプログラムの動作を確認できる（音デバッグ）</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★★</span><span class="stars-empty">★★</span></td>
+    </tr>
+
+    <tr class="cat-electronics">
+      <td class="num">L09</td>
+      <td><span class="badge badge-electronics">電子部品</span></td>
+      <td class="title">赤外線リモコンを読み取ろう<small>ライブラリを使って信号を解析</small></td>
+      <td class="summary">赤外線受信モジュールの仕組みを学び、付属リモコンの各ボタンが送る信号コードをシリアルモニターで確認します。</td>
+      <td class="skills"><ul>
+        <li>赤外線受信モジュールを説明できる</li>
+        <li>IRremoteライブラリを追加・使用できる</li>
+        <li>各ボタンの信号コードを読み取れる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★★</span><span class="stars-empty">★★</span></td>
+    </tr>
+
+    <tr class="cat-robot">
+      <td class="num">L10</td>
+      <td><span class="badge badge-robot">ロボット</span></td>
+      <td class="title">赤外線リモコンでロボット操縦<small>リモコンでコースを走破</small></td>
+      <td class="summary">赤外線リモコンの信号をロボットに覚えさせ、前後左右をボタンで操縦してコースを走破します。</td>
+      <td class="skills"><ul>
+        <li>赤外線受信モジュールをロボットに取り付けられる</li>
+        <li>ボタンと動作を対応させるコードを書ける</li>
+        <li>リモコン操作でコースを走破できる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★★</span><span class="stars-empty">★★</span></td>
+    </tr>
+
+    <tr class="cat-robot">
+      <td class="num">L11</td>
+      <td><span class="badge badge-robot">ロボット</span></td>
+      <td class="title">迷路チャレンジ！(1)<small>前後左右を組み合わせてゴールへ</small></td>
+      <td class="summary">前進・左折・右折の時間を細かく調整し、指定された迷路コースをプログラムで走破します。</td>
+      <td class="skills"><ul>
+        <li>旋回の時間を調整して方向を合わせられる</li>
+        <li>前進・旋回の組み合わせで迷路を抜けられる</li>
+        <li>コードを繰り返し試して改良できる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★★</span><span class="stars-empty">★★</span></td>
+    </tr>
+
+    <tr class="cat-electronics">
+      <td class="num">L12</td>
+      <td><span class="badge badge-electronics">電子部品</span></td>
+      <td class="title">障害物センサーで人感センサー<small>近づいたらブザーが鳴る！</small></td>
+      <td class="summary">赤外線障害物センサーとブザーをブレッドボードで接続し、物が近づいたら音が鳴る人感センサーを作ります。</td>
+      <td class="skills"><ul>
+        <li>障害物センサーの配線と感度調整ができる</li>
+        <li>digitalRead()でセンサー値を読み取れる</li>
+        <li>10cm以内でブザーを鳴らすコードが書ける</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★</span><span class="stars-empty">★★★</span></td>
+    </tr>
+
+    <tr class="cat-robot">
+      <td class="num">L13</td>
+      <td><span class="badge badge-robot">ロボット</span></td>
+      <td class="title">追いかけロボット<small>物体を検知して自動追尾</small></td>
+      <td class="summary">左右2個の障害物センサーを搭載し、物体が動いた方向にロボットが自動で追いかける「追尾ロボット」を作ります。</td>
+      <td class="skills"><ul>
+        <li>障害物センサー2個の配線ができる</li>
+        <li>左右センサーの値でif文を組み合わせられる</li>
+        <li>追従しやすいようにコードを調整できる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★★</span><span class="stars-empty">★★</span></td>
+    </tr>
+
+    <tr class="cat-robot">
+      <td class="num">L14</td>
+      <td><span class="badge badge-robot">ロボット</span></td>
+      <td class="title">障害物回避ロボット<small>「追いかける」→「逃げる」に改造</small></td>
+      <td class="summary">L13の追いかけロボットのコードをアレンジして、障害物を検知したら自動で逃げる「回避ロボット」に改造します。</td>
+      <td class="skills"><ul>
+        <li>既存コードを読み解いて改造できる</li>
+        <li>if文の条件を反転させて動作を変えられる</li>
+        <li>障害物を避けて自律走行させられる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★★</span><span class="stars-empty">★★</span></td>
+    </tr>
+
+    <tr class="cat-electronics">
+      <td class="num">L15</td>
+      <td><span class="badge badge-electronics">電子部品</span></td>
+      <td class="title">超音波センサーで距離測定<small>distance = duration / 58</small></td>
+      <td class="summary">超音波センサーで距離をセンチ単位で計測し、距離に応じてLEDの明るさが変わる回路をプログラムします。</td>
+      <td class="skills"><ul>
+        <li>超音波センサーの仕組みを説明できる</li>
+        <li>pulseIn()で距離を計算できる</li>
+        <li>map()で値の範囲を変換できる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★★</span><span class="stars-empty">★★</span></td>
+    </tr>
+
+    <tr class="cat-robot">
+      <td class="num">L16</td>
+      <td><span class="badge badge-robot">ロボット</span></td>
+      <td class="title">ライントレース<small>黒いテープのコースを自動走行</small></td>
+      <td class="summary">5チャンネルの赤外線ラインセンサーを使い、黒いテープが貼られたコースをロボットが自動で追いかけます。</td>
+      <td class="skills"><ul>
+        <li>ラインセンサーを正しく取り付けられる</li>
+        <li>複数センサーの値をAND/OR条件で組み合わせられる</li>
+        <li>コースを自律走行させられる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★★★</span><span class="stars-empty">★</span></td>
+    </tr>
+
+    <tr class="cat-electronics">
+      <td class="num">L17</td>
+      <td><span class="badge badge-electronics">電子部品</span></td>
+      <td class="title">リモコンでサーボを動かそう<small>Servo.h + 赤外線リモコン</small></td>
+      <td class="summary">サーボモーターと赤外線リモコンを組み合わせ、ボタンを押すと指定した角度にサーボが動くプログラムを作ります。</td>
+      <td class="skills"><ul>
+        <li>サーボモーターの配線・制御ができる</li>
+        <li>Servo.write()で角度を指定できる</li>
+        <li>リモコンボタンと角度を対応させられる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★★</span><span class="stars-empty">★★</span></td>
+    </tr>
+
+    <tr class="cat-robot">
+      <td class="num">L18</td>
+      <td><span class="badge badge-robot">ロボット</span></td>
+      <td class="title">迷路チャレンジ！(2)<small>超音波センサーで自律回避</small></td>
+      <td class="summary">超音波センサーとサーボモーターを組み合わせ、周囲をスキャンして障害物を自律的に回避する迷路チャレンジです。</td>
+      <td class="skills"><ul>
+        <li>超音波センサーをロボットに取り付けられる</li>
+        <li>サーボでセンサーを左右に向けてスキャンできる</li>
+        <li>自律回避プログラムでコースを走破できる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★★★</span><span class="stars-empty">★</span></td>
+    </tr>
+
+    <tr class="cat-programming">
+      <td class="num">L19</td>
+      <td><span class="badge badge-programming">プログラミング</span></td>
+      <td class="title">for文・while文を学ぼう<small>繰り返し処理でLEDをピカピカ</small></td>
+      <td class="summary">「決まった回数くり返す」for文と「条件が続く間くり返す」while文を学び、LEDの点滅パターンを作ります。</td>
+      <td class="skills"><ul>
+        <li>for文の書き方を理解できる（カウントアップ・ダウン）</li>
+        <li>while文の書き方を理解できる</li>
+        <li>ネストしたfor文で複数のLEDを制御できる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★★</span><span class="stars-empty">★★</span></td>
+    </tr>
+
+    <tr class="cat-electronics">
+      <td class="num">L20</td>
+      <td><span class="badge badge-electronics">電子部品</span></td>
+      <td class="title">WiFi通信の基礎<small>ArduinoをWiFiにつなごう</small></td>
+      <td class="summary">WiFiシールドの取り付けとSSID・パスワードの設定を学び、スマホからArduinoへUDPでデータを送受信します。</td>
+      <td class="skills"><ul>
+        <li>WiFiシールドをArduinoに取り付けられる</li>
+        <li>SSIDとパスワードを設定してWiFiに接続できる</li>
+        <li>UDP通信でデータを送受信できる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★★★</span><span class="stars-empty">★</span></td>
+    </tr>
+
+    <tr class="cat-robot">
+      <td class="num">L21</td>
+      <td><span class="badge badge-robot">ロボット</span></td>
+      <td class="title">WiFiでロボット操縦<small>スマホアプリでワイヤレス操縦</small></td>
+      <td class="summary">WiFiとスマホアプリを使い、タブレットからリアルタイムでロボットを操縦してコースを走破します。</td>
+      <td class="skills"><ul>
+        <li>WiFiライブラリを設定してロボットに接続できる</li>
+        <li>UDPで受け取ったコマンドで走行制御できる</li>
+        <li>スマホ操縦でコースを走破できる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★★★</span><span class="stars-empty">★</span></td>
+    </tr>
+
+    <tr class="cat-programming">
+      <td class="num">L22</td>
+      <td><span class="badge badge-programming">プログラミング</span></td>
+      <td class="title">switch文と自作関数<small>場合分けと「自分だけの命令」</small></td>
+      <td class="summary">複数の条件を整理できるswitch文と、処理をまとめる自作関数の書き方を学びます。シリアル入力で音とLEDを切り替えます。</td>
+      <td class="skills"><ul>
+        <li>switch文を使って多分岐を書ける</li>
+        <li>void 関数名()で自作関数を定義できる</li>
+        <li>入力に応じて異なる動作を割り当てられる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★★</span><span class="stars-empty">★★</span></td>
+    </tr>
+
+    <tr class="cat-electronics">
+      <td class="num">L23</td>
+      <td><span class="badge badge-electronics">電子部品</span></td>
+      <td class="title">Bluetoothでサーボを操作<small>スマホから角度を送信</small></td>
+      <td class="summary">BluetoothモジュールとサーボモーターをArduinoに接続し、スマホアプリから角度データを送ってサーボを動かします。</td>
+      <td class="skills"><ul>
+        <li>Bluetoothモジュール（HC-06）を接続できる</li>
+        <li>SoftwareSerialでBTデータを受信できる</li>
+        <li>受信した数値でサーボ角度を制御できる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★★★</span><span class="stars-empty">★</span></td>
+    </tr>
+
+    <tr class="cat-robot">
+      <td class="num">L24</td>
+      <td><span class="badge badge-robot">ロボット</span></td>
+      <td class="title">Bluetoothでロボット操縦<small>スマホアプリでワイヤレス操縦</small></td>
+      <td class="summary">Bluetoothとスマホアプリを使い、ロボットをワイヤレスで操縦してコースを走破します。WiFiとの違いも体験します。</td>
+      <td class="skills"><ul>
+        <li>Bluetoothモジュールをロボットに接続できる</li>
+        <li>スマホとペアリングして通信できる</li>
+        <li>コマンドと走行を対応させてコースを走破できる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★★★</span><span class="stars-empty">★</span></td>
+    </tr>
+
+    <tr class="cat-build">
+      <td class="num">L25</td>
+      <td><span class="badge badge-build">製作</span></td>
+      <td class="title">オリジナルロボット (1)<small>構想と素材</small></td>
+      <td class="summary">自分だけのロボットのコンセプトを考え、搭載したい機能をリストアップ。アクリル板の特性と端材での試し切りを体験します。</td>
+      <td class="skills"><ul>
+        <li>ロボットのコンセプトと搭載機能を決められる</li>
+        <li>アクリル板の種類と加工の注意点を説明できる</li>
+        <li>端材で直線カットを体験できる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★★</span><span class="stars-empty">★★</span></td>
+    </tr>
+
+    <tr class="cat-build">
+      <td class="num">L26</td>
+      <td><span class="badge badge-build">製作</span></td>
+      <td class="title">オリジナルロボット (2)<small>設計と加工</small></td>
+      <td class="summary">方眼紙に設計図を描き、アクリル板に線引き・穴マーキングをして切り出しと穴あけを行います。</td>
+      <td class="skills"><ul>
+        <li>部品の実寸を測って配置レイアウトを設計できる</li>
+        <li>アクリル板に正確な線引きができる</li>
+        <li>カッターと穴あけ工具でアクリルを加工できる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★★★</span><span class="stars-empty">★</span></td>
+    </tr>
+
+    <tr class="cat-build">
+      <td class="num">L27</td>
+      <td><span class="badge badge-build">製作</span></td>
+      <td class="title">オリジナルロボット (3)<small>組み立て</small></td>
+      <td class="summary">切り出したアクリル板にモーター・センサー・Arduinoを取り付け、タイラップでケーブルを整理します。</td>
+      <td class="skills"><ul>
+        <li>モーターやArduinoをアクリル板に固定できる</li>
+        <li>センサーを正しい向きに配置・配線できる</li>
+        <li>ケーブルを整理して配線を確認できる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★★★</span><span class="stars-empty">★</span></td>
+    </tr>
+
+    <tr class="cat-build">
+      <td class="num">L28</td>
+      <td><span class="badge badge-build">製作</span></td>
+      <td class="title">オリジナルロボット (4)<small>調整と完成</small></td>
+      <td class="summary">過去のレッスンで作ったコードをオリジナルロボットに移植し、音デバッグで動作を確認して完成させます。</td>
+      <td class="skills"><ul>
+        <li>motor_driver.hを使って自分のロボットを動かせる</li>
+        <li>ピン番号を自分の配線に合わせて変更できる</li>
+        <li>テスト→修正を繰り返してロボットを仕上げられる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★★★</span><span class="stars-empty">★</span></td>
+    </tr>
+
+    <tr class="cat-battle">
+      <td class="num">L29</td>
+      <td><span class="badge badge-battle">対戦</span></td>
+      <td class="title">ロボット対戦ゲーム！(1)<small>赤外線「弾」を撃ち合え</small></td>
+      <td class="summary">赤外線センサーで「弾」を発射・受信する対戦ゲームです。サンプルコードを動かして実際に対戦を楽しみます。</td>
+      <td class="skills"><ul>
+        <li>赤外線送受信モジュールを取り付けられる</li>
+        <li>サンプルコードで対戦できる</li>
+        <li>コードを修正して戦略を考えられる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★★★</span><span class="stars-empty">★</span></td>
+    </tr>
+
+    <tr class="cat-battle">
+      <td class="num">L30</td>
+      <td><span class="badge badge-battle">対戦</span></td>
+      <td class="title">ロボット対戦ゲーム！(2)<small>必殺技をプログラム</small></td>
+      <td class="summary">対戦ルールに合わせた「必殺技」をswitch文と自作関数でプログラムし、自分だけの戦略コードを完成させます。</td>
+      <td class="skills"><ul>
+        <li>戦略に基づいて必殺技を構想できる</li>
+        <li>switch文と自作関数で必殺技を実装できる</li>
+        <li>実際の対戦で試して改良できる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★★★★</span></td>
+    </tr>
+
+    <tr class="cat-battle">
+      <td class="num">L31</td>
+      <td><span class="badge badge-battle">対戦</span></td>
+      <td class="title">決勝大会！<small>最強のロボットで頂点を目指せ</small></td>
+      <td class="summary">全員でトーナメントを行う決勝大会です。最終調整を済ませ、これまで学んだすべての技術を総動員して戦います。</td>
+      <td class="skills"><ul>
+        <li>ロボットを最終調整できる</li>
+        <li>対戦を振り返って改善点を見つけられる</li>
+        <li>コース全体で学んだ技術を説明できる</li>
+      </ul></td>
+      <td class="difficulty"><span class="stars">★★★★★</span></td>
+    </tr>
+
+  </tbody>
+</table>
+</div>
+
+</body>
+</html>

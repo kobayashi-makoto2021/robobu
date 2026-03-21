@@ -53,28 +53,26 @@
 
 
 ``` C++
-#include <IRremote.h>  // IRRemote.hの関数を使用する
-const int irReceiverPin = 3;  ///受信モジュールのSIGはpin2
-IRrecv irrecv(irReceiverPin); //IRrecvタイプの変数を作成します
-decode_results results;    // 結果
+#include <IRremote.hpp>  // IRRemote.hpp の関数を使用する
+#define IR_PIN 3  // 受信モジュールのSIGはpin3
 
 void setup()
 {
-  Serial.begin(9600);    //シリアルを初期化し、ボーレートは9600に設定する
-  irrecv.enableIRIn();   // 赤外線受信機モジュールを有効にする
+  Serial.begin(9600);    // シリアルを初期化し、ボーレートは9600に設定する
+  IrReceiver.begin(IR_PIN, ENABLE_LED_FEEDBACK);  // 赤外線受信機モジュールを有効にする
 }
 
-void loop() 
+void loop()
 {
-  if (irrecv.decode(&results)) //赤外線受信機モジュールの受信データ
-  {  
-    Serial.print("irCode: ");    //irCode："の値を送信する 
-    Serial.print(results.value, HEX); //シリアルに値を出力する
-    Serial.print(",  bits: ");  //bitsを送信する         
-    Serial.println(results.bits); //bitsを結果に出力する
-    irrecv.resume();    // 次の値を受取る
-  }  
-  delay(600); //600ミリ秒待機
+  if (IrReceiver.decode())  // 赤外線受信機モジュールの受信データ
+  {
+    Serial.print("irCode: ");
+    Serial.print(IrReceiver.decodedIRData.decodedRawData, HEX);  // シリアルに値を出力する
+    Serial.print(",  bits: ");
+    Serial.println(IrReceiver.decodedIRData.numberOfBits);        // ビット数を出力する
+    IrReceiver.resume();    // 次の値を受取る
+  }
+  delay(600);  // 600ミリ秒待機
 }
 ```
 
@@ -99,53 +97,50 @@ ArduinoIDEを開き，ファイル→名前を付けて保存をクリックし�
 スケッチに以下のコードをコピー＆ペーストして，スケッチを実行してみよう．
 
 ``` C++
-#include <IRremote.h>      //IRremoteライブラリをアルドゥイーノライブラリにコピーする必要があります
+#include <IRremote.hpp>
 #include <Servo.h>
-#define plus 0xFF18E7   //時計回りのボタン
-#define minus 0xFF4AB5  //反時計回りのボタン
+#define plus  0xFF18E7  // 時計回りのボタン
+#define minus 0xFF4AB5  // 反時計回りのボタン
 
-int RECV_PIN = 3;       //赤外線受信機のピン
+const int RECV_PIN = 3;  // 赤外線受信機のピン
 Servo servo;
-int val;                //回転角度
-bool cwRotation, ccwRotation;  //回転の状態
-
-IRrecv irrecv(RECV_PIN);
-
-decode_results results;
+int val;                 // 回転角度
+bool cwRotation, ccwRotation;  // 回転の状態
 
 void setup()
 {
   Serial.begin(9600);
-  irrecv.enableIRIn(); // 受信機を起動する
-  servo.attach(9);     //サーボピン
+  IrReceiver.begin(RECV_PIN, ENABLE_LED_FEEDBACK);  // 受信機を起動する
+  servo.attach(9);  // サーボピン
 }
 
-void loop() 
+void loop()
 {
-  if (irrecv.decode(&results)) {
-    Serial.println(results.value, HEX);
-    irrecv.resume(); // Receive the next value
+  if (IrReceiver.decode()) {
+    uint32_t code = IrReceiver.decodedIRData.decodedRawData;  // コードを保存してから resume
+    Serial.println(code, HEX);
+    IrReceiver.resume();  // 次のデータを受信する
 
-    if (results.value == plus)
+    if (code == plus)
     {
-      cwRotation = !cwRotation;      //回転角度の値を切り替えます
-      ccwRotation = false;         //これ以上回転しません
+      cwRotation = !cwRotation;   // 回転角度の値を切り替えます
+      ccwRotation = false;        // これ以上回転しません
     }
 
-    if (results.value == minus)
+    if (code == minus)
     {
-      ccwRotation = !ccwRotation;   
-      cwRotation = false;            //回転角度の値を切り替えます
+      ccwRotation = !ccwRotation;
+      cwRotation = false;         // 回転角度の値を切り替えます
     }
   }
-  if (cwRotation && (val != 175))  {
-    val++;                         //連動ボタン用
+  if (cwRotation && (val != 175)) {
+    val++;  // 連動ボタン用
   }
-  if (ccwRotation && (val != 0))  {
-    val--;                         //カウンター連動ボタン用
+  if (ccwRotation && (val != 0)) {
+    val--;  // カウンター連動ボタン用
   }
   servo.write(val);
-  delay(20);          //回転速度
+  delay(20);  // 回転速度
 }
 ```
 
@@ -164,13 +159,13 @@ ArduinoIDEを開き，ファイル→名前を付けて保存をクリックし�
 スケッチに以下のコードをコピー＆ペーストして，スケッチを実行してみよう．
 
 ``` C++
-#include <IRremote.h>      //IRremoteライブラリをアルドゥイーノライブラリにコピーする必要があります
+#include <IRremote.hpp>
 #include <Servo.h>
 
-#define RIGHT_ARROW   0xFF5AA5 //時計回りに回転する
-#define LEFT_ARROW    0xFF10EF //反時計回りに回転する
-#define SELECT_BUTTON 0xFF38C7 //サーボの回転位置が中心
-#define BUTTON_0 0xFF9867  //ボタン0〜9を押すと、決まった位置に移動します
+#define RIGHT_ARROW   0xFF5AA5  // 時計回りに回転する
+#define LEFT_ARROW    0xFF10EF  // 反時計回りに回転する
+#define SELECT_BUTTON 0xFF38C7  // サーボの回転位置が中心
+#define BUTTON_0 0xFF9867  // ボタン0〜9を押すと、決まった位置に移動します
 #define BUTTON_1 0xFFA25D  // 20度ずつ回転
 #define BUTTON_2 0xFF629D
 #define BUTTON_3 0xFFE21D
@@ -181,39 +176,38 @@ ArduinoIDEを開き，ファイル→名前を付けて保存をクリックし�
 #define BUTTON_8 0xFFA857
 #define BUTTON_9 0xFF906F
 
-int RECV_PIN = 3;       //赤外線受信機のピン
-int16_t pos;         // サーボ位置を保存する変数を設定する
+const int RECV_PIN = 3;  // 赤外線受信機のピン
+int16_t pos;             // サーボ位置を保存する変数を設定する
 Servo servo;
-IRrecv irrecv(RECV_PIN);
-decode_results results;
 
 void setup()
 {
   Serial.begin(9600);
-  irrecv.enableIRIn(); // 受信機を起動する
-  servo.attach(9);     //サーボピン
-  pos = 90;               // 中間点90度から開始
-  servo.write(pos);     // 初期位置を設定
+  IrReceiver.begin(RECV_PIN, ENABLE_LED_FEEDBACK);  // 受信機を起動する
+  servo.attach(9);   // サーボピン
+  pos = 90;          // 中間点90度から開始
+  servo.write(pos);  // 初期位置を設定
 }
 
 void loop()
 {
-  if (irrecv.decode(&results)) {
-    irrecv.resume(); 
-    switch (results.value) {  //ボタンに応じてサーボを動かす
+  if (IrReceiver.decode()) {
+    uint32_t code = IrReceiver.decodedIRData.decodedRawData;  // コードを保存してから resume
+    IrReceiver.resume();
+    switch (code) {  // ボタンに応じてサーボを動かす
       case LEFT_ARROW:    pos = min(180, pos + 5); break;
-      case RIGHT_ARROW:   pos = max(0, pos - 5); break;
-      case SELECT_BUTTON: pos = 90; break;
-      case BUTTON_0:      pos = 0 * 20; break;
-      case BUTTON_1:      pos = 1 * 20; break;
-      case BUTTON_2:      pos = 2 * 20; break;
-      case BUTTON_3:      pos = 3 * 20; break;
-      case BUTTON_4:      pos = 4 * 20; break;
-      case BUTTON_5:      pos = 5 * 20; break;
-      case BUTTON_6:      pos = 6 * 20; break;
-      case BUTTON_7:      pos = 7 * 20; break;
-      case BUTTON_8:      pos = 8 * 20; break;
-      case BUTTON_9:      pos = 9 * 20; break;
+      case RIGHT_ARROW:   pos = max(0, pos - 5);   break;
+      case SELECT_BUTTON: pos = 90;                 break;
+      case BUTTON_0:      pos = 0 * 20;             break;
+      case BUTTON_1:      pos = 1 * 20;             break;
+      case BUTTON_2:      pos = 2 * 20;             break;
+      case BUTTON_3:      pos = 3 * 20;             break;
+      case BUTTON_4:      pos = 4 * 20;             break;
+      case BUTTON_5:      pos = 5 * 20;             break;
+      case BUTTON_6:      pos = 6 * 20;             break;
+      case BUTTON_7:      pos = 7 * 20;             break;
+      case BUTTON_8:      pos = 8 * 20;             break;
+      case BUTTON_9:      pos = 9 * 20;             break;
     }
     servo.write(pos);
   }
