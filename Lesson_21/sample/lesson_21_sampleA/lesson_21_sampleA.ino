@@ -149,7 +149,7 @@ void do_Uart_Tick()
   {
     case 'M':  go_Advance(); break;
     case 'L':  go_Left(); break;
-    case 'R': go_Right(); break;
+    case 'R':  go_Right(); break;
     case 'B':  go_Back(); break;
     case 'X':  back_Left(); break;
     case 'Y':  back_Right(); break;
@@ -223,8 +223,7 @@ void deadAlarm(){
     stop_Stop();
  while(1)
  {
-
-//output an frequency
+ //output an frequency
   for(int i=0;i<80;i++)
   {
     digitalWrite(BUZZ_PIN,LOW);
@@ -232,7 +231,6 @@ void deadAlarm(){
     digitalWrite(BUZZ_PIN,HIGH);
     delay(1);//wait for 1ms
   }
- 
   //output another frequency
   for(int i=0;i<100;i++)
   {
@@ -241,6 +239,5 @@ void deadAlarm(){
     digitalWrite(LED_PIN,HIGH);
     delay(2);//wait for 2ms
   }
-    
  }
 }

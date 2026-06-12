@@ -4,6 +4,7 @@
 #define speedPinL 6    // 左のPWM信号を送信するピンの設定
 #define LeftMotorDirPin1  7    //左のモーターの信号ピン1の設定
 #define LeftMotorDirPin2  8   //左のモーターの信号ピン2の設定
+#define BUZZ_PIN     13       //ブザーの信号ピン13の設定
 
 //モーターの制御
 void stop_Stop(int time = 1000)    //ストップ
@@ -83,6 +84,26 @@ void set_Motorspeed(int speed_L, int speed_R)
   analogWrite(speedPinR, speed_R);
 }
 
+// ブザー関係の関数
+void buzz_ON()   //open buzzer
+{
+    for(int i=0;i<100;i++)
+  {
+   digitalWrite(BUZZ_PIN,LOW);
+   delay(2);//wait for 1ms
+   digitalWrite(BUZZ_PIN,HIGH);
+   delay(2);//wait for 1ms
+  }
+}
+void buzz_OFF()  //close buzzer
+{
+  digitalWrite(BUZZ_PIN, HIGH);
+}
+void alarm(){
+   buzz_ON();
+   buzz_OFF();
+}
+
 //ピンの初期化
 void init_GPIO()
 {
@@ -93,6 +114,8 @@ void init_GPIO()
   pinMode(LeftMotorDirPin1, OUTPUT);
   pinMode(LeftMotorDirPin2, OUTPUT);
   pinMode(speedPinR, OUTPUT);
+  pinMode(BUZZ_PIN, OUTPUT);
+  buzz_OFF();    
   stop_Stop();
 }
 
