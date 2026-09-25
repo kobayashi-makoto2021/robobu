@@ -7,18 +7,13 @@
  * USe WI-FI UDP protocol to control robot car
  * tutorial url: https://osoyoo.com/?p=32758
  */
-/*Declare L298N Dual H-Bridge Motor Controller directly since there is not a library to load.*/
 #include <WiFiEspUdp.h>
 WiFiEspUDP Udp;
 unsigned int localPort = 8888;  // local port to listen on
 
-//Define L298N Dual H-Bridge Motor Controller Pins
-#define RightDirectPin1  12    //Right Motor direction pin 1 to MODEL-X IN1 grey
-#define RightDirectPin2  11    //Right Motor direction pin 1 to MODEL-X IN2 yellow
-#define speedPinL 6    //Left PWM pin connect MODEL-X ENB brown
-#define LeftDirectPin1  7    //Left Motor direction pin 1 to MODEL-X IN3 green
-#define LeftDirectPin2  8   //Left Motor direction pin 1 to MODEL-X IN4 white
-#define speedPinR 3    // RIGHT PWM pin connect MODEL-X ENA blue
+//モーターとブザーのピン・関数は motor_driver.h の中にある
+#include "motor_driver.h"
+
 #define SOFT_RX 4    // Softserial RX port
 #define SOFT_TX 5    //Softserial TX port
 
@@ -39,7 +34,6 @@ unsigned int localPort = 8888;  // local port to listen on
 #define AHEAD_TIME 300
 #define BACK_TIME 500
 
-#define BUZZ_PIN     13  //buzzer connect to D13
 #define FAST_SPEED 180
 #define MID_SPEED 130
 int track_speed = 100 ;    //tracking speed
@@ -114,72 +108,6 @@ Servo head;
 // use a ring buffer to increase speed and reduce memory allocation
 RingBuffer buf(8);
 
-void go_Advance(void)  //Forward
-{
-  digitalWrite(RightDirectPin1, HIGH);
-  digitalWrite(RightDirectPin2,LOW);
-  digitalWrite(LeftDirectPin1,HIGH);
-  digitalWrite(LeftDirectPin2,LOW);
-  set_Motorspeed(SPEED,SPEED);
-}
-void go_Left()  //Turn left
-{
-  digitalWrite(RightDirectPin1, HIGH);
-  digitalWrite(RightDirectPin2,LOW);
-  digitalWrite(LeftDirectPin1,LOW);
-  digitalWrite(LeftDirectPin2,HIGH);
-  set_Motorspeed(0,SPEED_RIGHT);
-}
-void go_Right()  //Turn right
-{
-  digitalWrite(RightDirectPin1, LOW);
-  digitalWrite(RightDirectPin2,HIGH);
-  digitalWrite(LeftDirectPin1,HIGH);
-  digitalWrite(LeftDirectPin2,LOW);
-  set_Motorspeed(SPEED_LEFT,0);
-}
-void go_Back()  //Reverse
-{
-  digitalWrite(RightDirectPin1, LOW);
-  digitalWrite(RightDirectPin2,HIGH);
-  digitalWrite(LeftDirectPin1,LOW);
-  digitalWrite(LeftDirectPin2,HIGH);
-  set_Motorspeed(BACK_SPEED,BACK_SPEED);
-}
-void stop_Stop()    //Stop
-{
-  digitalWrite(RightDirectPin1, LOW);
-  digitalWrite(RightDirectPin2,LOW);
-  digitalWrite(LeftDirectPin1,LOW);
-  digitalWrite(LeftDirectPin2,LOW);
-  set_Motorspeed(0,0);
-}
-
-void set_Motorspeed(int SPEED_L,int SPEED_R)
-{
-  analogWrite(speedPinL,SPEED_L); 
-  analogWrite(speedPinR,SPEED_R);   
-}
-void buzz_ON()   //open buzzer
-{
-   for(int i=0;i<100;i++)
-  {
-   digitalWrite(BUZZ_PIN,LOW);
-   delay(2);//wait for 1ms
-   digitalWrite(BUZZ_PIN,HIGH);
-   delay(2);//wait for 1ms
-  }
-}
-void buzz_OFF()  //close buzzer
-{
-  digitalWrite(BUZZ_PIN, HIGH);
-}
-
-void alarm(){
-   buzz_ON();
- 
-   buzz_OFF();
-}
 //car motor control
 void do_Drive_Tick()
 {
@@ -189,22 +117,24 @@ void do_Drive_Tick()
     switch (Drive_Num) 
     {
       case GO_ADVANCE:
-          go_Advance();
+          go_Advance(SPEED, 0);
           Serial.println("go ahead");
         //  delay(AHEAD_TIME); 
           break;
       case GO_LEFT: 
-          go_Left();
+          go_Left(SPEED_RIGHT, 0);
+          set_Motorspeed(0, SPEED_RIGHT);   //左タイヤを止めて向きを変える
         //  delay(LEFT_TURN_TIME); 
        Serial.println("TURN left");
           break;
       case GO_RIGHT:  
-          go_Right();
+          go_Right(SPEED_LEFT, 0);
+          set_Motorspeed(SPEED_LEFT, 0);    //右タイヤを止めて向きを変える
         //  delay(LEFT_TURN_TIME); 
          Serial.println("TURN right");
           break;
       case GO_BACK: 
-          go_Back();
+          go_Back(BACK_SPEED, 0);
          // delay(BACK_TIME); 
       Serial.println("GO back");
           break;
@@ -232,20 +162,10 @@ void do_Drive_Tick()
 void setup()
 {
    
-    pinMode(RightDirectPin1, OUTPUT); 
-  pinMode(RightDirectPin2, OUTPUT); 
-  pinMode(speedPinL, OUTPUT);  
-  pinMode(LeftDirectPin1, OUTPUT);
-  pinMode(LeftDirectPin2, OUTPUT); 
-  pinMode(speedPinR, OUTPUT); 
-  stop_Stop();//stop move
+  init_GPIO();   // モーターとブザーの準備
   /*init HC-SR04*/
   pinMode(Trig_PIN, OUTPUT); 
   pinMode(Echo_PIN,INPUT); 
-  /*init buzzer*/
-  pinMode(BUZZ_PIN, OUTPUT);
-  digitalWrite(BUZZ_PIN, HIGH);  
-  buzz_OFF(); 
 
   digitalWrite(Trig_PIN,LOW);
   /*init servo*/
@@ -368,14 +288,14 @@ void auto_tracking(){
  if (  sensorval=="11000" || sensorval=="10000"  || sensorval=="01000")
  { 
   //The black line is in the left of the car, need  left turn 
-      go_Left();  //Turn left
+      go_Left(SPEED, 0);  //Turn left
     set_Motorspeed(FAST_SPEED,FAST_SPEED);
  //   delay(50);
  //   stop_Stop();
     }
 else if (sensorval=="10100" || sensorval=="00100" || sensorval=="01100" || sensorval=="11100"  || sensorval=="10010" || sensorval=="11010")
 {
-      go_Advance();  //Turn slight left
+      go_Advance(SPEED, 0);  //Turn slight left
     set_Motorspeed(MID_SPEED,FAST_SPEED);
  //   delay(50);
 //    stop_Stop();
@@ -383,20 +303,20 @@ else if (sensorval=="10100" || sensorval=="00100" || sensorval=="01100" || senso
 }
  else if ( sensorval=="00011" || sensorval=="00001"  || sensorval=="00010" ){ //The black line is  on the right of the car, need  right turn 
   
-     go_Right();  //Turn right
+     go_Right(SPEED, 0);  //Turn right
        set_Motorspeed(FAST_SPEED,FAST_SPEED);
           // delay(50);
    // stop_Stop();
     }
  else if (sensorval=="00101" || sensorval=="00110" || sensorval=="00111" || sensorval=="01101" || sensorval=="01111"   || sensorval=="01011" || sensorval=="01110"  || sensorval=="01001")
  {
-       go_Advance();  //Turn slight right
+       go_Advance(SPEED, 0);  //Turn slight right
        set_Motorspeed(FAST_SPEED,MID_SPEED);
         //   delay(50);
     //stop_Stop();
  }
   else if (sensorval=="01110"  || sensorval=="00100"   ){
-      go_Advance();  //Turn slight right
+      go_Advance(SPEED, 0);  //Turn slight right
        set_Motorspeed(track_speed,track_speed);
   //         delay(50);
   //  stop_Stop();
@@ -407,13 +327,13 @@ else if (sensorval=="10100" || sensorval=="00100" || sensorval=="01100" || senso
     }
  
   else   if (sensorval=="00000" ){
-   // go_Advance();  //Turn slight right
+   // go_Advance(SPEED, 0);  //Turn slight right
     //   set_Motorspeed(track_speed,track_speed);
     stop_Stop();
  
      
    
-     go_Advance();  //Turn slight right
+     go_Advance(SPEED, 0);  //Turn slight right
      set_Motorspeed(track_speed,track_speed);
     }
     
@@ -443,7 +363,7 @@ int obstacle_status =B100000;
   centerscanval = watch();
   if(centerscanval<distancelimit){
     stop_Stop();
-    alarm();
+    beep(1, 100);
     obstacle_status  =obstacle_status | B100;
     }
   head.write(120);
@@ -451,7 +371,7 @@ int obstacle_status =B100000;
   ldiagonalscanval = watch();
   if(ldiagonalscanval<distancelimit){
     stop_Stop();
-    alarm();
+    beep(1, 100);
      obstacle_status  =obstacle_status | B1000;
     }
   head.write(170); //Didn't use 180 degrees because my servo is not able to take this angle
@@ -459,7 +379,7 @@ int obstacle_status =B100000;
   leftscanval = watch();
   if(leftscanval<sidedistancelimit){
     stop_Stop();
-    alarm();
+    beep(1, 100);
      obstacle_status  =obstacle_status | B10000;
     }
 
@@ -468,7 +388,7 @@ int obstacle_status =B100000;
   centerscanval = watch();
   if(centerscanval<distancelimit){
     stop_Stop();
-    alarm();
+    beep(1, 100);
     obstacle_status  =obstacle_status | B100;
     }
   head.write(40);
@@ -476,7 +396,7 @@ int obstacle_status =B100000;
   rdiagonalscanval = watch();
   if(rdiagonalscanval<distancelimit){
     stop_Stop();
-    alarm();
+    beep(1, 100);
     obstacle_status  =obstacle_status | B10;
     }
   head.write(0);
@@ -484,7 +404,7 @@ int obstacle_status =B100000;
   rightscanval = watch();
   if(rightscanval<sidedistancelimit){
     stop_Stop();
-    alarm();
+    beep(1, 100);
     obstacle_status  =obstacle_status | 1;
     }
   head.write(90); //Finish looking around (look forward again)
@@ -507,53 +427,53 @@ void auto_avoidance(){
         Serial.println(obstacle_sign);
                     if( obstacle_sign=="10000" || obstacle_sign=="01000" || obstacle_sign=="11000" ){
      Serial.println("SLIT right");
-       go_Right();
+       go_Right(SPEED, 0);
           set_Motorspeed(FAST_SPEED,track_speed);
       delay(180);
       stop_Stop();
     }
         else    if( obstacle_sign=="00001"  || obstacle_sign=="00011" || obstacle_sign=="00010"){
      Serial.println("SLIT LEFT");
-      go_Left();
+      go_Left(SPEED, 0);
        set_Motorspeed(track_speed,FAST_SPEED);
       delay(180);
       stop_Stop();
     }
     else if(obstacle_sign=="11100" || obstacle_sign=="10100"  || obstacle_sign=="01100" ||obstacle_sign=="00100" ){
      Serial.println("hand right");
-      go_Right();
+      go_Right(SPEED, 0);
       set_Motorspeed(TURN_SPEED,TURN_SPEED);
       delay(turntime);
       stop_Stop();
     } 
     else if (obstacle_sign=="01110"  || obstacle_sign=="11110" ||   obstacle_sign=="10110" ||   obstacle_sign=="11101" ||   obstacle_sign=="10101")
     {
-            go_Right(); //Turn back to Left
+            go_Right(SPEED, 0); //Turn back to Left
       set_Motorspeed(track_speed,FAST_SPEED);
       delay(backtime);
       stop_Stop();
     }
     else if( obstacle_sign=="00111"  || obstacle_sign=="00101" || obstacle_sign=="00110"  ){
     Serial.println("hand left");
-     go_Left();//Turn left
+     go_Left(SPEED, 0);//Turn left
      set_Motorspeed(TURN_SPEED,TURN_SPEED);
       delay(turntime);
       stop_Stop();
     }
     else if (obstacle_sign=="11011"   || obstacle_sign=="11111" || obstacle_sign=="01111" || obstacle_sign=="01011" || obstacle_sign=="01010")
     {
-         go_Left();//Turn back to right
+         go_Left(SPEED, 0);//Turn back to right
      set_Motorspeed(FAST_SPEED,track_speed);
       delay(backtime);
       stop_Stop();
     }
   else {Serial.println("SLOW AHEAD");
-    go_Advance();  // if nothing is wrong go forward using go() function above.
+    go_Advance(SPEED, 0);  // if nothing is wrong go forward using go() function above.
     set_Motorspeed(SPEED,SPEED);
   }
     numcycles=0; //Restart count of cycles
   } else {
-     go_Advance();  // if nothing is wrong go forward using go() function above.
+     go_Advance(SPEED, 0);  // if nothing is wrong go forward using go() function above.
     set_Motorspeed(SPEED,SPEED);
         delay(180);
           stop_Stop();
@@ -564,7 +484,7 @@ void auto_avoidance(){
   distance = watch(); // use the watch() function to see if anything is ahead (when the robot is just moving forward and not looking around it will test the distance in front)
   if (distance<distancelimit){ // The robot will just stop if it is completely sure there's an obstacle ahead (must test 25 times) (needed to ignore ultrasonic sensor's false signals)
  Serial.println("final go back");
-  go_Right();
+  go_Right(SPEED, 0);
   set_Motorspeed(FAST_SPEED,track_speed);
   delay(backtime);
       ++thereis;}
