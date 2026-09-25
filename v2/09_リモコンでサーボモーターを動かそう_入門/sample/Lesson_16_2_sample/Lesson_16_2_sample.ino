@@ -1,41 +1,38 @@
-#include <IRremote.h>      //IRremoteライブラリをアルドゥイーノライブラリにコピーする必要があります
+#include <IRremote.hpp>
 #include <Servo.h>
-#define plus 0xFF18E7   //時計回りのボタン
-#define minus 0xFF4AB5  //反時計回りのボタン
+
+#define plus   0x18   //時計回りのボタン（▲）
+#define minus  0x4A   //反時計回りのボタン（▼）
 
 int RECV_PIN = 3;       //赤外線受信機のピン
 Servo servo;
 int val;                //回転角度
 bool cwRotation, ccwRotation;  //回転の状態
 
-IRrecv irrecv(RECV_PIN);
-
-decode_results results;
-
 void setup()
 {
   Serial.begin(9600);
-  irrecv.enableIRIn(); // 受信機を起動する
+  IrReceiver.begin(RECV_PIN, ENABLE_LED_FEEDBACK); // 受信機を起動する
   servo.attach(9);     //サーボピン
 }
 
-void loop() 
+void loop()
 {
-  if (irrecv.decode(&results)) {
-    Serial.println(results.value, HEX);
-    irrecv.resume(); // Receive the next value
+  if (IrReceiver.decode()) {
+    Serial.println(IrReceiver.decodedIRData.command, HEX);
 
-    if (results.value == plus)
+    if (IrReceiver.decodedIRData.command == plus)
     {
       cwRotation = !cwRotation;      //回転角度の値を切り替えます
       ccwRotation = false;         //これ以上回転しません
     }
 
-    if (results.value == minus)
+    if (IrReceiver.decodedIRData.command == minus)
     {
-      ccwRotation = !ccwRotation;   
+      ccwRotation = !ccwRotation;
       cwRotation = false;            //回転角度の値を切り替えます
     }
+    IrReceiver.resume(); // Receive the next value
   }
   if (cwRotation && (val != 175))  {
     val++;                         //連動ボタン用

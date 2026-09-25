@@ -2,19 +2,18 @@
 
 #include <SoftwareSerial.h>
 SoftwareSerial BTSerial(4, 5);  //RX,TX
-#include <IRremote.h>
+
+#define DECODE_NEC         // 弾は「NEC」という決まりごとで送る
+#include <IRremote.hpp>
 #include "motor_driver.h"
 
 #define RECV_PIN   10 // IR receiver pin connect to D10
-IRrecv irrecv(RECV_PIN);
-IRsend irsend;        // IR transmitter は D3 に固定（IRremoteライブラリの決まり）
-decode_results results;
-int buttonState;
+#define SEND_PIN    3 // IR transmitter pin connect to D3
 
-#define IR_BULLET      0xAAA       //Aの時はこちらを使う。Bの時はコメントアウト
-#define MY_BULLET      0xBBB       //Aの時はこちらを使う。Bの時はコメントアウト
-// #define IR_BULLET      0xBBB       //Bの時はこちらを使う。Aの時はコメントアウト
-// #define MY_BULLET      0xAAA       //Bの時はこちらを使う。Aの時はコメントアウト
+#define IR_BULLET      0xAA       //Aの時はこちらを使う。Bの時はコメントアウト
+#define MY_BULLET      0xBB       //Aの時はこちらを使う。Bの時はコメントアウト
+// #define IR_BULLET      0xBB       //Bの時はこちらを使う。Aの時はコメントアウト
+// #define MY_BULLET      0xAA       //Bの時はこちらを使う。Aの時はコメントアウト
 #define LED_PIN 2
 
 #define SPEED      150  //ふつうの速さ
@@ -63,7 +62,7 @@ void do_Uart_Tick()
     case 'B': go_Back(SPEED, 0); break;
     case 'X': back_Left(TURNSPEED, 0); break;
     case 'Y': back_Right(TURNSPEED, 0); break;
-    case 'F': buttonState=1;shoot();break;
+    case 'F': shoot();break;
     case 'E': stop_Stop() ;buzz_Off();break;
     case 'J': stop_Stop() ;break;
     default:break;
@@ -74,7 +73,9 @@ void setup()
 {
   init_GPIO();          // モーターとブザーの準備
 
-  irrecv.enableIRIn();  // Start the receiver
+  // ブザーと同じD13を光らせないように、LEDの合図はオフにする
+  IrReceiver.begin(RECV_PIN, DISABLE_LED_FEEDBACK); // 弾を受け取る準備
+  IrSender.begin(SEND_PIN);                         // 弾を撃つ準備
   pinMode(LED_PIN, OUTPUT);
 
   Serial.begin(9600);//In order to fit the Bluetooth module's default baud rate, only 9600
@@ -82,40 +83,29 @@ void setup()
   beep(1, 200);         // 準備できたよの合図
 }
 
-int lastButtonState=0;
 void loop()
 {
-  if (buttonState) {
-    buttonState=0;
-      irrecv.enableIRIn(); // Start the receiver
-      irrecv.resume();
-  }
-  else  if (irrecv.decode(&results)) {
+  if (IrReceiver.decode()) {
 
-  //If got shoot by enemy, dead freeze and alarm
-  int data=results.value;
-    Serial.print("ir code:");
-    Serial.println(data);
+    //If got shoot by enemy, dead freeze and alarm
+    Serial.print("ir code: 0x");
+    Serial.println(IrReceiver.decodedIRData.command, HEX);
 
-    if(data==IR_BULLET)
+    if(IrReceiver.decodedIRData.command == IR_BULLET)
     {
       deadAlarm();
     }
 
-    irrecv.resume(); // resume receiver
+    IrReceiver.resume(); // resume receiver
   }
-  lastButtonState = buttonState;
   do_Uart_Tick();
 }
 
 void shoot(){
- Serial.print("shooting bullet :");
+ Serial.print("shooting bullet : 0x");
  Serial.println(MY_BULLET,HEX);
- for (int i = 0; i < 3; i++) {
-      irsend.sendSony(MY_BULLET, 12); // Sony TV power code
-      delay(40);
-    }
-
+ IrSender.sendNEC(0x00, MY_BULLET, 2);  // 弾を3回送る
+ IrReceiver.restartAfterSend();         // 撃ち終わったら、また受け取れるようにする
 }
 
 void deadAlarm(){

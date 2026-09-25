@@ -1,21 +1,21 @@
-#include <IRremote.h>  // IRRemote.hをインクルード ここでライブラリが使えるようになる
-const int irReceiverPin = 2;  ///受信モジュールのSIGはpin2
-IRrecv irrecv(irReceiverPin); //IRrecvタイプの変数を作成します
-decode_results results;    // 結果
+#include <IRremote.hpp>  // IRremoteライブラリ。ここでライブラリが使えるようになる
+
+const int irReceiverPin = 2;  //受信モジュールのSIGはpin2
 
 void setup(){
   Serial.begin(9600);    //シリアルを初期化し、ボーレートは9600に設定する
-  irrecv.enableIRIn();   //赤外線受信機モジュールを有効にする
-  Serial.print("赤外線モジュールサンプルプログラムスタート\n");
+  IrReceiver.begin(irReceiverPin, ENABLE_LED_FEEDBACK); //赤外線受信機モジュールを有効にする
+  Serial.println("赤外線モジュールサンプルプログラムスタート");
 }
 
 void loop(){
-  if (irrecv.decode(&results)){ //赤外線受信機モジュールの受信データ
-    Serial.print("IRコード: ");
-    Serial.print(results.value,HEX); //シリアルに値を出力する
-    Serial.print(",　ビット: ");  //bitsを送信する         
-    Serial.println(results.bits); //bitsを結果に出力する
-    irrecv.resume();// 次の値を受取る
-  }  
+  if (IrReceiver.decode()){  //赤外線を受け取ったら
+    Serial.print("IRコード: 0x");
+    Serial.println(IrReceiver.decodedIRData.command, HEX); //ボタンの番号を出力する
+
+    IrReceiver.printIRResultShort(&Serial); //くわしい中身も出力する
+
+    IrReceiver.resume();  // 次の値を受取る
+  }
   delay(600); //600ミリ秒待機
 }

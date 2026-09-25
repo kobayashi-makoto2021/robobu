@@ -1,29 +1,34 @@
-#include <IRremote.h>
-const int irReceiverPin =3; //受信モジュールのSIGはpin3
-const int buzzerPin = 13;//13ピンをブザーに接続します
-IRrecv irrecv(irReceiverPin); //IRrecv タイプの変数を作成します
-decode_results results;
+#include <IRremote.hpp>
+
+const int irReceiverPin = 3;  //受信モジュールのSIGはpin3
+const int buzzerPin = 13;     //13ピンをブザーに接続します
+
+#define IR_OK 0x38            //「OK」ボタンのIRコード
+
+int lastCommand = 0;          //さいごに押されたボタンをおぼえておく
+
 void setup()
 {
   pinMode(buzzerPin,OUTPUT);//ブザーピンを出力として設定します
   digitalWrite(buzzerPin,HIGH);
-  Serial.begin(9600);//irrecvを初期化します。
-  irrecv.enableIRIn(); // ir受信機モジュールを有効にする
+  Serial.begin(9600);
+  //ブザーと同じ13ピンを光らせないように、LEDの合図はオフにする
+  IrReceiver.begin(irReceiverPin, DISABLE_LED_FEEDBACK); // ir受信機モジュールを有効にする
 }
-void loop() 
-{
-  if (irrecv.decode(&results)) //赤外線受信モジュールの受信データ
-  { 
-    Serial.print("irCode: "); //"irCode: "を送信する出力
-    Serial.print(results.value, HEX); //値を16進数で出力します
-    Serial.print(", bits: "); //" , bits: " を送信する
-    Serial.println(results.bits); //bitsを結果に出力する
-    irrecv.resume(); // Receive the next value 
-  } 
 
-  if(results.value == 0xFF38C7)//「OK」ボタンを押すと、受信モジュールは0xFF38C7を受信します
+void loop()
+{
+  if (IrReceiver.decode()) //赤外線を受け取ったら
   {
-    digitalWrite(buzzerPin,LOW);//ブザーのビーブ音（低音）
+    lastCommand = IrReceiver.decodedIRData.command; //押されたボタンをおぼえる
+    Serial.print("IRコード: 0x");
+    Serial.println(lastCommand, HEX); //値を16進数で出力します
+    IrReceiver.resume(); // Receive the next value
+  }
+
+  if(lastCommand == IR_OK)//「OK」ボタンを押すと、受信モジュールは0x38を受信します
+  {
+    digitalWrite(buzzerPin,LOW);//ブザーのビープ音（低音）
   }
   else
   {
