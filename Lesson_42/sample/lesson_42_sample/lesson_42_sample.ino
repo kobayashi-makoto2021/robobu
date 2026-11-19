@@ -18,6 +18,10 @@ IRrecv irrecv(RECV_PIN);
 IRsend irsend;
 decode_results results;
 int buttonState;
+
+char buffUART[MAX_PACKETSIZE];     // bluetooth.h が使っていた変数（今回は使わないが残しておく）
+unsigned int buffUARTIndex = 0;
+unsigned long preUARTTick = 0;
 int lastButtonState = 0;
 
 // ---- 機能ごとのファイル（この順番が大切）----
@@ -26,6 +30,7 @@ int lastButtonState = 0;
 #include "battle.h"     // 赤外線攻撃・被弾時の処理（motor.h を使う）
 #include "hissatsu.h"   // 必殺技（motor.h・sound.h・battle.h を使う）
 #include "http.h"       // ← レッスン42で変更：Wi-Fi・HTTP通信（上の全部を使うので最後）
+// bluetooth.h はタブに残してあるが、#include していないので使われない
 
 void setup()
 {
