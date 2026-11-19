@@ -479,6 +479,16 @@ void doCommand(char cmd)
   Serial.println(" ミリ秒たったら止めます");
 }
 
+// ---- すぐに実行してよい命令か調べる ----
+// モーターを動かす・止めるだけの命令は、一瞬で終わるので、すぐに実行してよい。
+// それ以外（音を鳴らす・撃つ・必殺技など、delay() を使う命令）は、
+// 通信が終わってから実行する（実行中にリクエストの残りがあふれて、読めなくなるのを防ぐ）
+bool isQuick(char cmd)
+{
+  return cmd == 'M' || cmd == 'L' || cmd == 'R' || cmd == 'B' ||
+         cmd == 'X' || cmd == 'Y' || cmd == 'E' || cmd == 'J';
+}
+
 // ---- ブラウザからリクエストが来ていたら受け取って、返事をする（loop() で毎回呼ぶ）----
 void do_Http_Tick()
 {
@@ -490,8 +500,11 @@ void do_Http_Tick()
   String request = "";      // リクエストの1行目（例：GET /M HTTP/1.1）
   bool firstLine = true;    // 今、1行目を読んでいるか
   bool lineIsBlank = true;  // 今の行が、まだ空っぽか
+  char laterCmd = 0;        // 通信が終わってから実行する命令
+  unsigned long readStart = millis();  // 読みはじめた時刻
 
-  while (client.connected()) {
+  // 2秒たっても読み終わらなければ、あきらめる（固まったままにならないように）
+  while (client.connected() && millis() - readStart < 2000) {
     checkTimer();  // リクエストを読んでいる間も、時間が来ていたら止める
     if (client.available()) {
       char c = client.read();
@@ -505,8 +518,9 @@ void do_Http_Tick()
       if (c == '\n' && firstLine) {
         Serial.println(request);
         char cmd = getCommand(request);
-        if (cmd == 'T') setMoveTime(request);  // スライダーの時間
-        else if (cmd != 0) doCommand(cmd);     // ロボットへの命令
+        if (cmd == 'T') setMoveTime(request);   // スライダーの時間
+        else if (isQuick(cmd)) doCommand(cmd);  // モーターの命令は、すぐ実行
+        else if (cmd != 0) laterCmd = cmd;      // それ以外は、通信が終わってから
       }
 
       // 空っぽの行が来たら、リクエストはおしまい → 返事をする
@@ -530,6 +544,8 @@ void do_Http_Tick()
   delay(10);       // ブラウザが受け取るのを少し待つ
   checkTimer();    // 返事を送っている間に時間が来ていたら止める
   client.stop();   // 通信を終わる
+
+  if (laterCmd != 0) doCommand(laterCmd);  // 通信が終わってから実行する命令
 }
 ```
 
@@ -569,10 +585,15 @@ HTMLが `PAGE_TOP`（前半）と `PAGE_BOTTOM`（後半）の2つに分かれ�
 | `sendPage()`・`sendOK()` | ⑤ 操作画面のHTML（`page.h`）、または「受け取ったよ（204）」をレスポンスとして返す |
 | `checkTimer()` | ⑥ 命令から `moveTime` ミリ秒たったら、ロボットを止める |
 | `setMoveTime()` | ⑦ スライダーから届いた時間（例：`GET /T800 HTTP/1.1` の `800`）で、`moveTime` を変える |
+| `isQuick()` | ⑧ すぐに実行してよい命令（モーターを動かす・止めるだけの命令）かどうかを調べる |
 
 **`doCommand()` を `bluetooth.h` とくらべてみよう：** `doCommand()` の switch 文は、`bluetooth.h` の `do_Uart_Tick()` の switch 文と同じです。タブレットのアプリから届いていた `M` や `L` の文字が、今度はブラウザから届くようになっただけなのです。
 
 **`checkTimer()` はどうやって止めているの？：** `delay(500)` で0.5秒待ってから止める方法もあります。でもそうすると、待っている間は、相手の弾に当たったかどうかを調べたり、次の命令を受け取ったりできません。そこで、命令を受け取った時刻を `moveStart` に覚えておき、`loop()` のたびに今の時刻（`millis()`）とくらべて、`moveTime` たっていたら止めるようにしています。`moveTime` は**変数**なので、ロボットが動いている最中でも、スライダーから値を変えられます（`#define` で決めた値は、動いている最中には変えられません）。
+
+**`isQuick()` はなぜあるの？：** モーターを動かす・止める命令（`M`・`B`・`L`・`R` など）は一瞬で終わるので、リクエストの1行目を読んだらすぐに実行します。でも、音を鳴らす `alarm()` や、撃つ `shoot()`、必殺技の `hissatsu()` のように `delay()` を使う命令は、実行している間、Arduinoはほかのことが何もできません。その間もWi-Fiシールドからはリクエストの残りが送られてきますが、Arduinoがためておける量は少ないので、あふれた分は捨てられてしまいます。すると、リクエストの終わりが分からなくなって、次の命令を受け取れなくなります。そこで、そういう命令は `laterCmd` に覚えておいて、**返事を送って通信を閉じてから**実行します。新しい命令を `doCommand()` に足したときも、`isQuick()` に書いていなければ、自動的に「あとで実行」になります。
+
+**2秒たったらあきらめる：** `while` の条件に `millis() - readStart < 2000` を入れて、リクエストを2秒たっても読み終わらないときは、あきらめて次へ進むようにしています。何かがあっても、ロボットが固まったままにならないための安全装置です。
 
 `checkTimer()` は、`do_Http_Tick()` の最初だけでなく、**リクエストを読んでいる間（`while` の中）**と**通信を閉じる前**にも呼んでいます。リクエストを最後まで読むには0.5秒ほどかかるので、その間も時計を見ていないと、`moveTime` を短くしても止まるのがおくれてしまうからです。
 

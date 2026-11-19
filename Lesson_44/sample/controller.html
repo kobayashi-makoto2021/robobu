@@ -69,7 +69,11 @@
     async function send(path) {
       sending = true;
       try {
-        await fetch(robotURL() + path, { mode: "no-cors", cache: "no-store" });
+        await fetch(robotURL() + path, {
+          mode: "no-cors",
+          cache: "no-store",
+          signal: AbortSignal.timeout(2000)   // 2秒たっても返事がなければ、あきらめる
+        });
         document.getElementById("error").textContent = "";
       } catch (e) {
         document.getElementById("error").textContent =

@@ -126,6 +126,16 @@ void doCommand(char cmd)
   Serial.println(" ミリ秒たったら止めます");
 }
 
+// ---- すぐに実行してよい命令か調べる ----
+// モーターを動かす・止めるだけの命令は、一瞬で終わるので、すぐに実行してよい。
+// それ以外（音を鳴らす・撃つ・必殺技など、delay() を使う命令）は、
+// 通信が終わってから実行する（実行中にリクエストの残りがあふれて、読めなくなるのを防ぐ）
+bool isQuick(char cmd)
+{
+  return cmd == 'M' || cmd == 'L' || cmd == 'R' || cmd == 'B' ||
+         cmd == 'X' || cmd == 'Y' || cmd == 'E' || cmd == 'J';
+}
+
 // ---- ブラウザからリクエストが来ていたら受け取って、返事をする（loop() で毎回呼ぶ）----
 void do_Http_Tick()
 {
@@ -137,8 +147,11 @@ void do_Http_Tick()
   String request = "";      // リクエストの1行目（例：GET /M HTTP/1.1）
   bool firstLine = true;    // 今、1行目を読んでいるか
   bool lineIsBlank = true;  // 今の行が、まだ空っぽか
+  char laterCmd = 0;        // 通信が終わってから実行する命令
+  unsigned long readStart = millis();  // 読みはじめた時刻
 
-  while (client.connected()) {
+  // 2秒たっても読み終わらなければ、あきらめる（固まったままにならないように）
+  while (client.connected() && millis() - readStart < 2000) {
     checkTimer();  // リクエストを読んでいる間も、時間が来ていたら止める
     if (client.available()) {
       char c = client.read();
@@ -152,8 +165,9 @@ void do_Http_Tick()
       if (c == '\n' && firstLine) {
         Serial.println(request);
         char cmd = getCommand(request);
-        if (cmd == 'T') setMoveTime(request);  // スライダーの時間
-        else if (cmd != 0) doCommand(cmd);     // ロボットへの命令
+        if (cmd == 'T') setMoveTime(request);   // スライダーの時間
+        else if (isQuick(cmd)) doCommand(cmd);  // モーターの命令は、すぐ実行
+        else if (cmd != 0) laterCmd = cmd;      // それ以外は、通信が終わってから
       }
 
       // 空っぽの行が来たら、リクエストはおしまい → 返事をする
@@ -177,4 +191,6 @@ void do_Http_Tick()
   delay(10);       // ブラウザが受け取るのを少し待つ
   checkTimer();    // 返事を送っている間に時間が来ていたら止める
   client.stop();   // 通信を終わる
+
+  if (laterCmd != 0) doCommand(laterCmd);  // 通信が終わってから実行する命令
 }

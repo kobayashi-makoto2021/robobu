@@ -162,7 +162,11 @@ flowchart LR
     async function send(path) {
       sending = true;
       try {
-        await fetch(robotURL() + path, { mode: "no-cors", cache: "no-store" });
+        await fetch(robotURL() + path, {
+          mode: "no-cors",
+          cache: "no-store",
+          signal: AbortSignal.timeout(2000)   // 2秒たっても返事がなければ、あきらめる
+        });
         document.getElementById("error").textContent = "";
       } catch (e) {
         document.getElementById("error").textContent =
@@ -261,7 +265,11 @@ function readCommand(pad) {
 async function send(path) {
   sending = true;
   try {
-    await fetch(robotURL() + path, { mode: "no-cors", cache: "no-store" });
+    await fetch(robotURL() + path, {
+      mode: "no-cors",
+      cache: "no-store",
+      signal: AbortSignal.timeout(2000)
+    });
     ...
   } catch (e) {
     ...「ロボットにつながりません」と表示
@@ -274,6 +282,7 @@ async function send(path) {
 - `robotURL()` は、画面に入力したIPアドレスの前に `http://` を付けて、ロボットのアドレスを作る関数です。`http://` や最後の `/` をうっかり入れてしまっても、取りのぞいてから作り直すようにしています。
 - `await` は、「ロボットから返事が来るまで待つ」という意味です。`await` を使う関数には、前に `async` を付けます。
 - `mode: "no-cors"` は、「返事の中身は読まなくていいから、とにかく送ってね」という設定です。PCのページとロボットは別の場所にあるので、ふつうに送ると、ブラウザが「返事を読んではいけません」と止めてしまいます。今回は返事を読む必要がないので、この設定で送ります。
+- `signal: AbortSignal.timeout(2000)` は、「2秒たっても返事がなければ、あきらめてね」という設定です。返事を待ったまま、次の命令が送れなくなるのを防ぎます。
 - `try { ... } catch (e) { ... }` は、「`try` の中でうまくいかなかったら、`catch` の中をやる」という書き方です。ロボットにつながらなかったときに、画面にメッセージを出します。
 - `sending` は「今、送っているところか」を覚えておく変数です。
 
