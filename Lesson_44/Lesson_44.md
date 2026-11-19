@@ -127,7 +127,9 @@ flowchart LR
     async function send(path) {
       sending = true;
       try {
-        await fetch(ROBOT + path, { mode: "no-cors", cache: "no-store" });
+        // ROBOT の最後に / が付いていたら取る（「//M」にならないように）
+        const url = ROBOT.replace(/\/+$/, "") + path;
+        await fetch(url, { mode: "no-cors", cache: "no-store" });
         document.getElementById("error").textContent = "";
       } catch (e) {
         document.getElementById("error").textContent =
@@ -166,7 +168,7 @@ flowchart LR
 
 | 場所 | 書きかえる内容 |
 |---|---|
-| ★1 `const ROBOT = "http://192.168.1.20";` | `"` と `"` のあいだを、ミッション3でノートに書いた**ロボットのIPアドレス**にする（`http://` は残す） |
+| ★1 `const ROBOT = "http://192.168.1.20";` | `"` と `"` のあいだを、ミッション3でノートに書いた**ロボットのIPアドレス**にする（`http://` は残す。最後に `/` は付けない） |
 | ★2 `const UP = 12;` など4行 | レッスン43でノートにまとめた**十字キーの番号**にする |
 
 #### 手順3　ページを開いて、動かしてみる
@@ -213,7 +215,8 @@ function readCommand(pad) {
 async function send(path) {
   sending = true;
   try {
-    await fetch(ROBOT + path, { mode: "no-cors", cache: "no-store" });
+    const url = ROBOT.replace(/\/+$/, "") + path;
+    await fetch(url, { mode: "no-cors", cache: "no-store" });
     ...
   } catch (e) {
     ...「ロボットにつながりません」と表示
@@ -222,7 +225,7 @@ async function send(path) {
 }
 ```
 
-- `fetch(ROBOT + path)` は、`http://192.168.〇.〇/M` のようなアドレスにリクエストを送る命令です。レッスン42で、ブラウザのボタンを押したときに送っていたものと同じリクエストです。
+- `fetch(url)` は、`http://192.168.〇.〇/M` のようなアドレスにリクエストを送る命令です。`url` は、ロボットのIPアドレス（`ROBOT`）と命令（`path`）をつなげたものです。`ROBOT` の最後にうっかり `/` を付けてしまっても、`replace(...)` で取りのぞいてから、つなげるようにしています。レッスン42で、ブラウザのボタンを押したときに送っていたものと同じリクエストです。
 - `await` は、「ロボットから返事が来るまで待つ」という意味です。`await` を使う関数には、前に `async` を付けます。
 - `mode: "no-cors"` は、「返事の中身は読まなくていいから、とにかく送ってね」という設定です。PCのページとロボットは別の場所にあるので、ふつうに送ると、ブラウザが「返事を読んではいけません」と止めてしまいます。今回は返事を読む必要がないので、この設定で送ります。
 - `try { ... } catch (e) { ... }` は、「`try` の中でうまくいかなかったら、`catch` の中をやる」という書き方です。ロボットにつながらなかったときに、画面にメッセージを出します。

@@ -34,7 +34,9 @@
     async function send(path) {
       sending = true;
       try {
-        await fetch(ROBOT + path, { mode: "no-cors", cache: "no-store" });
+        // ROBOT の最後に / が付いていたら取る（「//M」にならないように）
+        const url = ROBOT.replace(/\/+$/, "") + path;
+        await fetch(url, { mode: "no-cors", cache: "no-store" });
         document.getElementById("error").textContent = "";
       } catch (e) {
         document.getElementById("error").textContent =
