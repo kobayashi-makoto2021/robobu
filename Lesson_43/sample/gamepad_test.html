@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ゲームパッド入力テスト</title>
+</head>
+<body>
+  <h1>ゲームパッド入力テスト</h1>
+  <p>ゲームパッドのボタンを押してください。</p>
+  <p id="status">接続待ち</p>
+  <p id="buttons">押されているボタン：なし</p>
+
+  <script>
+    function update() {
+      const pads = navigator.getGamepads();
+      const pad = Array.from(pads).find(p => p !== null);
+
+      if (!pad) {
+        document.getElementById("status").textContent =
+          "ゲームパッドが見つかりません";
+        document.getElementById("buttons").textContent =
+          "押されているボタン：なし";
+      } else {
+        document.getElementById("status").textContent =
+          "接続中：" + pad.id;
+
+        const pressed = [];
+        pad.buttons.forEach((button, number) => {
+          if (button.pressed) {
+            pressed.push(number);
+          }
+        });
+
+        document.getElementById("buttons").textContent =
+          "押されているボタン：" +
+          (pressed.length ? pressed.join(", ") : "なし");
+      }
+
+      requestAnimationFrame(update);
+    }
+
+    update();
+  </script>
+</body>
+</html>
