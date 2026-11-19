@@ -35,7 +35,7 @@ void http_init()
 }
 
 // ---- 安全のため：命令を受け取ってから moveTime ミリ秒たったら止まる ----
-unsigned int moveTime = MOVE_TIME;  // 動く時間（はじめは config.h の値。画面のスライダーで変えられる）
+unsigned int moveTime = 500;        // 1回に動く時間（ミリ秒）。はじめは500＝0.5秒。画面のスライダーで変わる
 bool moving = false;                // 今、動いているか
 unsigned long moveStart = 0;        // 命令を受け取った時刻（ミリ秒）
 
@@ -44,6 +44,9 @@ void checkTimer()
   if (moving && millis() - moveStart >= moveTime) {
     stop_Stop();
     moving = false;
+    Serial.print("止めました: ");
+    Serial.print(millis() - moveStart);   // 実際に動いた時間
+    Serial.println(" ミリ秒動いた");
   }
 }
 
@@ -118,6 +121,9 @@ void doCommand(char cmd)
   }
   moving = true;          // 時計をスタート
   moveStart = millis();
+  Serial.print("動き始めました: ");
+  Serial.print(moveTime);
+  Serial.println(" ミリ秒たったら止めます");
 }
 
 // ---- ブラウザからリクエストが来ていたら受け取って、返事をする（loop() で毎回呼ぶ）----
@@ -133,6 +139,7 @@ void do_Http_Tick()
   bool lineIsBlank = true;  // 今の行が、まだ空っぽか
 
   while (client.connected()) {
+    checkTimer();  // リクエストを読んでいる間も、時間が来ていたら止める
     if (client.available()) {
       char c = client.read();
 
@@ -168,5 +175,6 @@ void do_Http_Tick()
     }
   }
   delay(10);       // ブラウザが受け取るのを少し待つ
+  checkTimer();    // 返事を送っている間に時間が来ていたら止める
   client.stop();   // 通信を終わる
 }

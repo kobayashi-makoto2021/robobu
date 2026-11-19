@@ -28,6 +28,3 @@
 // Wi-Fiの設定（教室のWi-Fiの名前とパスワードに書きかえる）
 #define WIFI_SSID  "YOUR_ROUTER_SSID"
 #define WIFI_PASS  "YOUR_ROUTER_WIFI_PASSWORD"
-
-// 安全のため：ボタンを1回押すと、この時間（ミリ秒）だけ動いて止まる
-#define MOVE_TIME  500
