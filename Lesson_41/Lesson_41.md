@@ -69,166 +69,353 @@
 
 ---
 
-## ミッション3　ファイルを分けよう
+## ミッション3　完成形の構成を確認しよう
 
-Arduino IDEのタブが並んでいる行の右はしにある **「…」ボタン → 新規タブ** を選びます（`Ctrl` + `Shift` + `N` でもできます）。名前を聞かれたら、`motor.h` のように **`.h` まで入力**します。`.h` を書き忘れると `.ino` になってしまうので注意しましょう。
+ファイルを作り始める前に、最後にどんな形になるのかを確認しておきましょう。
 
-完成したフォルダは、次のような構成を目指します。
+完成すると、`Lesson_41` フォルダの中は次のようになります。
 
 ```text
 Lesson_41/
-├── Lesson_41.ino   ← 共通の読み込み、共有する変数、setup()、loop()
+├── Lesson_41.ino   ← メインのファイル。共有する変数、#include、setup()、loop()
 ├── config.h        ← ピン番号・定数・チームの設定
 ├── motor.h         ← モーターの動作
 ├── sound.h         ← ブザー
 ├── battle.h        ← 赤外線攻撃・被弾時の処理
-├── hissatsu.h      ← 必殺技（レッスン22で作ったもの）
+├── hissatsu.h      ← 必殺技（レッスン22で作った人だけ）
 └── bluetooth.h     ← Bluetooth通信
 ```
 
-**ポイント：** `.h` ファイルは、`Lesson_41.ino` に `#include` を書いた順番で読み込まれます。フォルダの中の並び順や、タブの並び順は関係ありません。読み込む順番は `Lesson_41.ino` を見ればすべて分かる、というのが `.h` で分けるよいところです。`setup()` と `loop()` は `Lesson_41.ino` に一つずつだけ書きます。
+それぞれのファイルに入れるものは、次のとおりです。
 
-- [ ] 必要なタブを作れたらチェック！
+| ファイル | 入れるもの | 作るミッション |
+|---|---|---|
+| `config.h` | `#define` で始まる行（ピン番号・スピード・チームの設定） | ミッション4 |
+| `motor.h` | `set_Motorspeed()`、`go_Advance()`、`go_Left()`、`go_Right()`、`go_Back()`、`back_Left()`、`back_Right()`、`stop_Stop()` | ミッション5 |
+| `sound.h` | `buzz_ON()`、`buzz_OFF()`、`alarm()` | ミッション6 |
+| `battle.h` | `shoot()`、`deadAlarm()` | ミッション6 |
+| `hissatsu.h` | レッスン22で作った `hissatsu()` などの必殺技 | ミッション6 |
+| `bluetooth.h` | `do_Uart_Tick()` | ミッション6 |
+| `Lesson_41.ino` | ライブラリの読み込み、共有するオブジェクト・変数、`#include`、`setup()`、`loop()` | 残ったもの |
+
+全部できあがると、`Lesson_41.ino` は次のような形になります（`...` は中身を省略しています）。
+
+```cpp
+#include <SoftwareSerial.h>
+SoftwareSerial BTSerial(4, 5);  //RX,TX
+#include <IRremote.h>
+#include "config.h"          // ← ミッション4で追加
+
+IRrecv irrecv(RECV_PIN);
+IRsend irsend;
+decode_results results;
+int buttonState;
+
+char buffUART[MAX_PACKETSIZE];
+unsigned int buffUARTIndex = 0;
+unsigned long preUARTTick = 0;
+#include "motor.h"           // ← ミッション5で追加
+#include "sound.h"           // ← ミッション6で追加
+#include "battle.h"          // ← ミッション6で追加
+#include "hissatsu.h"        // ← ミッション6で追加（必殺技を作った人だけ）
+#include "bluetooth.h"       // ← ミッション6で追加
+
+void setup()
+{
+  ...
+}
+int lastButtonState=0;
+void loop()
+{
+  ...
+}
+```
+
+### `#include` の順番にはルールがある
+
+`.h` ファイルは、`#include` を書いた**上から順番に**読み込まれます。そして `.h` ファイルの中では、**使う関数や変数が、それより先に読み込まれている**必要があります。
+
+| 順番 | ファイル | この順番になる理由 |
+|---|---|---|
+| 1 | `config.h` | ピン番号などは、ほかの全部のファイルが使うので最初 |
+| 2 | `motor.h` | ほかのファイルの関数を使わない |
+| 3 | `sound.h` | ほかのファイルの関数を使わない |
+| 4 | `battle.h` | `deadAlarm()` が `motor.h` の `stop_Stop()` を使う |
+| 5 | `hissatsu.h` | 必殺技は、走る・撃つ・鳴らす関数を使う |
+| 6 | `bluetooth.h` | `do_Uart_Tick()` が、アプリのボタンに合わせて全部の関数を呼ぶので最後 |
+
+共有する変数（`BTSerial` や `buttonState` など）も `.h` ファイルの中で使われるので、`#include "motor.h"` より上に書いておきます。
+
+**`#include` の順番は「読み込む順番」です。ロボットが動く順番ではありません。** 動く順番を決めるのは、これまでどおり `setup()` と `loop()` です。
+
+- [ ] 完成形の構成と、`#include` の順番のルールを確認できたらチェック！
 
 ---
 
-## ミッション4　共通設定を `config.h` にまとめよう
+## ミッション4　最初の `.h` ファイル `config.h` を作ろう
 
-レッスン21の冒頭には、ピン番号や速度などの設定が書かれています。これらを `config.h` に移動します。
+まずは、いちばん簡単な `config.h` から作ります。ここで `.h` ファイルの作り方を覚えましょう。
 
-`config.h` の例：
+#### 手順1　新しいタブを作る
+
+1. Arduino IDEのタブが並んでいる行の右はしにある **「…」ボタン**をクリックします。
+2. **新規タブ**を選びます（`Ctrl` + `Shift` + `N` でもできます）。
+3. ファイル名を聞かれるので、`config.h` と入力して **OK** を押します。**`.h` まで入力**しましょう。`.h` を書き忘れると `.ino` のファイルになってしまいます。
+4. `config.h` というタブが増えたら成功です。
+
+#### 手順2　1行目に `#pragma once` と書く
+
+`config.h` のタブを開いて、1行目に次のように書きます。
+
+```cpp
+#pragma once
+```
+
+`#pragma once` は、「このファイルは1回だけ読み込んでね」という命令です。これから作る `.h` ファイルには、全部この1行を最初に書きます。
+
+#### 手順3　`#define` の行を切り取って貼り付ける
+
+1. `Lesson_41` のタブに戻ります。
+2. `#define` で始まる行を探して、**切り取り**（`Ctrl` + `X`）ます。チームの設定の、`// #define` で始まる行（コメントアウトしてある行）もいっしょに切り取ります。
+3. `config.h` のタブを開いて、`#pragma once` の下に**貼り付け**（`Ctrl` + `V`）ます。
+4. これを、`Lesson_41` のタブに `#define` が1つもなくなるまでくり返します。
+
+切り取る `#define` は、全部で16行あります。
+
+- `RECV_PIN`、`BUZZ_PIN`、`LED_PIN`（センサー・ブザー・LEDのピン）
+- `IR_BULLET`、`MY_BULLET`（チームの設定。コメントアウトしてある行も入れて4行）
+- `dir1PinRight` 〜 `dir2PinLeft`（モーターのピン、6行）
+- `SPEED`、`TURNSPEED`（スピード）
+- `MAX_PACKETSIZE`（Bluetoothの受信バッファの大きさ）
+
+貼り付けが終わると、`config.h` はこのようになります（並び順はちがっていてもOKです）。
 
 ```cpp
 #pragma once
 
-#define RECV_PIN 10
-#define BUZZ_PIN 13
-#define LED_PIN 2
-
-#define dir1PinRight 12
-#define dir2PinRight 11
-#define speedPinRight 9
-#define speedPinLeft 6
-#define dir1PinLeft 7
-#define dir2PinLeft 8
-
-#define SPEED 150
-#define TURNSPEED 200
-#define MAX_PACKETSIZE 32
-
-// チームの設定（レッスン21と同じ切りかえ方）
+#define RECV_PIN   10 // IR receiver pin connect to D10
+#define BUZZ_PIN     13  //buzzer connect to D13
 #define IR_BULLET      0xAAA       //Aの時はこちらを使う。Bの時はコメントアウト
 #define MY_BULLET      0xBBB       //Aの時はこちらを使う。Bの時はコメントアウト
 // #define IR_BULLET      0xBBB       //Bの時はこちらを使う。Aの時はコメントアウト
 // #define MY_BULLET      0xAAA       //Bの時はこちらを使う。Aの時はコメントアウト
+#define LED_PIN 2
+#define dir1PinRight   12  // Right Motor direction pin 1 to MODEL-X IN1
+#define dir2PinRight  11   // Right Motor direction pin 2 to MODEL-X IN2
+#define speedPinRight 9   //RIGHT PWM pin connect MODEL-X ENA
+#define speedPinLeft 6    // Left PWM pin connect MODEL-X ENB
+#define dir1PinLeft  7    //Left Motor direction pin 1 to MODEL-X IN3
+#define dir2PinLeft  8    //Left Motor direction pin 2 to MODEL-X IN4
+#define SPEED   150  //avoidance motor speed
+#define TURNSPEED  200     //back speed
+#define MAX_PACKETSIZE 32    //Serial receive buffer
 ```
 
-`Lesson_41.ino` の先頭を、次のようにします。
+**注意：** 同じ `#define` を `Lesson_41` と `config.h` の二か所に書かないようにしましょう。Bチームの人は、Bチームの設定が有効になっていること（`0xBBB` の `IR_BULLET` が `//` なしになっていること）を確認します。
+
+#### 手順4　`Lesson_41.ino` に `#include "config.h"` を書く
+
+`Lesson_41` のタブに戻り、`#include <IRremote.h>` の**すぐ下**に1行追加します。
 
 ```cpp
 #include <SoftwareSerial.h>
+SoftwareSerial BTSerial(4, 5);  //RX,TX
 #include <IRremote.h>
-#include "config.h"
+#include "config.h"          // ← この行を追加する
+
+IRrecv irrecv(RECV_PIN);
 ```
 
-`#include "config.h"` は、コンパイル前にそのファイルの内容をここへ展開する命令です。実行中に読み込むわけではありません。
+`#include "config.h"` は、コンパイルする前に、`config.h` の中身をこの場所に展開する（はりつける）命令です。ロボットが動いている最中に読み込むわけではありません。
 
-**注意：** 元のファイルにある同じ `#define` は削除します。同じ設定を二か所に書かないようにしましょう。A側・B側で弾の設定が異なることにも注意します。
+`IRrecv irrecv(RECV_PIN);` の行では `RECV_PIN` を使っているので、`#include "config.h"` はそれより上に書く必要があります。
 
-- [ ] `config.h` に共通設定を移せたらチェック！
+#### 手順5　検証してみる
+
+Arduino IDEの**検証（チェックマーク）**を押します。エラーが出なければ成功です。
+
+`'RECV_PIN' was not declared in this scope` のようなエラーが出たときは、`#include "config.h"` を書いた場所を確認しましょう。
+
+- [ ] `config.h` に `#define` を移して、エラーなく検証できたらチェック！
 
 ---
 
-## ミッション5　関数を機能別に移そう
+## ミッション5　`motor.h` を作ろう
 
-元の `Lesson_41.ino` から、関数を**丸ごと切り取り**、対応するファイルに貼り付けます。それぞれの `.h` ファイルの1行目には、`#pragma once`（同じファイルを2回読み込まないようにする命令）を書いておきます。
+次は、モーターの関数を `motor.h` に移します。関数を移すときは、`void 関数名()` の行から、その関数の最後の `}` までを**まとめて**切り取ります。
 
-- `motor.h`：`set_Motorspeed()`、`go_Advance()`、`go_Left()`、`go_Right()`、`go_Back()`、`back_Left()`、`back_Right()`、`stop_Stop()`
-- `sound.h`：`buzz_ON()`、`buzz_OFF()`、`alarm()`
-- `battle.h`：`shoot()`、`deadAlarm()`
-- `hissatsu.h`：レッスン22で作った `hissatsu()` などの必殺技
-- `bluetooth.h`：`do_Uart_Tick()`
+#### 手順1　新しいタブ `motor.h` を作る
 
-**大切！ `.h` ファイルの中では、使う関数を先に書きます。** 例えば `go_Advance()` の中では `set_Motorspeed()` を使っています。そのため `motor.h` では、`set_Motorspeed()` を**いちばん上**に移しましょう。
+ミッション4と同じように、**「…」ボタン → 新規タブ**で、`motor.h` という名前のタブを作ります。
 
-`Lesson_41.ino` には、ライブラリの読み込み、共有オブジェクト・変数、`#include`、`setup()`、`loop()` を残します。
-
-今回の元コードにある共有オブジェクト・変数は、次のものです。
+#### 手順2　1行目に `#pragma once` と書く
 
 ```cpp
-SoftwareSerial BTSerial(4, 5);
-IRrecv irrecv(RECV_PIN);
-IRsend irsend;
-decode_results results;
+#pragma once
+```
 
-int buttonState;
+#### 手順3　`set_Motorspeed()` を切り取って貼り付ける
+
+`Lesson_41` のタブで、次の部分を探します（`stop_Stop()` のすぐ下にあります）。
+
+```cpp
+/*set motor speed */
+void set_Motorspeed(int speed_L,int speed_R)
+{
+  analogWrite(speedPinRight,speed_R); 
+  analogWrite(speedPinLeft,speed_L);   
+}
+```
+
+`/*set motor speed */` の行から最後の `}` までを選んで**切り取り**、`motor.h` の `#pragma once` の下に**貼り付け**ます。
+
+#### 手順4　`go_Advance()` 〜 `stop_Stop()` を切り取って貼り付ける
+
+`Lesson_41` のタブで、`/*motor control*/` の行を探します。そこから、`stop_Stop()` の最後の `}` までを選んで**切り取り**ます。
+
+```cpp
+/*motor control*/                 ← ここから
+void go_Advance(void)  //Forward
+{
+  ...
+}
+void go_Left()  //Turn left
+  ...
+void stop_Stop()    //Stop
+{
+  digitalWrite(dir1PinRight, LOW);
+  digitalWrite(dir2PinRight,LOW);
+  digitalWrite(dir1PinLeft,LOW);
+  digitalWrite(dir2PinLeft,LOW);
+  set_Motorspeed(0,0);
+}                                 ← ここまで
+```
+
+`motor.h` のタブを開いて、手順3で貼り付けた `set_Motorspeed()` の**下**に貼り付けます。
+
+貼り付けが終わると、`motor.h` はこのような形になります。
+
+```cpp
+#pragma once
+
+/*set motor speed */
+void set_Motorspeed(int speed_L,int speed_R)
+{
+  ...
+}
+/*motor control*/
+void go_Advance(void)  //Forward
+{
+  ...
+}
+void go_Left()  //Turn left
+  ...
+void stop_Stop()    //Stop
+{
+  ...
+}
+```
+
+**大切！ どうして `set_Motorspeed()` をいちばん上にするの？**
+`go_Advance()` などの関数は、中で `set_Motorspeed()` を使っています。`.ino` ファイルの中なら、Arduino IDEが関数の順番を気にしなくても動くようにしてくれます。でも `.h` ファイルの中ではそうしてくれないので、**使う関数を先に書いておく**必要があるのです。
+
+#### 手順5　`Lesson_41.ino` に `#include "motor.h"` を書く
+
+`Lesson_41` のタブに戻り、`unsigned long preUARTTick = 0;` の行の**すぐ下**に1行追加します。
+
+```cpp
 char buffUART[MAX_PACKETSIZE];
 unsigned int buffUARTIndex = 0;
 unsigned long preUARTTick = 0;
-int lastButtonState = 0;
+#include "motor.h"           // ← この行を追加する
 ```
 
-これらは `Lesson_41.ino` の、`#include "config.h"` のすぐ下にまとめて書きます。**定義は一か所にだけ**残します。複数のファイルに同じ変数を定義すると、エラーの原因になります。
+`Lesson_41` のタブに、モーターの関数（`go_Advance()` 〜 `stop_Stop()`、`set_Motorspeed()`）が残っていないことも確認しましょう。
 
-### `#include` の順番を考えよう
+#### 手順6　検証してみる
 
-最後に、`Lesson_41.ino` の共有オブジェクト・変数の下に、次のように `#include` を書きます。
+**検証（チェックマーク）**を押して、エラーが出なければ成功です。
 
-```cpp
-#include <SoftwareSerial.h>
-#include <IRremote.h>
-#include "config.h"      // ピン番号・定数・チームの設定
-
-// 共有するオブジェクト・変数（BTSerial、irrecv、buttonState など）
-
-#include "motor.h"       // モーターの動作
-#include "sound.h"       // ブザー
-#include "battle.h"      // 赤外線攻撃・被弾時の処理（motor.h を使う）
-#include "hissatsu.h"    // 必殺技（motor.h・sound.h・battle.h を使う）
-#include "bluetooth.h"   // Bluetooth通信（上の全部を使うので最後）
-
-void setup() {
-  ...
-```
-
-この順番には理由があります。
-
-- `battle.h` の `deadAlarm()` は、`motor.h` の `stop_Stop()` を使う → `motor.h` が先
-- `hissatsu.h` の必殺技は、走る・撃つの関数を使う → `motor.h`・`sound.h`・`battle.h` が先
-- `bluetooth.h` の `do_Uart_Tick()` は、アプリのボタンに合わせて全部の関数を呼ぶ → いちばん最後
-- 共有する変数は、ほとんどの `.h` が使う → `#include` よりも先
-
-**`#include` の順番は「読み込む順番」です。ロボットが動く順番ではありません。** 動く順番を決めるのは、これまでどおり `setup()` と `loop()` です。
-
-**注意：** 関数の中身や `setup()`・`loop()` の処理順は、この段階では変更しません。`deadAlarm()` にある停止後の無限ループも、元の対戦ルールの一部としてそのまま残します。必殺技をボタンに割り当てている `case 'G': hissatsu(); break;` などの行も、`bluetooth.h` の switch 文の中にそのまま残します。
-
-- [ ] 関数を移動できたらチェック！
-- [ ] 元の場所に同じ関数が重複していないことを確認できたらチェック！
-- [ ] `#include` を正しい順番で書けたらチェック！
+- [ ] `motor.h` にモーターの関数を移せたらチェック！
+- [ ] エラーなく検証できたらチェック！
 
 ---
 
-## ミッション6　コンパイルして確かめよう
+## ミッション6　残りのファイルも作ろう
 
-Arduino IDEの**検証（チェックマーク）**を押して、コンパイルしてみましょう。
+残りのファイルも、ミッション5と同じ手順で作ります。
+
+1. **「…」ボタン → 新規タブ**で、`.h` ファイルを作る
+2. 1行目に `#pragma once` と書く
+3. `Lesson_41` のタブから関数を**切り取り**、新しいタブに**貼り付け**る
+4. `Lesson_41` のタブの、前に書いた `#include` の**すぐ下**に、新しい `#include` を1行追加する
+5. **検証**して、エラーが出ないことを確かめる
+
+ひとつ作るごとに検証しましょう。エラーが出たときに、どこでまちがえたのかがすぐに分かります。
+
+次の表の**上から順番に**作ります。
+
+| 順番 | ファイル名 | 切り取る部分 | 追加する `#include` |
+|---|---|---|---|
+| 1 | `sound.h` | `void buzz_ON()` の行から、`alarm()` の最後の `}` まで | `#include "sound.h"` |
+| 2 | `battle.h` | `void shoot()` の行から、`deadAlarm()` の最後の `}` まで（`loop()` よりも下にあります） | `#include "battle.h"` |
+| 3 | `hissatsu.h` | レッスン22で作った `hissatsu()` などの必殺技の関数。**作っていない人はとばしてOK** | `#include "hissatsu.h"` |
+| 4 | `bluetooth.h` | `//WiFi / Bluetooth through the serial control` の行から、`do_Uart_Tick()` の最後の `}` まで | `#include "bluetooth.h"` |
+
+全部終わると、`#include` は次のように並びます。
+
+```cpp
+unsigned long preUARTTick = 0;
+#include "motor.h"
+#include "sound.h"
+#include "battle.h"
+#include "hissatsu.h"    // 必殺技を作った人だけ
+#include "bluetooth.h"
+```
+
+**注意：**
+
+- 関数の中身は、この段階では変更しません。`deadAlarm()` にある停止後の無限ループも、元の対戦ルールの一部としてそのまま残します。
+- 必殺技をボタンに割り当てている `case 'G': hissatsu();break;` などの行は、`do_Uart_Tick()` の switch 文の中にあります。`bluetooth.h` にそのまま移しましょう。
+- `battle.h` の `shoot()` と `deadAlarm()` は、元のプログラムでは `loop()` より下にありました。でも `#include "battle.h"` は、`loop()` の下ではなく、`#include "sound.h"` の下に書きます。
+
+最後に `Lesson_41` のタブを見て、残っているのが次のものだけになっているか確認しましょう。
+
+- ライブラリの読み込み（`#include <SoftwareSerial.h>` など）と `#include "〇〇.h"` の行
+- 共有するオブジェクト・変数（`BTSerial`、`irrecv`、`irsend`、`results`、`buttonState`、`buffUART`、`buffUARTIndex`、`preUARTTick`、`lastButtonState`）
+- `setup()` と `loop()`
+
+使われなくなった `//car motor control` のようなコメントは消してもかまいません。
+
+- [ ] `sound.h` を作れたらチェック！
+- [ ] `battle.h` を作れたらチェック！
+- [ ] `hissatsu.h` を作れたらチェック！（必殺技を作った人だけ）
+- [ ] `bluetooth.h` を作れたらチェック！
+- [ ] `Lesson_41` のタブに、`setup()` と `loop()` 以外の関数が残っていないことを確認できたらチェック！
+
+---
+
+## ミッション7　コンパイルして確かめよう
+
+最後にもう一度、**検証（チェックマーク）**を押して、全体がコンパイルできるか確かめましょう。
 
 エラーが出たら、次の点を確認します。
 
 1. `#include "config.h"` などのファイル名が正しく書かれているか
 2. **`〜 was not declared in this scope` と出たら、読み込む順番を確認する。** 「〜」の関数や変数が、それを使うファイルよりも**後**で読み込まれていないか見てみましょう。
-3. 関数や変数を重複して定義していないか
-4. 関数を移すときに `{` や `}` を消していないか
-5. `setup()` と `loop()` がそれぞれ一つだけか
+3. 関数や変数を、二か所に書いていないか（切り取らずにコピーしてしまっていないか）
+4. 関数を移すときに `{` や `}` を消していないか、多く切り取っていないか
+5. それぞれの `.h` ファイルの1行目に `#pragma once` があるか
 6. タブの名前が `.h` になっているか（`.ino` になっていないか）
 7. `Lesson_41.ino` がフォルダ名と同じ名前になっているか
 
-例えば `motor.h` を `bluetooth.h` の後に読み込むと、次のようなエラーになります。
+例えば `#include "motor.h"` を `#include "bluetooth.h"` の下に書いてしまうと、次のようなエラーになります。
 
 ```text
-battle.h:19:5: error: 'stop_Stop' was not declared in this scope
+battle.h:〇:〇: error: 'stop_Stop' was not declared in this scope
 ```
 
-「`battle.h` の19行目で `stop_Stop` を使おうとしたけれど、まだ読み込まれていないよ」という意味です。
+「`battle.h` の中で `stop_Stop` を使おうとしたけれど、まだ読み込まれていないよ」という意味です。
 
 **発展：** 今回は `.h` の中に関数の中身まで書いて、`Lesson_41.ino` にまとめて読み込んでいます。本格的なプログラムでは、`.h` には関数の名前（宣言）だけを書き、中身は `.cpp` ファイルに書いて別々にコンパイルします。そうすると、読み込む順番を気にしなくてよくなります。
 
@@ -244,7 +431,7 @@ battle.h:19:5: error: 'stop_Stop' was not declared in this scope
 
 ---
 
-## ミッション7　ロボットの動作を確認しよう
+## ミッション8　ロボットの動作を確認しよう
 
 コンパイルに成功したら、Arduinoに書き込んで動作を確かめます。
 
