@@ -34,7 +34,7 @@ flowchart LR
     D -.-> E[Arduinoとロボット]
 ```
 
-ゲームパッドはArduinoに直接つなぐのではありません。**PCがゲームパッドの信号を受け取り、JavaScriptがその内容を調べます。**
+ゲームパッドはArduinoに直接つなぐのではありません。**PCがゲームパッドの信号を受け取り、JavaScriptというブラウザの上で動くプログラム言語が処理をしてArduinoへ送ります。**
 
 - **Gamepad API**：ブラウザからゲームパッドの状態を調べるための仕組み。
 - **ボタン**：押されているかどうかを読み取れる。
@@ -104,7 +104,7 @@ Arduinoのプログラムは、Arduinoの中で動きます。JavaScriptのプ�
 | 関数を作る | `void update() { ... }` | `function update() { ... }` |
 | もし〜なら | `if (x > 0) { ... }` | `if (x > 0) { ... }`（同じ！） |
 | コメント | `// コメント` | `// コメント`（同じ！） |
-| 文字を表示する | `Serial.println("こんにちは");` | `console.log("こんにちは");` |
+| 文字を表示する | `Serial.println("こんにちは");`（シリアルモニターに出る） | `document.getElementById("status").textContent = "こんにちは";`（画面に出る。下でくわしく説明） |
 | くり返す | `loop()` がひとりでにくり返される | `requestAnimationFrame(update);` で、自分でくり返しをたのむ |
 
 **ちがうところ：**
@@ -131,30 +131,7 @@ document.getElementById("status").textContent = "ゲームパッドが見つか�
 
 ---
 
-## ミッション3　JavaScriptでボタンの状態を調べよう
-
-ブラウザには、接続中のゲームパッドを取得する命令があります。
-
-```javascript
-const pads = navigator.getGamepads();
-const pad = pads[0];
-```
-
-`pads[0]` は最初のゲームパッドです。ゲームパッドが見つからない場合もあるので、実際のプログラムでは確認が必要です。
-
-ボタンの状態は、次のように調べられます。
-
-```javascript
-const pressed = pad.buttons[0].pressed;
-```
-
-`pressed` は、押しているとき `true`、押していないとき `false` になります。
-
-**ポイント：** `buttons[0]` の `0` は「ボタン番号0」という意味です。必ずしもAボタンとは限りません。
-
----
-
-## ミッション4　ボタンの番号を表示するページを作ろう
+## ミッション3　ボタンの番号を表示するページを作ろう
 
 `gamepad_test.html` というファイルを作り、PCの中の小さなWebサーバー（`localhost`）から開きます。
 
@@ -394,7 +371,7 @@ document.getElementById("buttons").textContent =
 
 ---
 
-## ミッション5　十字キーとボタンの番号を調べよう
+## ミッション4　十字キーとボタンの番号を調べよう
 
 画面に表示された番号を記録します。
 
@@ -411,18 +388,49 @@ document.getElementById("buttons").textContent =
 
 ### 発展：押されたボタンに名前を付けよう
 
-例えば、調べた番号を使って次のようなプログラムを作れます。
+調べた番号を使うと、番号ではなく「上」「A」のような**名前**を画面に出せます。手順7で読んだ「名前札（id）の部品の文字を書きかえる」書き方を、もう一度使います。
 
-```javascript
-// 例：上ボタンが12番だった場合
-if (pad.buttons[12].pressed) {
-  console.log("上が押された！");
-}
+**① 名前を出す部品をHTMLに足す**
+
+`gamepad_test.html` の `<p id="buttons">` の行のすぐ下に、1行足します。
+
+```html
+  <p id="buttons">押されているボタン：なし</p>
+  <p id="name">押されたボタンの名前：なし</p>
 ```
 
-**注意：** `12` は例です。ミッション5で自分が調べた番号に書き換えてください。
+**② 名前を決めて、画面に書きこむプログラムを足す**
 
-`console.log()` の表示は、Chromeで `F12` キーを押して開く「デベロッパーツール」の **Console** に出ます。
+手順7の⑥の文（`document.getElementById("buttons")...` で始まる3行）のすぐ下に、次のプログラムを足します。
+
+```javascript
+        document.getElementById("buttons").textContent =
+          "押されているボタン：" +
+          (pressed.length ? pressed.join(", ") : "なし");
+
+        // ↓ ここから足す
+        let name = "なし";
+        if (pad.buttons[12].pressed) {
+          name = "上";
+        }
+        if (pad.buttons[0].pressed) {
+          name = "A";
+        }
+        document.getElementById("name").textContent =
+          "押されたボタンの名前：" + name;
+        // ↑ ここまで足す
+      }
+```
+
+- `let name = "なし";` で、`name` という変数を作ります。はじめは「なし」です。
+- `if (pad.buttons[12].pressed)` は、「12番のボタンが押されていたら」という意味です。押されていたら、`name` を「上」に書きかえます。
+- 最後に、`name` の中身を、`id="name"` の部品に書きこみます。
+
+保存（`Ctrl` + `S`）したら、Chromeで `F5` キーを押してページを読みこみ直し、十字キーの上やAボタンを押してみましょう。「押されたボタンの名前：上」と出たら成功です。
+
+**注意：** `12` と `0` は例です。ミッション4で自分が調べた番号に書きかえてください。
+
+**チャレンジ：** 同じように `if` を足して、下・左・右やB・X・Yボタンにも名前を付けてみましょう。
 
 ---
 
