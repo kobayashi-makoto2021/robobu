@@ -6,18 +6,54 @@
 </head>
 <body>
   <h1>ゲームパッドでロボットを動かそう！</h1>
+
+  <p>ロボットのIPアドレス：
+    <input id="ip" type="text" placeholder="192.168.〇.〇">
+  </p>
+
+  <p>1回に動く時間：<b id="t">1000</b> ミリ秒</p>
+  <input id="time" type="range" min="100" max="2000" step="100" value="1000">
+
   <p id="state">ゲームパッドのボタンを1回押してください</p>
   <p id="error"></p>
 
   <script>
-    // ★1 ロボットのIPアドレスに書きかえる（レッスン42のシリアルモニターに出たもの）
-    const ROBOT = "http://192.168.1.20";
-
-    // ★2 レッスン43でノートにまとめた番号に書きかえる（以下は例）
+    // ★ レッスン43でノートにまとめた番号に書きかえる（以下は例）
     const UP = 12;
     const DOWN = 13;
     const LEFT = 14;
     const RIGHT = 15;
+
+    const ipBox = document.getElementById("ip");         // IPアドレスの入力らん
+    const timeSlider = document.getElementById("time");  // 動く時間のスライダー
+
+    let sending = false;                  // 今、ロボットに送っているところか
+    let timeToSend = timeSlider.value;    // まだ送っていない「動く時間」（はじめに1回送る）
+    let lastCommand = "E";                // さっき送った命令
+
+    // 前に入れたIPアドレスを、ブラウザに覚えておいてもらう
+    ipBox.value = localStorage.getItem("robotIP") || "";
+    ipBox.addEventListener("change", () => {
+      localStorage.setItem("robotIP", ipBox.value);
+      timeToSend = timeSlider.value;   // つなぎなおしたら、動く時間も送りなおす
+    });
+
+    // スライダーを動かすと数字が変わり、手をはなすと動く時間を送る
+    timeSlider.addEventListener("input", () => {
+      document.getElementById("t").textContent = timeSlider.value;
+    });
+    timeSlider.addEventListener("change", () => {
+      timeToSend = timeSlider.value;
+    });
+
+    // 入力されたIPアドレスから、ロボットのアドレスを作る
+    // 例：「192.168.10.22」→「http://192.168.10.22」
+    function robotURL() {
+      let ip = ipBox.value.trim();
+      ip = ip.replace(/^https?:\/\//, "");   // http:// を入れていたら取る
+      ip = ip.replace(/\/+$/, "");           // 最後の / を取る
+      return "http://" + ip;
+    }
 
     // ゲームパッドのようすから、ロボットへの命令（1文字）を決める
     function readCommand(pad) {
@@ -30,13 +66,10 @@
     }
 
     // ロボットに命令を送る（返事が来るまで待つ。そのあいだは次を送らない）
-    let sending = false;
     async function send(path) {
       sending = true;
       try {
-        // ROBOT の最後に / が付いていたら取る（「//M」にならないように）
-        const url = ROBOT.replace(/\/+$/, "") + path;
-        await fetch(url, { mode: "no-cors", cache: "no-store" });
+        await fetch(robotURL() + path, { mode: "no-cors", cache: "no-store" });
         document.getElementById("error").textContent = "";
       } catch (e) {
         document.getElementById("error").textContent =
@@ -45,24 +78,30 @@
       sending = false;
     }
 
-    let lastCommand = "E";
     function update() {
       const pad = Array.from(navigator.getGamepads()).find(p => p !== null);
       const command = readCommand(pad);
       document.getElementById("state").textContent = "今の命令：" + command;
 
-      // 前の命令を送り終わっていたら、次の命令を送る
-      //  ・押しているあいだ（E以外）は、くり返し送る（ロボットが moveTime で止まらないように）
-      //  ・はなしたときは、停止（E）を1回だけ送る
-      if (!sending && (command !== "E" || lastCommand !== "E")) {
-        send("/" + command);
-        lastCommand = command;
+      if (ipBox.value.trim() === "") {
+        document.getElementById("error").textContent =
+          "ロボットのIPアドレスを入れてください";
+      } else if (!sending) {
+        // 前の命令を送り終わっていたら、次の命令を送る
+        if (timeToSend !== null) {
+          // 動く時間が変わっていたら、先にそれを送る
+          send("/T" + timeToSend);
+          timeToSend = null;
+        } else if (command !== "E" || lastCommand !== "E") {
+          //  ・押しているあいだ（E以外）は、くり返し送る（ロボットが止まらないように）
+          //  ・はなしたときは、停止（E）を1回だけ送る
+          send("/" + command);
+          lastCommand = command;
+        }
       }
       requestAnimationFrame(update);
     }
 
-    // 命令が届くまで少し時間がかかるので、1回に動く時間を1秒にしておく
-    send("/T1000");
     update();
   </script>
 </body>

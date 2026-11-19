@@ -99,18 +99,54 @@ flowchart LR
 </head>
 <body>
   <h1>ゲームパッドでロボットを動かそう！</h1>
+
+  <p>ロボットのIPアドレス：
+    <input id="ip" type="text" placeholder="192.168.〇.〇">
+  </p>
+
+  <p>1回に動く時間：<b id="t">1000</b> ミリ秒</p>
+  <input id="time" type="range" min="100" max="2000" step="100" value="1000">
+
   <p id="state">ゲームパッドのボタンを1回押してください</p>
   <p id="error"></p>
 
   <script>
-    // ★1 ロボットのIPアドレスに書きかえる（レッスン42のシリアルモニターに出たもの）
-    const ROBOT = "http://192.168.1.20";
-
-    // ★2 レッスン43でノートにまとめた番号に書きかえる（以下は例）
+    // ★ レッスン43でノートにまとめた番号に書きかえる（以下は例）
     const UP = 12;
     const DOWN = 13;
     const LEFT = 14;
     const RIGHT = 15;
+
+    const ipBox = document.getElementById("ip");         // IPアドレスの入力らん
+    const timeSlider = document.getElementById("time");  // 動く時間のスライダー
+
+    let sending = false;                  // 今、ロボットに送っているところか
+    let timeToSend = timeSlider.value;    // まだ送っていない「動く時間」（はじめに1回送る）
+    let lastCommand = "E";                // さっき送った命令
+
+    // 前に入れたIPアドレスを、ブラウザに覚えておいてもらう
+    ipBox.value = localStorage.getItem("robotIP") || "";
+    ipBox.addEventListener("change", () => {
+      localStorage.setItem("robotIP", ipBox.value);
+      timeToSend = timeSlider.value;   // つなぎなおしたら、動く時間も送りなおす
+    });
+
+    // スライダーを動かすと数字が変わり、手をはなすと動く時間を送る
+    timeSlider.addEventListener("input", () => {
+      document.getElementById("t").textContent = timeSlider.value;
+    });
+    timeSlider.addEventListener("change", () => {
+      timeToSend = timeSlider.value;
+    });
+
+    // 入力されたIPアドレスから、ロボットのアドレスを作る
+    // 例：「192.168.10.22」→「http://192.168.10.22」
+    function robotURL() {
+      let ip = ipBox.value.trim();
+      ip = ip.replace(/^https?:\/\//, "");   // http:// を入れていたら取る
+      ip = ip.replace(/\/+$/, "");           // 最後の / を取る
+      return "http://" + ip;
+    }
 
     // ゲームパッドのようすから、ロボットへの命令（1文字）を決める
     function readCommand(pad) {
@@ -123,13 +159,10 @@ flowchart LR
     }
 
     // ロボットに命令を送る（返事が来るまで待つ。そのあいだは次を送らない）
-    let sending = false;
     async function send(path) {
       sending = true;
       try {
-        // ROBOT の最後に / が付いていたら取る（「//M」にならないように）
-        const url = ROBOT.replace(/\/+$/, "") + path;
-        await fetch(url, { mode: "no-cors", cache: "no-store" });
+        await fetch(robotURL() + path, { mode: "no-cors", cache: "no-store" });
         document.getElementById("error").textContent = "";
       } catch (e) {
         document.getElementById("error").textContent =
@@ -138,38 +171,49 @@ flowchart LR
       sending = false;
     }
 
-    let lastCommand = "E";
     function update() {
       const pad = Array.from(navigator.getGamepads()).find(p => p !== null);
       const command = readCommand(pad);
       document.getElementById("state").textContent = "今の命令：" + command;
 
-      // 前の命令を送り終わっていたら、次の命令を送る
-      //  ・押しているあいだ（E以外）は、くり返し送る（ロボットが moveTime で止まらないように）
-      //  ・はなしたときは、停止（E）を1回だけ送る
-      if (!sending && (command !== "E" || lastCommand !== "E")) {
-        send("/" + command);
-        lastCommand = command;
+      if (ipBox.value.trim() === "") {
+        document.getElementById("error").textContent =
+          "ロボットのIPアドレスを入れてください";
+      } else if (!sending) {
+        // 前の命令を送り終わっていたら、次の命令を送る
+        if (timeToSend !== null) {
+          // 動く時間が変わっていたら、先にそれを送る
+          send("/T" + timeToSend);
+          timeToSend = null;
+        } else if (command !== "E" || lastCommand !== "E") {
+          //  ・押しているあいだ（E以外）は、くり返し送る（ロボットが止まらないように）
+          //  ・はなしたときは、停止（E）を1回だけ送る
+          send("/" + command);
+          lastCommand = command;
+        }
       }
       requestAnimationFrame(update);
     }
 
-    // 命令が届くまで少し時間がかかるので、1回に動く時間を1秒にしておく
-    send("/T1000");
     update();
   </script>
 </body>
 </html>
 ```
 
-#### 手順2　2か所を自分のものに書きかえる
+#### 手順2　ボタンの番号を自分のものに書きかえる
 
-`★` の付いたところを書きかえて、保存します。
+`★` の付いたところを、レッスン43でノートにまとめた**十字キーの番号**に書きかえて、保存します。
 
-| 場所 | 書きかえる内容 |
-|---|---|
-| ★1 `const ROBOT = "http://192.168.1.20";` | `"` と `"` のあいだを、ミッション3でノートに書いた**ロボットのIPアドレス**にする（`http://` は残す。最後に `/` は付けない） |
-| ★2 `const UP = 12;` など4行 | レッスン43でノートにまとめた**十字キーの番号**にする |
+```javascript
+    // ★ レッスン43でノートにまとめた番号に書きかえる（以下は例）
+    const UP = 12;
+    const DOWN = 13;
+    const LEFT = 14;
+    const RIGHT = 15;
+```
+
+ロボットのIPアドレスと、1回に動く時間は、プログラムを書きかえずに**ページの画面から入力**します（手順3）。
 
 #### 手順3　ページを開いて、動かしてみる
 
@@ -180,16 +224,18 @@ python -m http.server 8000
 ```
 
 2. Chromeで `http://localhost:8000/controller.html` を開きます。
-3. ゲームパッドのボタンを**一度押して**、ゲームパッドを見つけてもらいます。
-4. 十字キーを押して、ロボットが動くか確かめましょう。画面には「今の命令：M」のように、今送っている命令が表示されます。
+3. 「ロボットのIPアドレス」のらんに、ミッション3でノートに書いた**IPアドレス**（例：`192.168.10.22`）を入力して、`Enter` を押します。一度入れると、ブラウザが覚えておいてくれるので、次に開いたときは入力しなくてもだいじょうぶです。
+4. ゲームパッドのボタンを**一度押して**、ゲームパッドを見つけてもらいます。
+5. 十字キーを押して、ロボットが動くか確かめましょう。画面には「今の命令：M」のように、今送っている命令が表示されます。
+6. 「1回に動く時間」のスライダーは、レッスン42の操作画面と同じです。動かして手をはなすと、ロボットの `moveTime` が変わります。はじめは1000ミリ秒（1秒）です。
 
 **「ロボットにつながりません」と表示されたときは：**
 
-- ★1のIPアドレスがまちがっていないか
+- 画面に入れたIPアドレスがまちがっていないか（`192.168.〇.〇` の形になっているか）
 - ロボットの電源が入っていて、Wi-Fiにつながっているか（レッスン42の操作画面が開けるか）
 - PCが、ロボットと同じWi-Fiにつながっているか
 
-- [ ] `controller.html` を作って、2か所を書きかえられたらチェック！
+- [ ] `controller.html` を作って、ボタンの番号を書きかえられたらチェック！
 - [ ] ゲームパッドの十字キーで、ロボットが動いたらチェック！
 
 #### 手順4　プログラムを読んでみよう
@@ -215,8 +261,7 @@ function readCommand(pad) {
 async function send(path) {
   sending = true;
   try {
-    const url = ROBOT.replace(/\/+$/, "") + path;
-    await fetch(url, { mode: "no-cors", cache: "no-store" });
+    await fetch(robotURL() + path, { mode: "no-cors", cache: "no-store" });
     ...
   } catch (e) {
     ...「ロボットにつながりません」と表示
@@ -225,7 +270,8 @@ async function send(path) {
 }
 ```
 
-- `fetch(url)` は、`http://192.168.〇.〇/M` のようなアドレスにリクエストを送る命令です。`url` は、ロボットのIPアドレス（`ROBOT`）と命令（`path`）をつなげたものです。`ROBOT` の最後にうっかり `/` を付けてしまっても、`replace(...)` で取りのぞいてから、つなげるようにしています。レッスン42で、ブラウザのボタンを押したときに送っていたものと同じリクエストです。
+- `fetch(robotURL() + path)` は、`http://192.168.〇.〇/M` のようなアドレスにリクエストを送る命令です。レッスン42で、ブラウザのボタンを押したときに送っていたものと同じリクエストです。
+- `robotURL()` は、画面に入力したIPアドレスの前に `http://` を付けて、ロボットのアドレスを作る関数です。`http://` や最後の `/` をうっかり入れてしまっても、取りのぞいてから作り直すようにしています。
 - `await` は、「ロボットから返事が来るまで待つ」という意味です。`await` を使う関数には、前に `async` を付けます。
 - `mode: "no-cors"` は、「返事の中身は読まなくていいから、とにかく送ってね」という設定です。PCのページとロボットは別の場所にあるので、ふつうに送ると、ブラウザが「返事を読んではいけません」と止めてしまいます。今回は返事を読む必要がないので、この設定で送ります。
 - `try { ... } catch (e) { ... }` は、「`try` の中でうまくいかなかったら、`catch` の中をやる」という書き方です。ロボットにつながらなかったときに、画面にメッセージを出します。
@@ -234,16 +280,21 @@ async function send(path) {
 **③ くり返し調べて、送る（`update`）**
 
 ```javascript
-if (!sending && (command !== "E" || lastCommand !== "E")) {
-  send("/" + command);
-  lastCommand = command;
+} else if (!sending) {
+  if (timeToSend !== null) {
+    send("/T" + timeToSend);      // 動く時間が変わっていたら、先にそれを送る
+    timeToSend = null;
+  } else if (command !== "E" || lastCommand !== "E") {
+    send("/" + command);
+    lastCommand = command;
+  }
 }
 ```
 
-この `if` は、次の2つがどちらも当てはまるときに、命令を送ります。
+`!sending` は「前の命令を送り終わっている（ロボットから返事が来ている）」という意味です。送り終わっていたら、次のどちらかを送ります。
 
-1. `!sending`：前の命令を送り終わっている（ロボットから返事が来ている）
-2. `command !== "E" || lastCommand !== "E"`：十字キーを押している、または、さっきまで押していた（`||` は「または」）
+1. スライダーで「動く時間」が変わっていたら（`timeToSend` が空っぽでなければ）、先に `/T1000` のような命令を送ります。
+2. そうでなければ、`command !== "E" || lastCommand !== "E"`、つまり「十字キーを押している、または、さっきまで押していた」ときに、命令を送ります（`||` は「または」）。
 
 つまり、
 
@@ -251,15 +302,40 @@ if (!sending && (command !== "E" || lastCommand !== "E")) {
 - **離したとき：** 停止の命令 `E` を1回だけ送ります。
 - **何も押していない間：** 何も送りません。
 
-**④ 1回に動く時間を1秒にしておく**
+**④ IPアドレスと、1回に動く時間を画面から入力する**
 
-```javascript
-send("/T1000");
+```html
+<p>ロボットのIPアドレス：
+  <input id="ip" type="text" placeholder="192.168.〇.〇">
+</p>
+
+<p>1回に動く時間：<b id="t">1000</b> ミリ秒</p>
+<input id="time" type="range" min="100" max="2000" step="100" value="1000">
 ```
 
-ページを開いたときに1回だけ、`/T1000` を送ります。レッスン42のスライダーで送っていたのと同じ命令で、ロボットの `moveTime` を1000ミリ秒（1秒）にします。ロボットが命令を受け取って返事をするまでには、少し時間がかかります。`moveTime` が短すぎると、次の命令が届く前に止まってしまうので、少し長めにしておきます。
+- `<input type="text">` は、文字を入力できるらんです。`placeholder` は、何も入れていないときにうすく表示される見本の文字です。
+- `<input type="range">` は、レッスン42の操作画面と同じスライダーです。
 
-もしWi-Fiが切れて命令が届かなくなっても、ロボットは1秒で自動的に止まります。
+```javascript
+ipBox.value = localStorage.getItem("robotIP") || "";
+ipBox.addEventListener("change", () => {
+  localStorage.setItem("robotIP", ipBox.value);
+  ...
+});
+```
+
+- `addEventListener("change", ...)` は、「入力らんの中身が変わったら、`...` をやってね」というお願いです。
+- `localStorage` は、ブラウザの中の小さな**メモ帳**です。`setItem` で書きこみ、`getItem` で読み出します。IPアドレスをここに書いておくので、ページを閉じても、次に開いたときに入力らんに残っています。
+
+```javascript
+timeSlider.addEventListener("change", () => {
+  timeToSend = timeSlider.value;
+});
+```
+
+スライダーから手をはなすと、`timeToSend` にその値が入ります。すると③の `update()` が、次のすきまで `/T1000` のような命令をロボットに送ります。ページを開いたときにも、はじめの値（1000）を1回送ります。
+
+**どうして、はじめは1000ミリ秒（1秒）なの？：** ロボットが命令を受け取って返事をするまでには、少し時間がかかります。`moveTime` が短すぎると、押しっぱなしにしていても、次の命令が届く前にロボットが止まってしまい、カクカク動きます。少し長めにしておけば、なめらかに動き続けます。スライダーで短くしたり長くしたりして、ちょうどよい時間をさがしてみましょう。もしWi-Fiが切れて命令が届かなくなっても、ロボットは `moveTime` がたつと自動的に止まります。
 
 ---
 
@@ -280,7 +356,7 @@ send("/T1000");
 
 **追加実験：** 上と右を同時に押すと、今のプログラムはどう動きますか？ `readCommand` の `if` の順番と関係があるでしょうか？
 
-**追加実験：** ロボットのシリアルモニター（9600 baud）を開いて、十字キーを押しっぱなしにしてみましょう。`GET /M HTTP/1.1` は、どのくらいの間かくで表示されるでしょうか？
+**追加実験：** ロボットのシリアルモニター（9600 baud）を開いて、十字キーを押しっぱなしにしてみましょう。`GET /M HTTP/1.1` は、どのくらいの間かくで表示されるでしょうか？ スライダーで「1回に動く時間」をその間かくより短くすると、どうなるでしょうか？
 
 ---
 
@@ -295,6 +371,8 @@ send("/T1000");
 - **`try` / `catch`**：うまくいかなかったときの処理を書く書き方
 - **`return`**：関数の答えを返して、関数を終わりにする命令
 - **`||`**：「または」。どちらか片方でも当てはまれば OK
+- **`<input>`**：文字を入れるらんや、スライダーなど、入力する部品を作るタグ
+- **`localStorage`**：ブラウザの中の小さなメモ帳。ページを閉じても、書いたことを覚えておける
 
 ### 出来たことをチェックしよう
 
@@ -310,4 +388,4 @@ send("/T1000");
 
 ---
 
-*講師向けメモ：ロボット側はレッスン42のプログラムをそのまま使います（命令は `/M` `/B` `/L` `/R` `/E` と `/T数字`）。原稿段階ではPCに中継サーバー（`relay.py`）を置く案でしたが、次の理由で中継なしにしています。(1) `fetch(..., {mode: "no-cors"})` は返事を読まない単純なGETなので、CORSの制約を受けずに送れる。(2) Chromeのローカルネットワークアクセス制限は、`localhost`（より内側のアドレス空間）からLAN内のIPアドレスへの通信には確認画面を出さない。WiFiEsp は 9600bps のため、ロボットが1つのリクエストを読み終えて返事をするまで0.5秒前後かかります。そのため、押している間は「返事が来たら次を送る」形でくり返し送り、開始時に `/T1000` で `moveTime` を1秒にしています（通信が切れた場合も1秒で停止）。**この構成は実機での確認がまだです。** 送れない場合は、原稿の中継サーバー案にもどすことを検討してください。*
+*講師向けメモ：ロボット側はレッスン42のプログラムをそのまま使います（命令は `/M` `/B` `/L` `/R` `/E` と `/T数字`）。原稿段階ではPCに中継サーバー（`relay.py`）を置く案でしたが、次の理由で中継なしにしています。(1) `fetch(..., {mode: "no-cors"})` は返事を読まない単純なGETなので、CORSの制約を受けずに送れる。(2) Chromeのローカルネットワークアクセス制限は、`localhost`（より内側のアドレス空間）からLAN内のIPアドレスへの通信には確認画面を出さない。WiFiEsp は 9600bps のため、ロボットが1つのリクエストを読み終えて返事をするまで0.5秒前後かかります。そのため、押している間は「返事が来たら次を送る」形でくり返し送り、開始時とスライダー操作時に `/T数字` で `moveTime` を設定しています（初期値1000ミリ秒。通信が切れた場合も `moveTime` で停止）。ロボットのIPアドレスはページの入力らんから入れ、`localStorage` に保存します。**この構成は実機での確認がまだです。** 送れない場合は、原稿の中継サーバー案にもどすことを検討してください。*
