@@ -1,7 +1,7 @@
 // =============================================
 //  battle.h  赤外線攻撃・被弾時の処理
 //  motor.h（stop_Stop）を使う
-//  レッスン42：Bluetooth を使っていた BTSerial.println("DEAD!"); の行を消した
+//  レッスン42：Bluetooth を使っていた BTSerial.println("DEAD!"); の行をコメントアウトした
 // =============================================
 #pragma once
 
@@ -15,6 +15,7 @@ void shoot(){
   
 }
 void deadAlarm(){
+  // BTSerial.println("DEAD!");   // レッスン42：Bluetooth を使う行なのでコメントアウト
   Serial.println("DEAD!");
     stop_Stop();
  while(1)

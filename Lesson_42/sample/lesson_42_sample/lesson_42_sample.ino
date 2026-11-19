@@ -13,6 +13,7 @@
 
 // ---- 共有するオブジェクト・変数（定義はここ一か所だけ）----
 // 下の .h ファイルが使うので、#include より先に書く
+// SoftwareSerial BTSerial(4, 5);  //RX,TX
 SoftwareSerial espSerial(4, 5);  // ← レッスン42で変更：Wi-Fiシールド（ESP8266）とつなぐ RX,TX
 IRrecv irrecv(RECV_PIN);
 IRsend irsend;
@@ -29,6 +30,7 @@ int lastButtonState = 0;
 #include "sound.h"      // ブザー
 #include "battle.h"     // 赤外線攻撃・被弾時の処理（motor.h を使う）
 #include "hissatsu.h"   // 必殺技（motor.h・sound.h・battle.h を使う）
+// #include "bluetooth.h"
 #include "http.h"       // ← レッスン42で変更：Wi-Fi・HTTP通信（上の全部を使うので最後）
 // bluetooth.h はタブに残してあるが、#include していないので使われない
 
@@ -46,6 +48,7 @@ void setup()
   pinMode(BUZZ_PIN, OUTPUT);
   buzz_OFF();
   Serial.begin(9600);
+  // BTSerial.begin(9600);
   http_init();    // ← レッスン42で変更：Wi-Fiにつないで、Webサーバーを始める
 
 }
@@ -74,5 +77,6 @@ void loop()
     irrecv.resume(); // resume receiver
   }
   lastButtonState = buttonState;
+  // do_Uart_Tick();
   do_Http_Tick();   // ← レッスン42で変更：ブラウザからの命令を見る
 }
