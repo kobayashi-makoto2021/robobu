@@ -31,7 +31,8 @@ int lastButtonState = 0;
 #include "battle.h"     // 赤外線攻撃・被弾時の処理（motor.h を使う）
 #include "hissatsu.h"   // 必殺技（motor.h・sound.h・battle.h を使う）
 // #include "bluetooth.h"
-#include "http.h"       // ← レッスン42で変更：Wi-Fi・HTTP通信（上の全部を使うので最後）
+#include "page.h"       // ← レッスン42で追加：操作画面のHTML（http.h が使うので、その前）
+#include "http.h"      // ← レッスン42で変更：Wi-Fi・HTTP通信（上の全部を使うので最後）
 // bluetooth.h はタブに残してあるが、#include していないので使われない
 
 void setup()

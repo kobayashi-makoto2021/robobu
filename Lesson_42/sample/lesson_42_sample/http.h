@@ -34,7 +34,21 @@ void http_init()
   Serial.println(WiFi.localIP());
 }
 
+// ---- 安全のため：命令を受け取ってから moveTime ミリ秒たったら止まる ----
+unsigned int moveTime = MOVE_TIME;  // 動く時間（はじめは config.h の値。画面のスライダーで変えられる）
+bool moving = false;                // 今、動いているか
+unsigned long moveStart = 0;        // 命令を受け取った時刻（ミリ秒）
+
+void checkTimer()
+{
+  if (moving && millis() - moveStart >= moveTime) {
+    stop_Stop();
+    moving = false;
+  }
+}
+
 // ---- 操作画面のHTMLを送る（「/」を開いたときだけ）----
+// HTMLの中身は page.h に書いてある
 void sendPage(WiFiEspClient &client)
 {
   // 1. ヘッダー：「うまくいったよ（200 OK）。中身はHTMLだよ」
@@ -43,20 +57,10 @@ void sendPage(WiFiEspClient &client)
     "Content-Type: text/html; charset=UTF-8\r\n"
     "Connection: close\r\n"
     "\r\n"));
-  // 2. 本体：操作画面のHTML
-  client.print(F(
-    "<!DOCTYPE html>"
-    "<html lang=\"ja\">"
-    "<head><meta charset=\"UTF-8\"><title>Robot Controller</title>"
-    "<link rel=\"icon\" href=\"data:,\"></head>"   // アイコンを取りに来ないようにする
-    "<body>"
-    "<h1>ロボット操作パネル</h1>"
-    "<p><a href=\"/M\">▲ 前進</a></p>"
-    "<p><a href=\"/L\">◀ 左</a> "
-    "<a href=\"/E\">■ 停止</a> "
-    "<a href=\"/R\">▶ 右</a></p>"
-    "<p><a href=\"/B\">▼ 後退</a></p>"
-    "</body></html>"));
+  // 2. 本体：page.h のHTML（前半 → 今の moveTime → 後半 の順に送る）
+  client.print((const __FlashStringHelper*)PAGE_TOP);
+  client.print(moveTime);
+  client.print((const __FlashStringHelper*)PAGE_BOTTOM);
 }
 
 // ---- 命令を受け取ったときの返事を送る ----
@@ -80,15 +84,17 @@ char getCommand(String request)
   return cmd;
 }
 
-// ---- 安全のため：命令を受け取ってから MOVE_TIME ミリ秒たったら止まる ----
-bool moving = false;          // 今、動いているか
-unsigned long moveStart = 0;  // 命令を受け取った時刻（ミリ秒）
-
-void checkTimer()
+// ---- スライダーから届いた時間を読んで、moveTime を変える ----
+// 例：「GET /T800 HTTP/1.1」→ 800
+void setMoveTime(String request)
 {
-  if (moving && millis() - moveStart >= MOVE_TIME) {
-    stop_Stop();
-    moving = false;
+  int slash = request.indexOf('/');
+  int space = request.indexOf(' ', slash);
+  int value = request.substring(slash + 2, space).toInt();  // T のうしろの数字
+  if (value >= 100 && value <= 2000) {
+    moveTime = value;
+    Serial.print("動く時間を変えました: ");
+    Serial.println(moveTime);
   }
 }
 
@@ -139,7 +145,8 @@ void do_Http_Tick()
       if (c == '\n' && firstLine) {
         Serial.println(request);
         char cmd = getCommand(request);
-        if (cmd != 0) doCommand(cmd);
+        if (cmd == 'T') setMoveTime(request);  // スライダーの時間
+        else if (cmd != 0) doCommand(cmd);     // ロボットへの命令
       }
 
       // 空っぽの行が来たら、リクエストはおしまい → 返事をする
