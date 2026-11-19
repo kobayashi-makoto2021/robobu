@@ -34,7 +34,7 @@ void http_init()
   Serial.println(WiFi.localIP());
 }
 
-// ---- レスポンス（返事）として、操作画面のHTMLを送る ----
+// ---- 操作画面のHTMLを送る（「/」を開いたときだけ）----
 void sendPage(WiFiEspClient &client)
 {
   // 1. ヘッダー：「うまくいったよ（200 OK）。中身はHTMLだよ」
@@ -47,44 +47,82 @@ void sendPage(WiFiEspClient &client)
   client.print(F(
     "<!DOCTYPE html>"
     "<html lang=\"ja\">"
-    "<head><meta charset=\"UTF-8\"><title>Robot Controller</title></head>"
+    "<head><meta charset=\"UTF-8\"><title>Robot Controller</title>"
+    "<link rel=\"icon\" href=\"data:,\"></head>"   // アイコンを取りに来ないようにする
     "<body>"
     "<h1>ロボット操作パネル</h1>"
-    "<p><a href=\"/forward\">▲ 前進</a></p>"
-    "<p><a href=\"/left\">◀ 左</a> "
-    "<a href=\"/stop\">■ 停止</a> "
-    "<a href=\"/right\">▶ 右</a></p>"
-    "<p><a href=\"/back\">▼ 後退</a></p>"
+    "<p><a href=\"/M\">▲ 前進</a></p>"
+    "<p><a href=\"/L\">◀ 左</a> "
+    "<a href=\"/E\">■ 停止</a> "
+    "<a href=\"/R\">▶ 右</a></p>"
+    "<p><a href=\"/B\">▼ 後退</a></p>"
     "</body></html>"));
 }
 
-// ---- リクエストの1行目から、パス（/forward など）を取り出す ----
-// 例：「GET /forward HTTP/1.1」→「/forward」
-String getPath(String request)
+// ---- 命令を受け取ったときの返事を送る ----
+// 204 No Content：「受け取ったよ。送る中身はないよ」→ ブラウザは今の画面のまま
+void sendOK(WiFiEspClient &client)
 {
-  int space1 = request.indexOf(' ');               // 1つ目のスペース
-  int space2 = request.indexOf(' ', space1 + 1);   // 2つ目のスペース
-  return request.substring(space1 + 1, space2);    // そのあいだがパス
+  client.print(F(
+    "HTTP/1.1 204 No Content\r\n"
+    "Connection: close\r\n"
+    "\r\n"));
 }
 
-// ---- パスに合わせて、ロボットを動かす ----
-// モーターの動かし方は motor.h の関数を呼ぶだけ。ここでは作り直さない。
-void doCommand(String path)
+// ---- リクエストの1行目から、命令の1文字を取り出す ----
+// 例：「GET /M HTTP/1.1」→ 'M'（/ のすぐ後ろの1文字）
+//     「GET / HTTP/1.1」→ 0（命令なし。操作画面を開いただけ）
+char getCommand(String request)
 {
-  if      (path == "/forward") go_Advance();
-  else if (path == "/back")    go_Back();
-  else if (path == "/left")    go_Left();
-  else if (path == "/right")   go_Right();
-  else if (path == "/stop")    stop_Stop();
+  int slash = request.indexOf('/');   // 1つ目の / の場所
+  char cmd = request.charAt(slash + 1);
+  if (cmd == ' ') return 0;           // / のすぐ後ろが空白なら、命令なし
+  return cmd;
+}
+
+// ---- 安全のため：命令を受け取ってから MOVE_TIME ミリ秒たったら止まる ----
+bool moving = false;          // 今、動いているか
+unsigned long moveStart = 0;  // 命令を受け取った時刻（ミリ秒）
+
+void checkTimer()
+{
+  if (moving && millis() - moveStart >= MOVE_TIME) {
+    stop_Stop();
+    moving = false;
+  }
+}
+
+// ---- 命令の1文字に合わせて、ロボットを動かす ----
+// bluetooth.h の switch 文と同じ。アプリと同じ文字を使っている。
+// モーターの動かし方は motor.h の関数を呼ぶだけ。ここでは作り直さない。
+void doCommand(char cmd)
+{
+  switch (cmd)
+  {
+    case 'M':  go_Advance(); break;
+    case 'L':  go_Left(); break;
+    case 'R':  go_Right(); break;
+    case 'B':  go_Back(); break;
+    case 'X':  back_Left(); break;
+    case 'Y':  back_Right(); break;
+    case 'F':  buttonState=1;shoot();break;
+    case 'E': stop_Stop() ;buzz_OFF();break;
+    case 'J': stop_Stop() ;break;
+    default:break;
+  }
+  moving = true;          // 時計をスタート
+  moveStart = millis();
 }
 
 // ---- ブラウザからリクエストが来ていたら受け取って、返事をする（loop() で毎回呼ぶ）----
 void do_Http_Tick()
 {
+  checkTimer();  // 時間が来ていたら止める
+
   WiFiEspClient client = server.available();  // ブラウザが来ているか見る
   if (!client) return;                         // 来ていなければ何もしない
 
-  String request = "";      // リクエストの1行目（例：GET /forward HTTP/1.1）
+  String request = "";      // リクエストの1行目（例：GET /M HTTP/1.1）
   bool firstLine = true;    // 今、1行目を読んでいるか
   bool lineIsBlank = true;  // 今の行が、まだ空っぽか
 
@@ -97,11 +135,20 @@ void do_Http_Tick()
         request += c;
       }
 
-      // 空っぽの行が来たら、リクエストはおしまい → 命令を実行して返事をする
-      if (c == '\n' && lineIsBlank) {
+      // 1行目を読み終わったら、すぐに命令を実行する（残りの行を読み終わるのを待たない）
+      if (c == '\n' && firstLine) {
         Serial.println(request);
-        doCommand(getPath(request));
-        sendPage(client);
+        char cmd = getCommand(request);
+        if (cmd != 0) doCommand(cmd);
+      }
+
+      // 空っぽの行が来たら、リクエストはおしまい → 返事をする
+      if (c == '\n' && lineIsBlank) {
+        if (getCommand(request) == 0) {
+          sendPage(client);   // 「/」を開いたときだけ、操作画面のHTMLを送る
+        } else {
+          sendOK(client);     // 命令のときは、短い返事だけ送る
+        }
         break;
       }
 
