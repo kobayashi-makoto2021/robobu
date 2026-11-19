@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>レッスン44 ゲームパッド操作</title>
+</head>
+<body>
+  <h1>ゲームパッドでロボットを動かそう！</h1>
+  <p id="state">ゲームパッドのボタンを1回押してください</p>
+  <p id="error"></p>
+
+  <script>
+    // ★1 ロボットのIPアドレスに書きかえる（レッスン42のシリアルモニターに出たもの）
+    const ROBOT = "http://192.168.1.20";
+
+    // ★2 レッスン43でノートにまとめた番号に書きかえる（以下は例）
+    const UP = 12;
+    const DOWN = 13;
+    const LEFT = 14;
+    const RIGHT = 15;
+
+    // ゲームパッドのようすから、ロボットへの命令（1文字）を決める
+    function readCommand(pad) {
+      if (!pad) return "E";
+      if (pad.buttons[UP].pressed) return "M";     // 前進
+      if (pad.buttons[DOWN].pressed) return "B";   // 後退
+      if (pad.buttons[LEFT].pressed) return "L";   // 左
+      if (pad.buttons[RIGHT].pressed) return "R";  // 右
+      return "E";                                  // 何も押していない → 停止
+    }
+
+    // ロボットに命令を送る（返事が来るまで待つ。そのあいだは次を送らない）
+    let sending = false;
+    async function send(path) {
+      sending = true;
+      try {
+        await fetch(ROBOT + path, { mode: "no-cors", cache: "no-store" });
+        document.getElementById("error").textContent = "";
+      } catch (e) {
+        document.getElementById("error").textContent =
+          "ロボットにつながりません。IPアドレスを確かめましょう";
+      }
+      sending = false;
+    }
+
+    let lastCommand = "E";
+    function update() {
+      const pad = Array.from(navigator.getGamepads()).find(p => p !== null);
+      const command = readCommand(pad);
+      document.getElementById("state").textContent = "今の命令：" + command;
+
+      // 前の命令を送り終わっていたら、次の命令を送る
+      //  ・押しているあいだ（E以外）は、くり返し送る（ロボットが moveTime で止まらないように）
+      //  ・はなしたときは、停止（E）を1回だけ送る
+      if (!sending && (command !== "E" || lastCommand !== "E")) {
+        send("/" + command);
+        lastCommand = command;
+      }
+      requestAnimationFrame(update);
+    }
+
+    // 命令が届くまで少し時間がかかるので、1回に動く時間を1秒にしておく
+    send("/T1000");
+    update();
+  </script>
+</body>
+</html>
