@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>レッスン45 スティック操作</title>
+</head>
+<body>
+  <h1>アナログスティックでロボットを動かそう！</h1>
+
+  <p>ロボットのIPアドレス：
+    <input id="ip" type="text" placeholder="192.168.〇.〇">
+  </p>
+
+  <p>1回に動く時間：<b id="t">1000</b> ミリ秒</p>
+  <input id="time" type="range" min="100" max="2000" step="100" value="1000">
+
+  <p>操作のしかた：
+    <label><input type="radio" name="mode" value="arcade" checked> アーケード方式（左スティック1本）</label>
+    <label><input type="radio" name="mode" value="tank"> 戦車方式（左右のスティック）</label>
+  </p>
+
+  <p id="axes">スティックの値：</p>
+  <p id="state">ゲームパッドのボタンを1回押してください</p>
+  <p id="error"></p>
+
+  <script>
+    // ★ レッスン43・45で調べたスティックの番号に書きかえる（以下は例）
+    const LEFT_X = 0;    // 左スティックの 左右
+    const LEFT_Y = 1;    // 左スティックの 上下
+    const RIGHT_Y = 3;   // 右スティックの 上下（戦車方式で使う）
+
+    const ipBox = document.getElementById("ip");         // IPアドレスの入力らん
+    const timeSlider = document.getElementById("time");  // 動く時間のスライダー
+
+    let sending = false;                  // 今、ロボットに送っているところか
+    let timeToSend = timeSlider.value;    // まだ送っていない「動く時間」（はじめに1回送る）
+    let lastSent = "0,0";                 // さっき送った左右の速さ
+
+    // 前に入れたIPアドレスを、ブラウザに覚えておいてもらう
+    ipBox.value = localStorage.getItem("robotIP") || "";
+    ipBox.addEventListener("change", () => {
+      localStorage.setItem("robotIP", ipBox.value);
+      timeToSend = timeSlider.value;
+    });
+
+    // スライダーを動かすと数字が変わり、手をはなすと動く時間を送る
+    timeSlider.addEventListener("input", () => {
+      document.getElementById("t").textContent = timeSlider.value;
+    });
+    timeSlider.addEventListener("change", () => {
+      timeToSend = timeSlider.value;
+    });
+
+    // 入力されたIPアドレスから、ロボットのアドレスを作る
+    function robotURL() {
+      let ip = ipBox.value.trim();
+      ip = ip.replace(/^https?:\/\//, "");   // http:// を入れていたら取る
+      ip = ip.replace(/\/+$/, "");           // 最後の / を取る
+      return "http://" + ip;
+    }
+
+    // スティックの小さなゆれを 0 にする（デッドゾーン）
+    function deadZone(value) {
+      return Math.abs(value) < 0.12 ? 0 : value;
+    }
+
+    // -1.0〜1.0 の値を、-255〜255 のモーターの速さに直す
+    function toSpeed(value) {
+      return Math.round(value * 255);
+    }
+
+    // アーケード方式：左スティック1本で、前後の速さと曲がる強さを決める
+    function arcadeMix(x, y) {
+      const forward = -deadZone(y);   // 上がマイナスなので、- を付けて「上＝前進」にする
+      const turn = deadZone(x);       // 右がプラス
+      let left = forward + turn;
+      let right = forward - turn;
+      // 1 をこえたら、左右の比率をそのままにして小さくする
+      const scale = Math.max(1, Math.abs(left), Math.abs(right));
+      return { left: toSpeed(left / scale), right: toSpeed(right / scale) };
+    }
+
+    // 戦車方式：左スティックの上下で左モーター、右スティックの上下で右モーター
+    function tankMix(leftY, rightY) {
+      return { left: toSpeed(-deadZone(leftY)), right: toSpeed(-deadZone(rightY)) };
+    }
+
+    // ロボットに命令を送る（返事が来るまで待つ。そのあいだは次を送らない）
+    async function send(path) {
+      sending = true;
+      try {
+        await fetch(robotURL() + path, {
+          mode: "no-cors",
+          cache: "no-store",
+          signal: AbortSignal.timeout(2000)   // 2秒たっても返事がなければ、あきらめる
+        });
+        document.getElementById("error").textContent = "";
+      } catch (e) {
+        document.getElementById("error").textContent =
+          "ロボットにつながりません。IPアドレスを確かめましょう";
+      }
+      sending = false;
+    }
+
+    function update() {
+      const pad = Array.from(navigator.getGamepads()).find(p => p !== null);
+      let speed = { left: 0, right: 0 };
+
+      if (pad) {
+        // スティックの値を画面に表示する
+        document.getElementById("axes").textContent =
+          "スティックの値：" +
+          pad.axes.map((v, n) => n + "番=" + v.toFixed(2)).join("　");
+
+        // えらんだ方式で、左右の速さを計算する
+        const mode = document.querySelector('input[name="mode"]:checked').value;
+        if (mode === "arcade") {
+          speed = arcadeMix(pad.axes[LEFT_X], pad.axes[LEFT_Y]);
+        } else {
+          speed = tankMix(pad.axes[LEFT_Y], pad.axes[RIGHT_Y]);
+        }
+      }
+
+      document.getElementById("state").textContent =
+        "左モーター：" + speed.left + "　右モーター：" + speed.right;
+
+      const now = speed.left + "," + speed.right;
+      if (ipBox.value.trim() === "") {
+        document.getElementById("error").textContent =
+          "ロボットのIPアドレスを入れてください";
+      } else if (!sending) {
+        if (timeToSend !== null) {
+          send("/T" + timeToSend);          // 動く時間が変わっていたら、先にそれを送る
+          timeToSend = null;
+        } else if (now !== "0,0" || lastSent !== "0,0") {
+          // ・スティックを倒しているあいだは、くり返し送る
+          // ・はなしたときは、0,0（停止）を1回だけ送る
+          send("/D?l=" + speed.left + "&r=" + speed.right);
+          lastSent = now;
+        }
+      }
+      requestAnimationFrame(update);
+    }
+
+    update();
+  </script>
+</body>
+</html>
